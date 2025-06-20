@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frog Police: Gang Bust</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/ui.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/achievements.css" />
+    <link rel="stylesheet" href="css/conversation.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/interactions.css" />
+    <link rel="stylesheet" href="css/exploration.css" />
+    <link rel="stylesheet" href="css/loading.css" />
+    <link rel="stylesheet" href="css/start-screen.css" />
+    <link rel="stylesheet" href="css/victory.css" />
+    <link rel="stylesheet" href="css/game-over.css" />
+    <link rel="stylesheet" href="css/location-navigation.css" />
+    <link rel="stylesheet" href="css/level-completion.css" />
+    <link rel="stylesheet" href="css/audio-settings.css" />
+  </head>
+  <body>
+    <div id="game-container"></div>
+    <div id="ui-container"></div>
+
+    <!-- GSAP from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- LOCAL CONFIG: Only load in development (ignored in production if file doesn't exist) -->
+    <script>
+      // Try to load local config if we're in development
+      if (
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname.includes("localhost")
+      ) {
+        // Dynamically load local config
+        const localConfigScript = document.createElement("script");
+        localConfigScript.src = "js/utils/local.config.js";
+        localConfigScript.onerror = function () {
+          console.warn(
+            "⚠️ local.config.js not found - API key may not be available for development"
+          );
+          console.log(
+            "💡 Create js/utils/local.config.js with your API key for local development"
+          );
+        };
+        document.head.appendChild(localConfigScript);
+      }
+    </script>
+
+    <!-- IMPORTANT: Load in this exact order! -->
+    <!-- 1. Configuration (after local config attempt) -->
+    <script src="js/utils/config.js"></script>
+
+    <!-- 2. Constants before data files -->
+    <script src="js/data/Constants.js"></script>
+
+    <!-- 3. Data files (now constants are available) -->
+    <script src="js/data/Levels.js"></script>
+    <script src="js/data/Locations.js"></script>
+    <script src="js/data/Characters.js"></script>
+    <script src="js/data/Items.js"></script>
+    <script src="js/data/Achievements.js"></script>
+
+    <!-- 4. Core utilities -->
+    <script src="js/core/EventEmitter.js"></script>
+    <script src="js/utils/Helpers.js"></script>
+
+    <!-- 5. Core systems -->
+    <script src="js/core/GameState.js"></script>
+
+    <!-- 6. Services (Enhanced with audio system) -->
+    <script src="js/systems/AudioManager.js"></script>
+    <script src="js/services/AssetManager.js"></script>
+    <script src="js/services/AIService.js"></script>
+
+    <!-- 7. UI Components (Enhanced with audio settings and start screen) -->
+    <script src="js/ui/LoadingScreen.js"></script>
+    <script src="js/ui/StartScreen.js"></script>
+    <script src="js/ui/VictoryScreen.js"></script>
+    <script src="js/ui/GameOverScreen.js"></script>
+    <script src="js/ui/ExplorationDrawer.js"></script>
+    <script src="js/ui/AudioSettingsUI.js"></script>
+
+    <!-- 8. Game systems -->
+    <script src="js/systems/ResponsivePositioning.js"></script>
+    <script src="js/systems/Renderer.js"></script>
+    <script src="js/systems/InteractionHandler.js"></script>
+    <script src="js/systems/ConversationManager.js"></script>
+    <script src="js/systems/LocationNavigator.js"></script>
+    <script src="js/systems/LevelManager.js"></script>
+    <script src="js/systems/AchievementManager.js"></script>
+    <script src="js/systems/CutsceneManager.js"></script>
+
+    <!-- 9. Main game engine (Enhanced with audio and start screen) -->
+    <script src="js/core/GameEngine.js"></script>
+
+    <!-- 10. Start the game -->
+    <script src="js/main.js"></script>
+  </body>
+</html>
