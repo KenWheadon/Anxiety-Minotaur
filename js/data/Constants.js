@@ -1,24 +1,25 @@
 // js/data/Constants.js - Minotaur's Labyrinth constants
 
+const LEVELE0_BG = "level0_bg";
+
 // Location constants (Level 1 - Home)
-const MINOTAUR_BEDROOM = "minotaur_bedroom";
-const MINOTAUR_KITCHEN = "minotaur_kitchen";
-const MINOTAUR_GARDEN = "minotaur_garden";
+const LEVEL1_HOUSE = "level1-house";
+const LEVEL1_LIVINGROOM = "level1_livingroom";
 
 // Location constants (Level 2 - Labyrinth)
-const LABYRINTH_ENTRANCE = "labyrinth_entrance";
-const ANCIENT_LIBRARY = "ancient_library";
-const TREASURE_CHAMBER = "treasure_chamber";
-const MONSTER_BARRACKS = "monster_barracks";
-const TRAP_WORKSHOP = "trap_workshop";
-const CRYSTAL_CAVE = "crystal_cave";
-const MEDITATION_GROVE = "meditation_grove";
-const MARKET_SQUARE = "market_square";
-const PUZZLE_CHAMBER = "puzzle_chamber";
-const SHADOW_ALCOVE = "shadow_alcove";
+const LEVEL2_OUTSIDELAB = "level2_outsidelab";
+const LEVEL2_FOREST = "level2_forest";
+const LEVEL2_CAVE = "level2_cave";
+const LEVEL2_CRYSTALCAVE = "level2_crystalcave";
+const LEVEL2_POTIONSHOP = "level2_potionshop";
+const LEVEL2_POTIONINSIDE = "level2_potioninside";
+const LEVEL2_HALL = "level2_hall";
+const LEVEL2_HALLINSIDE = "level2_hallinside";
+const LEVEL2_LIBRARY = "level2_library";
+const LEVEL2_GOLDROOM = "level2_goldroom";
 
 // Location constants (Level 3 - Results)
-const RESULT_CHAMBER = "result_chamber";
+const LEVEL3_BG = "level3_bg";
 
 // Character constants - Duck
 const DUCK_COMPANION = "duck_companion";
