@@ -1,99 +1,104 @@
-// js/data/Levels.js - Level definitions that REFERENCE data from other files
+// js/data/Levels.js - Minotaur's Labyrinth level definitions
 
 const LEVELS = {
   1: {
-    name: "Level 1: The Assignment",
+    name: "Home Sweet Home",
     description:
-      "Get Papa Police to give out the assignment that every cop in the city has been talking about.",
-    startLocation: OUTSIDE_POLICE_STATION,
-    completionAchievement: HOP_TO_IT,
+      "Prepare yourself mentally for the challenge ahead. When you're ready, tell duck it's time to start the day.",
+    startLocation: MINOTAUR_BEDROOM,
+    completionAchievement: READY_FOR_THE_DAY,
     completionMessage:
-      "You've been assigned the task of taking down the Kingpin. Now to track down his hideout.",
-    // FIXED: Reference locations from global locations object
-    locations: [OUTSIDE_POLICE_STATION, POLICE_STATION, OFFICE],
-    // FIXED: Reference characters from global characters object
-    characters: [FROG_FLAD, FROG_HOPS, FROG_PAPA_POLICE, FROG_CUFFED],
-    // FIXED: Reference items from global items object
-    items: [ITEM_HOPS_PICTURE, ITEM_FLAD_PICTURE, ITEM_NOTE],
-    // FIXED: Reference achievements from global achievements object
-    achievements: [HOP_TO_IT, NOT_STACKING_UP, LOST_THESE_IN_NAM],
+      "Time to head to the labyrinth and find the right allies!",
+    locations: [MINOTAUR_BEDROOM, MINOTAUR_KITCHEN, MINOTAUR_GARDEN],
+    characters: [DUCK_COMPANION],
+    items: [
+      ANXIETY_WORKBOOK,
+      LETTER_FROM_MOM,
+      BABY_DUCK_PHOTOS,
+      DUCK_TREAT_RECIPE,
+      LABYRINTH_BLUEPRINT,
+    ],
+    achievements: [READY_FOR_THE_DAY, TALKED_TO_DUCK, READ_MOMS_LETTER],
   },
 
   2: {
-    name: "Level 2: Gang Territory",
-    description: "Infiltrate the frog gang's territory and gain their trust",
-    startLocation: OUTSIDE_GANG_CLUB,
-    completionAchievement: VIP_ACCESS,
-    completionMessage: "You've gained access to the gang's inner circle!",
-    // FIXED: Reference existing locations
-    locations: [OUTSIDE_GANG_CLUB, ALLEY_LEFT, ALLEY_RIGHT],
-    // FIXED: Reference existing characters
-    characters: [FROG_SOUPMAN, FROG_BOUNCER, FROG_HAPPYLEATHER],
-    // FIXED: Reference existing items
-    items: [
-      ITEM_BALLOONDOG,
-      ITEM_BARREL,
-      ITEM_CAN,
-      ITEM_DUMPSTER,
-      ITEM_GARBAGECAN,
-      ITEM_MATTRESS,
-      ITEM_RIM_TIRE,
-      ITEM_TIRE,
-      ITEM_TRASH,
+    name: "Labyrinth Preparation",
+    description:
+      "Explore the labyrinth, recruit 2 monsters and 1 trap maker, and gather intelligence on the incoming adventurer. Manage your social energy wisely!",
+    startLocation: LABYRINTH_ENTRANCE,
+    completionAchievement: RECRUITMENT_COMPLETE,
+    completionMessage:
+      "All preparations complete! Time to face the adventurer!",
+    locations: [
+      LABYRINTH_ENTRANCE,
+      ANCIENT_LIBRARY,
+      TREASURE_CHAMBER,
+      MONSTER_BARRACKS,
+      TRAP_WORKSHOP,
+      CRYSTAL_CAVE,
+      MEDITATION_GROVE,
+      MARKET_SQUARE,
+      PUZZLE_CHAMBER,
+      SHADOW_ALCOVE,
     ],
-    // FIXED: Reference existing achievements
-    achievements: [VIP_ACCESS, SOUP_TO_GO],
+    characters: [
+      DUCK_COMPANION, // Energy restoration
+      // Monsters (recruit 2 of 6)
+      SKELETON_WARRIOR,
+      DRAGON_HATCHLING,
+      SPHINX,
+      GIANT_SPIDER,
+      SIREN,
+      TROLL,
+      // Trap Makers (recruit 1 of 4)
+      COGWHEEL_KATE,
+      PUZZLE_MASTER_PIP,
+      ILLUSION_IRIS,
+      PIT_BOSS_PETE,
+      // Information Dealers (visit all 3)
+      THE_LIBRARIAN,
+      THE_MERCHANT_KING,
+      THE_PHILOSOPHER,
+    ],
+    items: [
+      // Monster clues
+      WAR_MEDAL,
+      POLISHED_SCALE,
+      ANCIENT_SCROLL,
+      SILK_THREAD,
+      GOLDEN_HARP_STRING,
+      TRADE_CONTRACT,
+      // Trap maker clues
+      CLOCKWORK_GEAR,
+      CHESS_PIECE,
+      KALEIDOSCOPE,
+      HAMMER_HEAD,
+      // Information dealer clues
+      LIBRARY_CARD,
+      MERCHANT_LEDGER,
+      THINKING_STONE,
+    ],
+    achievements: [
+      RECRUITED_FIRST_MONSTER,
+      RECRUITED_SECOND_MONSTER,
+      HIRED_TRAP_MAKER,
+      LEARNED_FEAR_LEVEL,
+      LEARNED_GREED_LEVEL,
+      LEARNED_PRIDE_LEVEL,
+      RECRUITMENT_COMPLETE,
+    ],
   },
 
   3: {
-    name: "Level 3: The Confession",
+    name: "The Confrontation",
     description:
-      "Find out how to get the Kingpin to confess without raising suspicions that you're a cop.",
-    startLocation: HIDEOUT_BAR,
-    completionAchievement: SPILLED_HIS_GUTS,
-    completionMessage:
-      "You got enough info to have Frog Kingpin arrested and executed without trial!",
-    locations: [
-      HIDEOUT_BAR,
-      HIDEOUT_BATHROOM,
-      HIDEOUT_KINGPIN_OFFICE,
-      HIDEOUT_LOUNGE,
-      HIDEOUT_WAITINGROOM,
-    ],
-    characters: [
-      FROG_DRUNK,
-      FROG_FLAD_LOVE,
-      FROG_GHOST,
-      FROG_PUNK,
-      FROG_MECHA,
-      FROG_TALL,
-      FROG_KINGPIN,
-    ],
-    items: [
-      ITEM_BOTTLES,
-      ITEM_CASHBOX,
-      ITEM_CHAIR,
-      ITEM_CLOCK,
-      ITEM_DARTBOARD,
-      ITEM_PAINTING_FROG,
-      ITEM_PAINTING_JACKO,
-      ITEM_PAINTING_MECHA,
-      ITEM_LAMP,
-      ITEM_MAGAZINE,
-      ITEM_PAPERSTACK,
-      ITEM_PLANT,
-      ITEM_TOILET,
-      ITEM_TRANSACTION_LOG,
-      ITEM_TV,
-      FROG_PASSEDOUT,
-    ],
-    // FIXED: Include ALL Level 3 achievements
-    achievements: [
-      SPILLED_HIS_GUTS,
-      FOUND_THE_RAT,
-      ONE_MORE_DRINK,
-      NAME_GAME,
-      ATOMIC_CLOCK,
-    ],
+      "Watch as your carefully chosen allies face the incoming adventurer. Will your strategy succeed?",
+    startLocation: RESULT_CHAMBER,
+    completionAchievement: null, // No interactive completion - just cutscenes
+    completionMessage: "The challenge is complete!",
+    locations: [RESULT_CHAMBER],
+    characters: [], // No interactive characters in results level
+    items: [], // No items to examine
+    achievements: [DEFEATED_ADVENTURER, ADVENTURER_ESCAPED], // One of these will trigger
   },
 };

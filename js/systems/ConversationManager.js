@@ -7,16 +7,16 @@ class ConversationManager {
     this.conversationPanel = null;
     this.messageHistory = [];
     this.isWaitingForResponse = false;
-    this.isClosing = false; // NEW: Flag to prevent race conditions during closing
+    this.isClosing = false;
 
     this.createConversationUI();
     this.setupEventListeners();
 
-    console.log("💬 Conversation manager initialized");
+    console.log("💬 Conversation manager initialized (Minotaur's Labyrinth)");
   }
 
   createConversationUI() {
-    // Create conversation panel
+    // Create conversation panel (same as original)
     this.conversationPanel = document.createElement("div");
     this.conversationPanel.className = "conversation-panel";
     this.conversationPanel.innerHTML = `
@@ -42,6 +42,9 @@ class ConversationManager {
                     </span>
                     <span class="typing-text">Character is thinking...</span>
                 </div>
+                <div class="energy-warning" style="display: none;">
+                    <span class="energy-text">💔 Too drained to talk! Chat with duck to recharge.</span>
+                </div>
             </div>
         `;
 
@@ -50,7 +53,7 @@ class ConversationManager {
   }
 
   setupEventListeners() {
-    // Close button - ONLY way to close conversation
+    // Close button
     this.conversationPanel
       .querySelector(".close-conversation")
       .addEventListener("click", () => {
@@ -74,7 +77,7 @@ class ConversationManager {
         }
       });
 
-    // Stop propagation on conversation panel clicks to prevent outside clicks
+    // Stop propagation on conversation panel clicks
     this.conversationPanel.addEventListener("click", (e) => {
       e.stopPropagation();
     });
@@ -93,7 +96,15 @@ class ConversationManager {
       `💬 START CONVERSATION - Current: ${this.currentCharacter}, New: ${characterKey}, Active: ${this.isConversationActive}, Closing: ${this.isClosing}`
     );
 
-    // FIXED: If clicking the same character while conversation is active, do nothing
+    // NEW: Check social energy before starting (Level 2 only, non-duck NPCs)
+    if (this.shouldCheckSocialEnergy(character)) {
+      if (this.gameEngine.gameState.socialEnergy <= 0) {
+        this.showEnergyWarning();
+        return;
+      }
+    }
+
+    // If clicking the same character while conversation is active, do nothing
     if (
       this.isConversationActive &&
       this.currentCharacter === characterKey &&
@@ -103,13 +114,13 @@ class ConversationManager {
       return;
     }
 
-    // FIXED: If currently closing a conversation, wait for it to complete
+    // If currently closing a conversation, wait for it to complete
     if (this.isClosing) {
       console.log(`💬 Currently closing conversation, waiting...`);
       await this.waitForClose();
     }
 
-    // FIXED: If a different conversation is active, end it properly first
+    // If a different conversation is active, end it properly first
     if (this.isConversationActive && this.currentCharacter !== characterKey) {
       console.log(
         `💬 Switching conversation from ${this.currentCharacter} to ${characterKey}`
@@ -117,9 +128,17 @@ class ConversationManager {
       await this.endConversationAndWait();
     }
 
-    // FIXED: Double-check we're not in a closing state after waiting
+    // Double-check we're not in a closing state after waiting
     if (this.isClosing) {
       await this.waitForClose();
+    }
+
+    // NEW: Deduct social energy AFTER confirming conversation will start
+    if (this.shouldCheckSocialEnergy(character)) {
+      this.gameEngine.gameState.socialEnergy--;
+      console.log(
+        `💔 Social energy: ${this.gameEngine.gameState.socialEnergy}/${CONFIG.MAX_SOCIAL_ENERGY}`
+      );
     }
 
     this.currentCharacter = characterKey;
@@ -152,7 +171,7 @@ class ConversationManager {
     this.conversationPanel.querySelector(".conversation-input").focus();
 
     // Emit event
-    GameEvents.emit(GAME_EVENTS.CONVERSATION_STARTED, {
+    GameEvents.emit(GAME_EVENTS.CHARACTER_INTERACTION, {
       characterKey,
       character,
     });
@@ -160,7 +179,33 @@ class ConversationManager {
     console.log(`💬 Conversation with ${characterKey} fully initialized`);
   }
 
-  // NEW: Helper method to wait for conversation to finish closing
+  // NEW: Check if we should deduct social energy for this conversation
+  shouldCheckSocialEnergy(character) {
+    // Only in Level 2 and for non-duck characters
+    return this.gameEngine.gameState.currentLevel === 2 && !character.isDuck;
+  }
+
+  // NEW: Show energy warning
+  showEnergyWarning() {
+    const warning = this.conversationPanel.querySelector(".energy-warning");
+    if (warning) {
+      warning.style.display = "block";
+      setTimeout(() => {
+        warning.style.display = "none";
+      }, 3000);
+    }
+
+    // Also show floating text
+    this.gameEngine.renderer.showFloatingText(
+      "Too drained to talk! Find duck to recharge.",
+      400,
+      300,
+      3000
+    );
+
+    console.log("💔 Showed energy warning - player needs to talk to duck");
+  }
+
   async waitForClose() {
     return new Promise((resolve) => {
       const checkClosed = () => {
@@ -174,13 +219,17 @@ class ConversationManager {
     });
   }
 
-  // NEW: End conversation and wait for it to complete
   async endConversationAndWait() {
     this.endConversation();
     await this.waitForClose();
   }
 
   async generateGreeting(character, history) {
+    // NEW: Special duck greeting
+    if (character.isDuck) {
+      return this.generateDuckResponse("hello");
+    }
+
     if (history.length === 0) {
       return this.getFirstMeetingGreeting(character);
     } else {
@@ -198,16 +247,16 @@ class ConversationManager {
     // Simple greeting based on character personality
     const prompt = character.prompt.toLowerCase();
 
-    if (prompt.includes("shy") || prompt.includes("bashful")) {
+    if (prompt.includes("shy") || prompt.includes("nervous")) {
       return "Oh! H-hello there... I wasn't expecting visitors...";
     } else if (prompt.includes("wise") || prompt.includes("ancient")) {
-      return "Welcome, young traveler. I sense you have questions to ask.";
+      return "Welcome, young minotaur. I sense you have questions to ask.";
     } else if (prompt.includes("cheerful") || prompt.includes("excited")) {
       return "Oh wonderful! A new friend has come to visit! How delightful!";
     } else if (prompt.includes("mysterious")) {
       return "Ah... so you've found me. I wondered when someone would come asking the right questions...";
     } else {
-      return "Hello there!";
+      return "Hello there, minotaur!";
     }
   }
 
@@ -233,24 +282,35 @@ class ConversationManager {
     // Add player message
     this.addMessage("player", message);
 
-    // Show typing indicator
-    this.showTypingIndicator();
+    // Show typing indicator (except for duck)
+    const character = characters[this.currentCharacter];
+    if (!character.isDuck) {
+      this.showTypingIndicator();
+    }
 
     try {
-      // Get conversation history for context
-      const history = this.gameEngine.gameState.getConversationHistory(
-        this.currentCharacter
-      );
-      console.log(`💬 Using ${history.length} previous messages for context`);
+      let response;
 
-      // Generate AI response
-      console.log(`💬 Requesting AI response from ${this.currentCharacter}`);
-      const response = await this.aiService.generateResponse(
-        this.currentCharacter,
-        message,
-        history
-      );
-      console.log(`💬 AI RESPONSE RECEIVED: "${response}"`);
+      // NEW: Handle duck conversations differently
+      if (character.isDuck) {
+        response = this.generateDuckResponse(message);
+        console.log(`🦆 DUCK RESPONSE: "${response}"`);
+      } else {
+        // Get conversation history for context
+        const history = this.gameEngine.gameState.getConversationHistory(
+          this.currentCharacter
+        );
+        console.log(`💬 Using ${history.length} previous messages for context`);
+
+        // Generate AI response
+        console.log(`💬 Requesting AI response from ${this.currentCharacter}`);
+        response = await this.aiService.generateResponse(
+          this.currentCharacter,
+          message,
+          history
+        );
+        console.log(`💬 AI RESPONSE RECEIVED: "${response}"`);
+      }
 
       // Hide typing indicator
       this.hideTypingIndicator();
@@ -258,7 +318,7 @@ class ConversationManager {
       // Add character response
       this.addMessage("character", response);
 
-      // Save to conversation history
+      // Save to conversation history (including duck conversations)
       this.gameEngine.gameState.addConversation(
         this.currentCharacter,
         message,
@@ -284,6 +344,60 @@ class ConversationManager {
     input.focus();
 
     console.log(`💬 Message send cycle completed`);
+  }
+
+  // NEW: Generate duck responses
+  generateDuckResponse(message) {
+    const quackVariations = [
+      "Quack!",
+      "Quack quack!",
+      "Quack quack quack!",
+      "Quack?",
+      "Quack!!",
+      "Quack quack?",
+      "Quack quack quack!!",
+      "Quack! Quack!",
+      "Quaaaack!",
+      "Quack quack quack?",
+      "Quack! Quack quack!",
+      "Quaaaaaack!!",
+    ];
+
+    // Give energy back (Level 2 only)
+    if (this.gameEngine.gameState.currentLevel === 2) {
+      const oldEnergy = this.gameEngine.gameState.socialEnergy;
+      this.gameEngine.gameState.socialEnergy = Math.min(
+        CONFIG.MAX_SOCIAL_ENERGY,
+        this.gameEngine.gameState.socialEnergy + CONFIG.DUCK_ENERGY_RESTORE
+      );
+      const newEnergy = this.gameEngine.gameState.socialEnergy;
+
+      if (newEnergy > oldEnergy) {
+        console.log(`💝 Duck restored energy: ${oldEnergy} → ${newEnergy}`);
+      }
+    }
+
+    // Check for "ready" keywords in Level 1
+    if (this.gameEngine.gameState.currentLevel === 1) {
+      const readyKeywords = [
+        "ready",
+        "start",
+        "begin",
+        "go",
+        "day",
+        "adventure",
+      ];
+      const messageWords = message.toLowerCase().split(" ");
+
+      if (readyKeywords.some((keyword) => messageWords.includes(keyword))) {
+        // Trigger level completion
+        this.gameEngine.achievementManager.unlockAchievement(READY_FOR_THE_DAY);
+        return "Quack quack!! Quack! (Duck seems excited and ready!)";
+      }
+    }
+
+    // Return random quack
+    return quackVariations[Math.floor(Math.random() * quackVariations.length)];
   }
 
   addMessage(sender, text) {
@@ -414,7 +528,7 @@ class ConversationManager {
       ease: "power2.in",
       onComplete: () => {
         this.conversationPanel.style.display = "none";
-        this.isClosing = false; // FIXED: Clear closing flag when animation completes
+        this.isClosing = false;
       },
     });
   }
@@ -424,7 +538,7 @@ class ConversationManager {
 
     console.log(`💬 Ending conversation with ${this.currentCharacter}`);
 
-    this.isClosing = true; // FIXED: Set closing flag to prevent race conditions
+    this.isClosing = true;
     this.isConversationActive = false;
     this.hideConversation();
 
@@ -452,7 +566,7 @@ class ConversationManager {
       currentCharacter: this.currentCharacter,
       messageCount: this.messageHistory.length,
       isWaiting: this.isWaitingForResponse,
-      isClosing: this.isClosing, // FIXED: Include closing state in status
+      isClosing: this.isClosing,
     };
   }
 

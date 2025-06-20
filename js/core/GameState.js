@@ -1,4 +1,4 @@
-// js/core/GameState.js - Updated to use CONFIG for default level and removed clue system
+// js/core/GameState.js - Enhanced for Minotaur's Labyrinth
 
 class GameState {
   constructor() {
@@ -8,20 +8,231 @@ class GameState {
     this.visitedLocations = new Set();
     this.conversationHistories = new Map();
     this.unlockedAchievements = new Set();
-    // REMOVED: discoveredClues - no longer needed
     this.completedLevels = new Set();
+
+    // NEW: Social Energy System (Level 2 only)
+    this.socialEnergy = 0; // Start at 0, only active in Level 2
+    this.maxSocialEnergy = CONFIG.MAX_SOCIAL_ENERGY;
+
+    // NEW: Recruitment Tracking
+    this.recruitedMonsters = new Set(); // Track recruited monsters (max 2)
+    this.hiredTrapMaker = null; // Track hired trap maker (max 1)
+
+    // NEW: Adventurer Intelligence
+    this.adventurerStats = {
+      fear: null, // Will be revealed by The Librarian
+      greed: null, // Will be revealed by The Merchant King
+      pride: null, // Will be revealed by The Philosopher
+    };
+
+    // NEW: Hidden adventurer stats (set at game start, revealed through gameplay)
+    this.generateAdventurerStats();
+
+    // Game Progress Tracking
     this.gameProgress = {
       startTime: Date.now(),
       playTime: 0,
       conversationCount: 0,
       locationsVisited: 0,
       levelsCompleted: 0,
+      energyRestored: 0, // NEW: Track duck interactions
+      monstersRecruited: 0, // NEW: Track recruitment
+      trapMakersHired: 0, // NEW: Track trap makers
     };
 
     // Auto-save every 30 seconds
     this.autoSaveInterval = setInterval(() => {
       this.save();
     }, 30000);
+
+    console.log("🎮 GameState initialized for Minotaur's Labyrinth");
+  }
+
+  // NEW: Generate random adventurer stats for this playthrough
+  generateAdventurerStats() {
+    this.hiddenAdventurerStats = {
+      fear: Math.random() > 0.5 ? FEAR_HIGH : FEAR_LOW,
+      greed: Math.random() > 0.5 ? GREED_HIGH : GREED_LOW,
+      pride: Math.random() > 0.5 ? PRIDE_HIGH : PRIDE_LOW,
+    };
+
+    console.log("🎯 Generated adventurer stats:", this.hiddenAdventurerStats);
+  }
+
+  // NEW: Check if social energy tracking is active
+  shouldTrackSocialEnergy() {
+    return this.currentLevel === 2;
+  }
+
+  // NEW: Initialize social energy for Level 2
+  initializeSocialEnergy() {
+    if (this.currentLevel === 2) {
+      this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
+      console.log(
+        `💝 Social energy initialized: ${this.socialEnergy}/${this.maxSocialEnergy}`
+      );
+    }
+  }
+
+  // NEW: Restore energy (duck conversations)
+  restoreEnergy(amount = CONFIG.DUCK_ENERGY_RESTORE) {
+    if (!this.shouldTrackSocialEnergy()) return false;
+
+    const oldEnergy = this.socialEnergy;
+    this.socialEnergy = Math.min(
+      this.maxSocialEnergy,
+      this.socialEnergy + amount
+    );
+    const restored = this.socialEnergy - oldEnergy;
+
+    if (restored > 0) {
+      this.gameProgress.energyRestored += restored;
+      console.log(
+        `💝 Energy restored: +${restored} (${oldEnergy} → ${this.socialEnergy})`
+      );
+      return true;
+    }
+
+    return false;
+  }
+
+  // NEW: Spend energy (conversations)
+  spendEnergy(amount = CONFIG.CONVERSATION_ENERGY_COST) {
+    if (!this.shouldTrackSocialEnergy()) return true;
+
+    if (this.socialEnergy >= amount) {
+      this.socialEnergy -= amount;
+      console.log(
+        `💔 Energy spent: -${amount} (${this.socialEnergy + amount} → ${
+          this.socialEnergy
+        })`
+      );
+      return true;
+    }
+
+    return false; // Not enough energy
+  }
+
+  // NEW: Recruit a monster
+  recruitMonster(monsterId) {
+    if (this.recruitedMonsters.size >= 2) {
+      return { success: false, reason: "Already recruited 2 monsters" };
+    }
+
+    if (this.recruitedMonsters.has(monsterId)) {
+      return { success: false, reason: "Monster already recruited" };
+    }
+
+    this.recruitedMonsters.add(monsterId);
+    this.gameProgress.monstersRecruited++;
+
+    console.log(
+      `⚔️ Recruited monster: ${monsterId} (${this.recruitedMonsters.size}/2)`
+    );
+
+    // Check for achievement
+    if (this.recruitedMonsters.size === 1) {
+      this.unlockAchievement(RECRUITED_FIRST_MONSTER);
+    } else if (this.recruitedMonsters.size === 2) {
+      this.unlockAchievement(RECRUITED_SECOND_MONSTER);
+    }
+
+    this.checkRecruitmentComplete();
+    return { success: true };
+  }
+
+  // NEW: Hire a trap maker
+  hireTrapMaker(trapMakerId) {
+    if (this.hiredTrapMaker !== null) {
+      return { success: false, reason: "Already hired a trap maker" };
+    }
+
+    this.hiredTrapMaker = trapMakerId;
+    this.gameProgress.trapMakersHired++;
+
+    console.log(`🪤 Hired trap maker: ${trapMakerId}`);
+    this.unlockAchievement(HIRED_TRAP_MAKER);
+
+    this.checkRecruitmentComplete();
+    return { success: true };
+  }
+
+  // NEW: Reveal adventurer stat
+  revealAdventurerStat(statType) {
+    if (
+      this.hiddenAdventurerStats[statType] &&
+      this.adventurerStats[statType] === null
+    ) {
+      this.adventurerStats[statType] = this.hiddenAdventurerStats[statType];
+
+      console.log(
+        `🔍 Revealed adventurer ${statType}: ${this.adventurerStats[statType]}`
+      );
+
+      // Check for achievements
+      if (statType === "fear") {
+        this.unlockAchievement(LEARNED_FEAR_LEVEL);
+      } else if (statType === "greed") {
+        this.unlockAchievement(LEARNED_GREED_LEVEL);
+      } else if (statType === "pride") {
+        this.unlockAchievement(LEARNED_PRIDE_LEVEL);
+      }
+
+      this.checkRecruitmentComplete();
+      return true;
+    }
+
+    return false;
+  }
+
+  // NEW: Check if recruitment is complete
+  checkRecruitmentComplete() {
+    const hasEnoughMonsters = this.recruitedMonsters.size === 2;
+    const hasTrapMaker = this.hiredTrapMaker !== null;
+    const hasAllStats = Object.values(this.adventurerStats).every(
+      (stat) => stat !== null
+    );
+
+    if (hasEnoughMonsters && hasTrapMaker && hasAllStats) {
+      console.log("✅ Recruitment complete!");
+      this.unlockAchievement(RECRUITMENT_COMPLETE);
+      return true;
+    }
+
+    console.log(
+      `📋 Recruitment progress: Monsters ${
+        this.recruitedMonsters.size
+      }/2, Trap Maker ${hasTrapMaker ? 1 : 0}/1, Stats ${
+        Object.values(this.adventurerStats).filter((s) => s !== null).length
+      }/3`
+    );
+    return false;
+  }
+
+  // NEW: Get recruitment status
+  getRecruitmentStatus() {
+    return {
+      monsters: {
+        recruited: Array.from(this.recruitedMonsters),
+        count: this.recruitedMonsters.size,
+        max: 2,
+        complete: this.recruitedMonsters.size === 2,
+      },
+      trapMaker: {
+        hired: this.hiredTrapMaker,
+        complete: this.hiredTrapMaker !== null,
+      },
+      intelligence: {
+        revealed: this.adventurerStats,
+        hidden: this.hiddenAdventurerStats, // For debugging
+        complete: Object.values(this.adventurerStats).every(
+          (stat) => stat !== null
+        ),
+      },
+      overall: {
+        complete: this.checkRecruitmentComplete(),
+      },
+    };
   }
 
   // Visit a location
@@ -69,7 +280,14 @@ class GameState {
 
   // Set current level
   setCurrentLevel(levelNumber) {
+    const oldLevel = this.currentLevel;
     this.currentLevel = levelNumber;
+
+    // Initialize social energy when entering Level 2
+    if (levelNumber === 2 && oldLevel !== 2) {
+      this.initializeSocialEnergy();
+    }
+
     console.log(`🎯 Current level set to: ${levelNumber}`);
   }
 
@@ -85,7 +303,7 @@ class GameState {
       player: playerMessage,
       character: characterResponse,
       location: this.currentLocation,
-      level: this.currentLevel, // Track which level conversation happened in
+      level: this.currentLevel,
     });
 
     this.gameProgress.conversationCount++;
@@ -117,8 +335,6 @@ class GameState {
     return this.unlockedAchievements.has(achievementKey);
   }
 
-  // REMOVED: addClue method - no longer needed
-
   // Get game statistics
   getStats() {
     return {
@@ -129,8 +345,15 @@ class GameState {
       achievementsUnlocked: this.unlockedAchievements.size,
       totalAchievements: Object.keys(achievements).length,
       conversationCount: this.gameProgress.conversationCount,
-      // REMOVED: cluesFound - no longer tracked
       playTime: this.getPlayTime(),
+      // NEW: Social energy stats
+      socialEnergy: this.socialEnergy,
+      maxSocialEnergy: this.maxSocialEnergy,
+      energyRestored: this.gameProgress.energyRestored,
+      // NEW: Recruitment stats
+      monstersRecruited: this.recruitedMonsters.size,
+      trapMakersHired: this.gameProgress.trapMakersHired,
+      recruitmentComplete: this.checkRecruitmentComplete(),
     };
   }
 
@@ -142,7 +365,6 @@ class GameState {
 
   // Update play time (called from game loop)
   updatePlayTime() {
-    // Update play time every minute to avoid constant calculations
     const now = Date.now();
     if (!this.lastPlayTimeUpdate || now - this.lastPlayTimeUpdate > 60000) {
       this.gameProgress.playTime =
@@ -161,8 +383,13 @@ class GameState {
         visitedLocations: Array.from(this.visitedLocations),
         conversationHistories: Object.fromEntries(this.conversationHistories),
         unlockedAchievements: Array.from(this.unlockedAchievements),
-        // REMOVED: discoveredClues - no longer saved
         completedLevels: Array.from(this.completedLevels),
+        // NEW: Social energy and recruitment data
+        socialEnergy: this.socialEnergy,
+        recruitedMonsters: Array.from(this.recruitedMonsters),
+        hiredTrapMaker: this.hiredTrapMaker,
+        adventurerStats: this.adventurerStats,
+        hiddenAdventurerStats: this.hiddenAdventurerStats,
         gameProgress: {
           ...this.gameProgress,
           playTime:
@@ -170,21 +397,11 @@ class GameState {
             (Date.now() - this.gameProgress.startTime),
         },
         saveTime: Date.now(),
-        saveVersion: "2.0", // Version for save compatibility
+        saveVersion: "3.0", // Version for Minotaur's Labyrinth
       };
 
       localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(saveData));
-      console.log("💾 Game saved");
-      console.log(
-        "💾 Current level:",
-        this.currentLevel,
-        "| Completed levels:",
-        Array.from(this.completedLevels)
-      );
-      console.log(
-        "💾 Saved achievements:",
-        Array.from(this.unlockedAchievements)
-      );
+      console.log("💾 Game saved (Minotaur's Labyrinth v3.0)");
       GameEvents.emit(GAME_EVENTS.GAME_SAVED);
     } catch (error) {
       console.error("Failed to save game:", error);
@@ -202,7 +419,7 @@ class GameState {
 
       const parsed = JSON.parse(saveData);
 
-      // Load v2.0+ save data
+      // Load basic data
       this.currentLocation = parsed.currentLocation || CONFIG.DEFAULT_LOCATION;
       this.currentLevel = parsed.currentLevel || CONFIG.DEFAULT_LEVEL;
       this.visitedLocations = new Set(parsed.visitedLocations || []);
@@ -210,25 +427,28 @@ class GameState {
         Object.entries(parsed.conversationHistories || {})
       );
       this.unlockedAchievements = new Set(parsed.unlockedAchievements || []);
-      // REMOVED: discoveredClues loading - no longer needed
       this.completedLevels = new Set(parsed.completedLevels || []);
+
+      // NEW: Load social energy and recruitment data
+      this.socialEnergy = parsed.socialEnergy || 0;
+      this.recruitedMonsters = new Set(parsed.recruitedMonsters || []);
+      this.hiredTrapMaker = parsed.hiredTrapMaker || null;
+      this.adventurerStats = parsed.adventurerStats || {
+        fear: null,
+        greed: null,
+        pride: null,
+      };
+      this.hiddenAdventurerStats =
+        parsed.hiddenAdventurerStats || this.generateAdventurerStats();
+
       this.gameProgress = {
         ...this.gameProgress,
         ...parsed.gameProgress,
         startTime: Date.now(), // Reset start time for current session
       };
 
-      console.log("📂 Game loaded (v2.0)");
-      console.log(
-        "📂 Current level:",
-        this.currentLevel,
-        "| Completed levels:",
-        Array.from(this.completedLevels)
-      );
-      console.log(
-        "📂 Loaded achievements:",
-        Array.from(this.unlockedAchievements)
-      );
+      console.log("📂 Game loaded (Minotaur's Labyrinth v3.0)");
+      console.log("📂 Recruitment status:", this.getRecruitmentStatus());
 
       GameEvents.emit(GAME_EVENTS.GAME_LOADED);
       return true;
@@ -246,8 +466,14 @@ class GameState {
     this.visitedLocations.clear();
     this.conversationHistories.clear();
     this.unlockedAchievements.clear();
-    // REMOVED: discoveredClues clearing - no longer exists
     this.completedLevels.clear();
+
+    // NEW: Reset social energy and recruitment
+    this.socialEnergy = 0;
+    this.recruitedMonsters.clear();
+    this.hiredTrapMaker = null;
+    this.adventurerStats = { fear: null, greed: null, pride: null };
+    this.generateAdventurerStats(); // Generate new random stats
 
     // Reset game progress
     this.gameProgress = {
@@ -256,9 +482,13 @@ class GameState {
       conversationCount: 0,
       locationsVisited: 0,
       levelsCompleted: 0,
+      energyRestored: 0,
+      monstersRecruited: 0,
+      trapMakersHired: 0,
     };
 
     console.log(`🔄 Game state reset to Level ${CONFIG.DEFAULT_LEVEL}`);
+    console.log("🎯 New adventurer stats generated for fresh playthrough");
   }
 
   // Cleanup when game ends

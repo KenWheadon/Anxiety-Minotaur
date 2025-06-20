@@ -1,231 +1,180 @@
 const items = {
-  // Level 1 item
-  [ITEM_HOPS_PICTURE]: {
+  // Level 1 Items - World Building
+  [ANXIETY_WORKBOOK]: {
     description:
-      "A picture showing Hops and his wife in a heart-themed frame. She looks so proud of him in his uniform... I wonder if he feels he's living up to her expectations?",
-    X: 806,
-    Y: 594,
+      "Your well-worn copy of 'Social Anxiety for Minotaurs'. Chapter 3: 'Making Friends with Monsters' has lots of highlights and nervous doodles in the margins.",
+    X: 200,
+    Y: 300,
     scale: 0.5,
-    img: ITEM_HOPS_PICTURE,
-  },
-  [ITEM_FLAD_PICTURE]: {
-    description:
-      "A photo of Flad with his son, with 'Love you Dad' scrawled in crayon. Flad's robotic arms are clearly visible - there's a story behind those prosthetics.",
-    X: 1363,
-    Y: 367,
-    scale: 0.5,
-    img: ITEM_FLAD_PICTURE,
-  },
-  [ITEM_NOTE]: {
-    description:
-      "A note from the arrested criminal with an address scribbled on it - somewhere in the gang territory near uptown. This could be your ticket to infiltrating the frog gang.",
-    X: 451,
-    Y: 226,
-    scale: 0.8,
-    img: ITEM_NOTE,
+    img: ANXIETY_WORKBOOK,
   },
 
-  // level 2 items
-  [ITEM_BALLOONDOG]: {
+  [LETTER_FROM_MOM]: {
     description:
-      "A masterfully crafted balloon dog - clearly made by someone with serious artistic talent. You wonder if anyone around her has a secret passion for balloon animals. Maybe they'd love to hear someone appreciate this kind of artistry?",
-    X: 1254,
-    Y: 818,
-    scale: 0.15,
-    img: ITEM_BALLOONDOG,
+      "A letter from Mom: 'Remember sweetie, just be yourself! The labyrinth will be wonderful. The other minotaurs will be so proud. PS - don't forget to feed duck! Love you! ❤️'",
+    X: 400,
+    Y: 200,
+    scale: 0.4,
+    img: LETTER_FROM_MOM,
   },
-  [ITEM_BARREL]: {
+
+  [BABY_DUCK_PHOTOS]: {
     description:
-      "A weathered barrel, you peak inside and see a bunch of balloon animals. Someone around here is embarrassed about their balloon hobby.",
-    X: 963,
-    Y: 729,
+      "Adorable polaroids of duck as a tiny duckling. There's one of you both napping together, another of duck's first swim. The memories make you smile despite your nerves.",
+    X: 300,
+    Y: 400,
     scale: 0.3,
-    img: ITEM_BARREL,
-  },
-  [ITEM_CAN]: {
-    description:
-      "A crumpled can, smells like it used to contain red frog - supossed to give you fly wings or something.",
-    X: 1478,
-    Y: 912,
-    scale: 0.25,
-    img: ITEM_CAN,
-  },
-  [ITEM_DUMPSTER]: {
-    description:
-      "A dumpster tagged with a neon frog skull. Inside, you find an empty can of 'Five Star Carrot Soup' - premium vegetable soup. Someone around here must have expensive tastes in soup. There's also deflated balloons mixed in with the trash.",
-    X: 251,
-    Y: 912,
-    scale: 1,
-    img: ITEM_DUMPSTER,
-  },
-  [ITEM_GARBAGECAN]: {
-    description:
-      "A dented garbage can overflowing with synthetic frog slime and... balloon animal instruction booklets? 'Balloon Animals for Beginners' and 'Advanced Twisting Techniques' are visible among the gang trash. Each signed -B.",
-    X: 1443,
-    Y: 825,
-    scale: 1,
-    img: ITEM_GARBAGECAN,
-  },
-  [ITEM_MATTRESS]: {
-    description:
-      "A disgusting mattress with suspicious green stains. The frogs crash here after all-night binges.",
-    X: 1194,
-    Y: 696,
-    scale: 0.5,
-    img: ITEM_MATTRESS,
-  },
-  [ITEM_RIM_TIRE]: {
-    description:
-      "A shiny rim and tire combo. The frogs are known for their underground drag races.",
-    X: 445,
-    Y: 847,
-    scale: 0.5,
-    img: ITEM_RIM_TIRE,
-  },
-  [ITEM_TIRE]: {
-    description:
-      "A lone tire. Rolled in from the gang’s latest getaway—or robery.",
-    X: 714,
-    Y: 793,
-    scale: 0.5,
-    img: ITEM_TIRE,
-  },
-  [ITEM_TRASH]: {
-    description:
-      "A pile of trash buzzing with robo flies. The frogs rigged it to spy on their own hideout enterence.",
-    X: 655,
-    Y: 760,
-    scale: 0.75,
-    img: ITEM_TRASH,
+    img: BABY_DUCK_PHOTOS,
   },
 
-  // Level 3 item
-  [ITEM_TV]: {
+  [DUCK_TREAT_RECIPE]: {
     description:
-      "A broken CRT TV with gang tags covering the screen. You can still make out audio saying something about... preservation techniques.",
-    X: 1499,
-    Y: 502,
-    scale: 0.55,
-    img: ITEM_TV,
+      "A hand-written recipe card: 'Duck's Favorite Breadcrumbs - Makes duck super happy!' with little drawings of smiling bread pieces. Your handwriting is surprisingly neat.",
+    X: 500,
+    Y: 350,
+    scale: 0.4,
+    img: DUCK_TREAT_RECIPE,
   },
-  [ITEM_CHAIR]: {
+
+  [LABYRINTH_BLUEPRINT]: {
     description:
-      "A worn leather chair by the fireplace where gang members relax and share war stories. The cushions are stained with... you'd rather not know what.",
-    X: 1692,
-    Y: 868,
-    scale: 1,
-    img: ITEM_CHAIR,
+      "Plans for your labyrinth covered in corrections, revisions, and nervous eraser marks. 'Version 47 - This time it'll work!' is written in the corner with determined handwriting.",
+    X: 250,
+    Y: 450,
+    scale: 0.6,
+    img: LABYRINTH_BLUEPRINT,
   },
-  [ITEM_CASHBOX]: {
+
+  // Level 2 Items - Monster Clues
+  [WAR_MEDAL]: {
     description:
-      "A box overflowing with dirty money from the gang's various 'businesses' - You've heard they run protection rackets and loan sharking operations.",
-    X: 1349,
-    Y: 1030,
-    scale: 0.75,
-    img: ITEM_CASHBOX,
+      "A tarnished bronze medal with an eagle emblem and 'For Valor' inscription. The ribbon is faded but the weight of honor still feels heavy in your hands.",
+    X: 350,
+    Y: 600,
+    scale: 0.4,
+    img: WAR_MEDAL,
+    clueFor: SKELETON_WARRIOR,
   },
-  [ITEM_DARTBOARD]: {
+
+  [POLISHED_SCALE]: {
     description:
-      "A dartboard riddled with holes and what looks like... organic stains. The gang uses this for 'practice' - though what they're practicing for is disturbing.",
-    X: 1750,
-    Y: 825,
-    scale: 1,
-    img: ITEM_DARTBOARD,
+      "An iridescent dragon scale that shifts colors in the light - deep emerald to brilliant gold. It's small but perfectly formed, practically glowing with draconic pride.",
+    X: 450,
+    Y: 700,
+    scale: 0.3,
+    img: POLISHED_SCALE,
+    clueFor: DRAGON_HATCHLING,
   },
-  [ITEM_MAGAZINE]: {
+
+  [ANCIENT_SCROLL]: {
     description:
-      "A zine featuring Cucumber Gal, the frog supermodel. When she's on a cover it means there are coded gang meetup deets somewhere inside.",
-    X: 1750,
-    Y: 825,
-    scale: 1,
-    img: ITEM_MAGAZINE,
-  },
-  [ITEM_BOTTLES]: {
-    description:
-      "A collection of bottles, all brimming with liquids of different shades.",
-    X: 982,
-    Y: 727,
+      "A preserved parchment containing complex geometric diagrams and philosophical equations. The knowledge seems to pulse with ancient wisdom and intellectual challenge.",
+    X: 280,
+    Y: 320,
     scale: 0.5,
-    img: ITEM_BOTTLES,
+    img: ANCIENT_SCROLL,
+    clueFor: SPHINX,
   },
-  [ITEM_TRANSACTION_LOG]: {
+
+  [SILK_THREAD]: {
     description:
-      "You shouldn't be looking at this financial ledger while the Kingpin is right here but you do notice records of 'special deliveries' and 'biological asset management.",
-    X: 1078,
-    Y: 782,
-    scale: 1,
-    img: ITEM_TRANSACTION_LOG,
+      "Strong, shimmering thread wound carefully on a wooden spool. The craftsmanship is exquisite - each strand perfectly aligned with patience and artistic precision.",
+    X: 520,
+    Y: 650,
+    scale: 0.3,
+    img: SILK_THREAD,
+    clueFor: GIANT_SPIDER,
   },
-  [ITEM_PLANT]: {
+
+  [GOLDEN_HARP_STRING]: {
     description:
-      "A plastic plant that's obviously fake - just like the gang's 'legitimate business' front. Nothing here is what it seems to be.",
-    X: 1385,
-    Y: 566,
-    scale: 1,
-    img: ITEM_PLANT,
+      "A delicate golden string that hums melodiously in the breeze. Even the slightest touch produces beautiful notes that seem to demand an audience.",
+    X: 380,
+    Y: 380,
+    scale: 0.2,
+    img: GOLDEN_HARP_STRING,
+    clueFor: SIREN,
   },
-  [ITEM_PAPERSTACK]: {
+
+  [TRADE_CONTRACT]: {
     description:
-      "Maybe you shouldn't rifle through these documents so openly. They appear to be medical reports and 'specimen quality assessments' - deeply disturbing stuff.",
-    X: 1423,
-    Y: 717,
-    scale: 1,
-    img: ITEM_PAPERSTACK,
+      "A formal business document with official seals and careful legal language. 'Fair Payment Guaranteed' is stamped in bold letters - the mark of honest dealing.",
+    X: 420,
+    Y: 750,
+    scale: 0.4,
+    img: TRADE_CONTRACT,
+    clueFor: TROLL,
   },
-  [ITEM_PAINTING_JACKO]: {
+
+  // Level 2 Items - Trap Maker Clues
+  [CLOCKWORK_GEAR]: {
     description:
-      "A painting of the punk-looking frog with 'JACKO' written in bold letters below. He's one of the gang's key members",
-    X: 713,
-    Y: 296,
-    scale: 1,
-    img: ITEM_PAINTING_JACKO,
+      "A precisely machined brass gear with perfect teeth and smooth rotation. The mechanical precision is mesmerizing - clearly made by someone who loves how things work.",
+    X: 300,
+    Y: 550,
+    scale: 0.3,
+    img: CLOCKWORK_GEAR,
+    clueFor: COGWHEEL_KATE,
   },
-  [ITEM_PAINTING_FROG]: {
+
+  [CHESS_PIECE]: {
     description:
-      "A painting of an ancient frog elder, probably some kind of gang mythology or tribute to their criminal heritage. Even criminals have their legends.",
-    X: 194,
-    Y: 187,
-    scale: 1,
-    img: ITEM_PAINTING_FROG,
+      "An ornate king piece carved from dark wood with intricate details. It seems to radiate strategic thinking and intellectual superiority - a mastermind's tool.",
+    X: 480,
+    Y: 420,
+    scale: 0.3,
+    img: CHESS_PIECE,
+    clueFor: PUZZLE_MASTER_PIP,
   },
-  [ITEM_PAINTING_MECHA]: {
+
+  [KALEIDOSCOPE]: {
     description:
-      "A painting of the mecha looking frog. It's labeled 'MECHA'....right on the nose with that name.",
-    X: 1442,
-    Y: 253,
-    scale: 1,
-    img: ITEM_PAINTING_MECHA,
+      "A beautiful tube that creates mesmerizing, ever-changing patterns when you look through it. Reality shifts and dances - nothing is quite what it seems.",
+    X: 400,
+    Y: 480,
+    scale: 0.4,
+    img: KALEIDOSCOPE,
+    clueFor: ILLUSION_IRIS,
   },
-  [ITEM_TOILET]: {
+
+  [HAMMER_HEAD]: {
     description:
-      "A toilet sitting openly in the main area instead of a proper bathroom. Gang members have no shame - or maybe they just like asserting dominance through public displays.",
-    X: 884,
-    Y: 793,
-    scale: 1,
-    img: ITEM_TOILET,
+      "A well-worn but perfectly balanced hammer head. Honest work has polished the metal smooth - the tool of someone who builds things to last.",
+    X: 320,
+    Y: 680,
+    scale: 0.4,
+    img: HAMMER_HEAD,
+    clueFor: PIT_BOSS_PETE,
   },
-  [ITEM_CLOCK]: {
+
+  // Level 2 Items - Information Dealer Clues
+  [LIBRARY_CARD]: {
     description:
-      "It's 2:50am. Thank goodness you can still read analog clocks.",
-    X: 1040,
-    Y: 274,
-    scale: 1,
-    img: ITEM_CLOCK,
+      "A worn library card with countless date stamps and careful notations. 'Handle books with care' is printed in gentle letters - the mark of someone who treasures knowledge.",
+    X: 250,
+    Y: 280,
+    scale: 0.3,
+    img: LIBRARY_CARD,
+    clueFor: THE_LIBRARIAN,
   },
-  [ITEM_LAMP]: {
+
+  [MERCHANT_LEDGER]: {
     description:
-      "A simple desk lamp, though it's probably seen things that would make most people sick. Gang hideouts aren't known for their cheerful atmosphere.",
-    X: 348,
-    Y: 620,
-    scale: 1,
-    img: ITEM_LAMP,
+      "A leather-bound book filled with careful calculations, profit margins, and trade records. Every transaction is meticulously recorded - the work of a master merchant.",
+    X: 500,
+    Y: 320,
+    scale: 0.4,
+    img: MERCHANT_LEDGER,
+    clueFor: THE_MERCHANT_KING,
   },
-  [FROG_PASSEDOUT]: {
+
+  [THINKING_STONE]: {
     description:
-      "This frog is completely unconscious and barely breathing. You can see recent surgical scars all over his chest.",
-    X: 1376,
-    Y: 1090,
-    scale: 0.5,
-    img: FROG_PASSEDOUT,
+      "A smooth, perfectly round stone that fits comfortably in your palm. Holding it seems to encourage deep contemplation and consideration of multiple perspectives.",
+    X: 360,
+    Y: 200,
+    scale: 0.3,
+    img: THINKING_STONE,
+    clueFor: THE_PHILOSOPHER,
   },
 };

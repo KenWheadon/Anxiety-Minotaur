@@ -1,4 +1,4 @@
-// js/utils/Config.js - Environment-aware configuration enhanced for proxy
+// js/utils/Config.js - Environment-aware configuration for Minotaur's Labyrinth
 const CONFIG = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
@@ -18,19 +18,19 @@ const CONFIG = {
     );
   },
 
-  // Game Level Configuration
+  // Game Level Configuration - Start at Level 1 (Home)
   DEFAULT_LEVEL: 1,
 
   // Get the starting location based on the default level
   get DEFAULT_LOCATION() {
     if (this.DEFAULT_LEVEL === 1) {
-      return OUTSIDE_POLICE_STATION;
+      return MINOTAUR_BEDROOM;
     } else if (this.DEFAULT_LEVEL === 2) {
-      return OUTSIDE_GANG_CLUB;
+      return LABYRINTH_ENTRANCE;
     } else if (this.DEFAULT_LEVEL === 3) {
-      return HIDEOUT_BAR;
+      return RESULT_CHAMBER;
     } else {
-      return OUTSIDE_POLICE_STATION;
+      return MINOTAUR_BEDROOM;
     }
   },
 
@@ -54,7 +54,7 @@ const CONFIG = {
   // Proxy URL - Update this with your actual Vercel deployment URL
   get PROXY_URL() {
     // Replace 'your-vercel-app' with your actual Vercel app name
-    return "https://frogpolice-gangbust.vercel.app/api/chat";
+    return "https://minotaur-labyrinth.vercel.app/api/chat";
   },
 
   // API Key - only used in development for direct calls
@@ -87,14 +87,20 @@ const CONFIG = {
     }
   },
 
-  SITE_TITLE: "Frog Police: Gang Bust",
+  SITE_TITLE: "Minotaur's Labyrinth",
   MODEL: "deepseek/deepseek-r1-0528-qwen3-8b:free", // Free model - change as needed
   MAX_TOKENS: 10000, // Maximum tokens for AI responses
 
   // Game Configuration
-  SAVE_KEY: "frog-police-gang-bust-town-save",
+  SAVE_KEY: "minotaur-labyrinth-save",
   ANIMATION_SPEED: 0.3,
   DEBUG: true, // Set to false for production
+
+  // Social Energy Configuration (Level 2 only)
+  STARTING_SOCIAL_ENERGY: 10,
+  MAX_SOCIAL_ENERGY: 10,
+  DUCK_ENERGY_RESTORE: 2,
+  CONVERSATION_ENERGY_COST: 1,
 
   // Helper method to check if we're using the proxy
   get IS_USING_PROXY() {
@@ -143,6 +149,7 @@ const CONFIG = {
     console.log("  - API URL:", this.AI_API_URL);
     console.log("  - Using Proxy:", this.IS_USING_PROXY);
     console.log("  - Site URL:", this.SITE_URL);
+    console.log("  - Game Title:", this.SITE_TITLE);
 
     if (this.IS_DEVELOPMENT) {
       // Wait for local config to load before logging
@@ -161,5 +168,3 @@ const CONFIG = {
     }
   },
 };
-
-// Don't log environment immediately - let the game engine handle it after local config loads
