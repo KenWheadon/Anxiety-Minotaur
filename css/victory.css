@@ -77,12 +77,24 @@
 /* NEW: Trophy Container and Styles */
 .victory-trophy-container {
   position: relative;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
   height: 120px;
   animation: trophyFloat 3s ease-in-out infinite;
+}
+
+.victory-flex {
+  display: flex;
+}
+
+.victory-message {
+  width: 50%;
+}
+
+.victory-actions {
+  width: 50%;
 }
 
 .victory-trophy-image {

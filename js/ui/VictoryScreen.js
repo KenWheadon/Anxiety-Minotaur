@@ -106,15 +106,17 @@ class VictoryScreen {
           </div>
         </div>
         
-        <div class="victory-message">
-          <p>🌟 You've successfully helped your gardener neighbor identify their seeds!</p>
-          <p>💝 You've learned how to manage social energy and use your duck companion for support!</p>
-          <p>🎮 You're ready for bigger adventures in the full game!</p>
-        </div>
-        
-        <div class="victory-actions">
-          <button class="victory-button continue-game">Continue to Full Game</button>
-          <button class="victory-button close-victory">Keep Exploring Tutorial</button>
+        <div class="victory-flex">
+          <div class="victory-message">
+            <p>🌟 You've successfully helped your gardener neighbor identify their seeds!</p>
+            <p>💝 You've learned how to manage social energy and use your duck companion for support!</p>
+            <p>🎮 You're ready for bigger adventures in the full game!</p>
+          </div>
+          
+          <div class="victory-actions">
+            <button class="victory-button continue-game">Continue to Full Game</button>
+            <button class="victory-button close-victory">Keep Exploring Tutorial</button>
+          </div>
         </div>
         
         <div class="victory-footer">
