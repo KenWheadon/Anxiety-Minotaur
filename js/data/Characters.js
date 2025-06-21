@@ -18,9 +18,9 @@ const characters = {
       "You are a chatty skeleton warrior with a military background. You're sentimental about honor, duty, and military history. You love sharing war stories and discussing tactics. You get excited when someone shows appreciation for military service or mentions anything related to combat honor. You're looking for someone who respects the warrior's code.",
     description:
       "A skeleton warrior still wearing battle-worn armor. Chatty about military history and honor.",
-    X: 300,
-    Y: 700,
-    scale: 0.8,
+    X: 1663,
+    Y: 699,
+    scale: 1,
     img: MON_SKELETON,
     counters: [FEAR_HIGH], // Intimidates fearful adventurers
   },
@@ -32,7 +32,7 @@ const characters = {
       "A beautiful siren with a melodious voice. Loves performing and being admired.",
     X: 350,
     Y: 450,
-    scale: 0.7,
+    scale: 1,
     img: MON_SIREN,
     counters: [PRIDE_LOW], // Distracts humble adventurers with beauty
   },
@@ -44,7 +44,7 @@ const characters = {
       "A small but proud dragon hatchling with iridescent scales. Obsessed with proving their dragon status.",
     X: 500,
     Y: 600,
-    scale: 0.7,
+    scale: 1,
     img: MON_DRAGON,
     counters: [GREED_HIGH], // Lures greedy adventurers with treasure
   },
@@ -56,7 +56,7 @@ const characters = {
       "A large spider with delicate movements. Passionate about craftsmanship and intricate work.",
     X: 400,
     Y: 800,
-    scale: 0.8,
+    scale: 1,
     img: MON_SPIDER,
     counters: [FEAR_LOW], // Effective against brave adventurers who won't flee
   },
@@ -66,9 +66,9 @@ const characters = {
       "You are an ancient sphinx who speaks in riddles and enjoys intellectual conversations. You're bored by simple minds and get excited when someone shows genuine curiosity about knowledge, wisdom, or ancient mysteries. You love complex discussions and philosophical debates. You appreciate items that represent learning and intellectual pursuits.",
     description:
       "An ancient sphinx with wise eyes. Enjoys riddles and intellectual challenges.",
-    X: 600,
-    Y: 500,
-    scale: 0.9,
+    X: 465,
+    Y: 650,
+    scale: 0.95,
     img: MON_SPHINX,
     counters: [PRIDE_HIGH], // Punishes arrogant adventurers with impossible questions
   },
@@ -93,7 +93,7 @@ const characters = {
       "An energetic engineer covered in grease stains. Loves mechanical contraptions and precision.",
     X: 250,
     Y: 600,
-    scale: 0.6,
+    scale: 1,
     img: TRAP_KATE,
     trapType: "fear", // Creates fear-based traps
   },
@@ -105,7 +105,7 @@ const characters = {
       "A smug-looking puzzle master with a collection of brain teasers. Loves showing off intelligence.",
     X: 550,
     Y: 400,
-    scale: 0.7,
+    scale: 1,
     img: TRAP_PIP,
     trapType: "pride", // Creates pride-based traps
   },
@@ -117,7 +117,7 @@ const characters = {
       "A mystical figure surrounded by shimmering illusions. Creates beautiful but deceptive magic.",
     X: 380,
     Y: 550,
-    scale: 0.8,
+    scale: 1,
     img: TRAP_IRIS,
     trapType: "greed", // Creates greed-based traps
   },
@@ -128,9 +128,9 @@ const characters = {
       "You are the Giant but also a Librarian, you speak in whispers and love organization. You know everything about books, cataloging, and the incoming adventurer's FEAR level. You get excited when someone shows respect for knowledge, books, or careful organization. You will reveal the adventurer's fear level when properly approached.",
     description:
       "A massive but gentle librarian who speaks in whispers. Knows secrets about courage and fear.",
-    X: 320,
-    Y: 350,
-    scale: 1.1,
+    X: 1184,
+    Y: 430,
+    scale: 1,
     img: INFO_LIB,
     revealsStatType: "fear", // Reveals adventurer's fear level
   },
@@ -142,7 +142,7 @@ const characters = {
       "A massive merchant surrounded by goods and ledgers. Knows the value of everything and everyone.",
     X: 420,
     Y: 300,
-    scale: 1.2,
+    scale: 1,
     img: INFO_KING,
     revealsStatType: "greed", // Reveals adventurer's greed level
   },

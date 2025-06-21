@@ -23,7 +23,7 @@ const locations = {
     description:
       "The grand entrance to your labyrinth. Time to find the right allies for today's challenge.",
     characters: [MON_SKELETON],
-    items: [ITEM_SKELETON, ITEM_LIB],
+    items: [ITEM_SKELETON],
     locations: [LEVEL2_FOREST, LEVEL2_POTIONSHOP, LEVEL2_HALL],
     background: LEVEL2_OUTSIDELAB,
   },
@@ -40,7 +40,7 @@ const locations = {
   [LEVEL2_CAVE]: {
     description:
       "The cave's enterence is guarded by two beautifully crafted gargoyles, I can see the Siren's craft mark.",
-    characters: [INFO_LIB, MON_SIREN],
+    characters: [MON_SIREN, TRAP_PIP],
     items: [ITEM_SPIDER],
     locations: [LEVEL2_FOREST, LEVEL2_CRYSTALCAVE],
     background: LEVEL2_CAVE,
@@ -104,7 +104,7 @@ const locations = {
     description:
       "A room filled with golds and riches, gems and magical items. You could spend hours just looking at all the different wonderful items.",
     characters: [NPC_KINGKING],
-    items: [],
+    items: [ITEM_LIB],
     locations: [LEVEL2_HALL],
     background: LEVEL2_GOLDROOM,
   },

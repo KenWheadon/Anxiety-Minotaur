@@ -19,19 +19,21 @@ const CONFIG = {
   },
 
   // Game Level Configuration - Start at Level 1 (Home)
-  DEFAULT_LEVEL: 1,
+  DEFAULT_LEVEL: 2,
 
   // Get the starting location based on the default level
   get DEFAULT_LOCATION() {
-    if (this.DEFAULT_LEVEL === 1) {
-      return LEVEL1_HOUSE;
-    } else if (this.DEFAULT_LEVEL === 2) {
-      return LEVEL2_OUTSIDELAB;
-    } else if (this.DEFAULT_LEVEL === 3) {
-      return LEVEL3_BG;
-    } else {
-      return LEVEL1_HOUSE;
-    }
+    return LEVEL2_FOREST;
+
+    // if (this.DEFAULT_LEVEL === 1) {
+    //   return LEVEL1_HOUSE;
+    // } else if (this.DEFAULT_LEVEL === 2) {
+    //   return LEVEL2_OUTSIDELAB;
+    // } else if (this.DEFAULT_LEVEL === 3) {
+    //   return LEVEL3_BG;
+    // } else {
+    //   return LEVEL1_HOUSE;
+    // }
   },
 
   // AI Configuration - Enhanced proxy detection
