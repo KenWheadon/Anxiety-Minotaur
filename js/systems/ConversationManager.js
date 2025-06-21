@@ -1,15 +1,16 @@
-// js/systems/ConversationManager.js - Enhanced for Minotaur's Labyrinth
+// js/systems/ConversationManager.js - Fixed duck energy system for all levels
 
 class ConversationManager {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
-    this.aiService = new AIService();
+    this.conversationPanel = null;
     this.currentCharacter = null;
     this.isConversationActive = false;
-    this.conversationPanel = null;
-    this.messageHistory = [];
-    this.isWaitingForResponse = false;
     this.isClosing = false;
+    this.isWaitingForResponse = false;
+    this.messageHistory = [];
+
+    this.aiService = new AIService();
 
     this.createConversationUI();
     this.setupEventListeners();
@@ -18,7 +19,6 @@ class ConversationManager {
   }
 
   createConversationUI() {
-    // Create conversation panel (same as original)
     this.conversationPanel = document.createElement("div");
     this.conversationPanel.className = "conversation-panel";
     this.conversationPanel.innerHTML = `
@@ -26,26 +26,30 @@ class ConversationManager {
                 <div class="character-info">
                     <div class="character-avatar"></div>
                     <div class="character-details">
-                        <div class="character-name"></div>
-                        <div class="character-description"></div>
+                        <div class="character-name">Character</div>
+                        <div class="character-description">Description</div>
                     </div>
                 </div>
                 <button class="close-conversation">×</button>
             </div>
+            
             <div class="conversation-messages"></div>
-            <div class="conversation-input-area">
-                <input type="text" class="conversation-input" placeholder="Type your message...">
-                <button class="send-button">Send</button>
-            </div>
-            <div class="conversation-footer">
-                <div class="typing-indicator">
-                    <span class="typing-dots">
-                        <span></span><span></span><span></span>
-                    </span>
-                    <span class="typing-text">Character is thinking...</span>
+            
+            <div class="typing-indicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
+                <span class="typing-text">Thinking...</span>
+            </div>
+            
+            <div class="conversation-input-container">
+                <textarea class="conversation-input" placeholder="Type your message..." rows="2"></textarea>
+                <button class="send-button">Send</button>
                 <div class="energy-warning" style="display: none;">
-                    <span class="energy-text">💔 Too drained to talk! Chat with duck to recharge.</span>
+                    <span class="warning-icon">💔</span>
+                    <span class="warning-text">Too drained to talk! Chat with duck to recharge.</span>
                 </div>
             </div>
         `;
@@ -98,7 +102,7 @@ class ConversationManager {
       `💬 START CONVERSATION - Current: ${this.currentCharacter}, New: ${characterKey}, Active: ${this.isConversationActive}, Closing: ${this.isClosing}`
     );
 
-    // NEW: Check social energy before starting (Level 2 only, non-duck NPCs)
+    // Check social energy before starting (Level 2+ only, non-duck NPCs)
     if (this.shouldCheckSocialEnergy(character)) {
       if (this.gameEngine.gameState.socialEnergy <= 0) {
         this.showEnergyWarning();
@@ -135,7 +139,7 @@ class ConversationManager {
       await this.waitForClose();
     }
 
-    // NEW: Deduct social energy AFTER confirming conversation will start
+    // Deduct social energy AFTER confirming conversation will start (Level 2+ only)
     if (this.shouldCheckSocialEnergy(character)) {
       this.gameEngine.gameState.socialEnergy--;
       console.log(
@@ -181,13 +185,13 @@ class ConversationManager {
     console.log(`💬 Conversation with ${characterKey} fully initialized`);
   }
 
-  // NEW: Check if we should deduct social energy for this conversation
+  // Check if we should deduct social energy for this conversation
   shouldCheckSocialEnergy(character) {
-    // Only in Level 2 and for non-duck characters
-    return this.gameEngine.gameState.currentLevel === 2 && !character.isDuck;
+    // Only in Level 2+ and for non-duck characters
+    return this.gameEngine.gameState.currentLevel >= 2 && !character.isDuck;
   }
 
-  // NEW: Show energy warning
+  // Show energy warning
   showEnergyWarning() {
     const warning = this.conversationPanel.querySelector(".energy-warning");
     if (warning) {
@@ -227,9 +231,18 @@ class ConversationManager {
   }
 
   async generateGreeting(character, history) {
-    // NEW: Special duck greeting
+    // Special duck greeting with energy restoration
     if (character.isDuck) {
-      return this.generateDuckResponse("hello");
+      // FIXED: Duck always restores energy when conversation starts
+      const energyRestored = this.gameEngine.gameState.restoreEnergy();
+
+      if (energyRestored && this.gameEngine.energyUI) {
+        this.gameEngine.energyUI.showEnergyGain(CONFIG.DUCK_ENERGY_RESTORE);
+        this.gameEngine.energyUI.updateEnergyDisplay();
+        console.log("💝 Duck greeting restored energy automatically");
+      }
+
+      return "Quack! Quack! (Your faithful companion is happy to see you - you feel recharged!)";
     }
 
     if (history.length === 0) {
@@ -239,27 +252,26 @@ class ConversationManager {
       const contextualGreeting = await this.aiService.generateResponse(
         this.currentCharacter,
         "The player has returned to talk to you again. Give a brief, friendly greeting acknowledging you've met before.",
-        character.prompt,
-        history.slice(-3) // Last 3 messages for context
+        history.slice(-3)
       );
-      return contextualGreeting || this.getFirstMeetingGreeting(character);
+
+      return (
+        contextualGreeting ||
+        this.getFirstMeetingGreeting(character) + " Good to see you again!"
+      );
     }
   }
 
   getFirstMeetingGreeting(character) {
-    const prompt = character.prompt.toLowerCase();
+    const greetings = [
+      "Hello there! Nice to meet you.",
+      "Oh, hello! I wasn't expecting company.",
+      "Greetings, traveler. What brings you here?",
+      "Well hello! Always nice to see a new face.",
+      "Oh my, a visitor! How delightful!",
+    ];
 
-    if (prompt.includes("shy") || prompt.includes("bashful")) {
-      return "Oh... um... H-hello there... I wasn't expecting visitors...";
-    } else if (prompt.includes("wise") || prompt.includes("ancient")) {
-      return "Welcome, young minotaur. I sense you have questions to ask.";
-    } else if (prompt.includes("cheerful") || prompt.includes("excited")) {
-      return "Oh wonderful! A new friend has come to visit! How delightful!";
-    } else if (prompt.includes("mysterious")) {
-      return "Ah... so you've found me. I wondered when someone would come asking the right questions...";
-    } else {
-      return "Hello there, minotaur!";
-    }
+    return greetings[Math.floor(Math.random() * greetings.length)];
   }
 
   async sendMessage() {
@@ -267,15 +279,12 @@ class ConversationManager {
     const message = input.value.trim();
 
     if (!message || this.isWaitingForResponse) {
-      console.log(
-        `💬 SEND MESSAGE BLOCKED - Message: "${message}", Waiting: ${this.isWaitingForResponse}`
-      );
       return;
     }
 
-    console.log(`💬 SENDING MESSAGE: "${message}" to ${this.currentCharacter}`);
+    console.log(`💬 Sending message to ${this.currentCharacter}: "${message}"`);
 
-    // Clear input and disable it
+    // Clear input and disable
     input.value = "";
     input.disabled = true;
     this.conversationPanel.querySelector(".send-button").disabled = true;
@@ -284,27 +293,30 @@ class ConversationManager {
     // Add player message
     this.addMessage("player", message);
 
-    // NEW: Emit message for keyword checking
-    GameEvents.emit("CONVERSATION_MESSAGE_SENT", {
-      characterId: this.currentCharacter,
-      message: message,
-    });
-
-    // Show typing indicator (except for duck)
+    // Show typing indicator for non-duck characters
     const character = characters[this.currentCharacter];
-    if (!character.isDuck) {
+    if (!character?.isDuck) {
       this.showTypingIndicator();
     }
 
     try {
       let response;
 
-      // NEW: Handle duck conversations differently
-      if (character.isDuck) {
+      // Handle duck conversations with energy restoration
+      if (character && character.isDuck) {
+        // FIXED: Every message to duck restores energy in all levels
+        const energyRestored = this.gameEngine.gameState.restoreEnergy();
+
+        if (energyRestored && this.gameEngine.energyUI) {
+          this.gameEngine.energyUI.showEnergyGain(CONFIG.DUCK_ENERGY_RESTORE);
+          this.gameEngine.energyUI.updateEnergyDisplay();
+          console.log("💝 Duck message restored energy automatically");
+        }
+
         response = this.generateDuckResponse(message);
         console.log(`🦆 DUCK RESPONSE: "${response}"`);
       } else {
-        // Get conversation history for context
+        // Handle other character conversations normally
         const history = this.gameEngine.gameState.getConversationHistory(
           this.currentCharacter
         );
@@ -354,7 +366,7 @@ class ConversationManager {
     console.log(`💬 Message send cycle completed`);
   }
 
-  // NEW: Generate duck responses
+  // FIXED: Generate duck responses - energy restoration happens in sendMessage
   generateDuckResponse(message) {
     const quackVariations = [
       "Quack!",
@@ -369,23 +381,45 @@ class ConversationManager {
     // Special responses for key phrases
     const messageLower = message.toLowerCase();
 
+    // Handle "ready" for Level 1 completion
     if (messageLower.includes("ready")) {
-      // The key phrase for Level 1 completion!
       return "Quack quack quack!! (Duck seems very excited for your adventure!)";
     }
 
-    if (messageLower.includes("tired") || messageLower.includes("energy")) {
-      // Duck helps restore energy in Level 2
-      if (this.gameEngine.gameState.currentLevel === 2) {
-        this.gameEngine.gameState.restoreEnergy();
-        return "Quack! Quack! (Duck gives you comfort and energy - you feel recharged!)";
-      } else {
-        return "Quack! (Duck seems excited and ready!)";
-      }
+    // Special responses for energy-related words
+    if (
+      messageLower.includes("tired") ||
+      messageLower.includes("energy") ||
+      messageLower.includes("drained") ||
+      messageLower.includes("exhausted")
+    ) {
+      return "Quack! Quack! (Duck gives you comfort and energy - you feel recharged!)";
     }
 
-    // Return random quack
-    return quackVariations[Math.floor(Math.random() * quackVariations.length)];
+    // Special responses for emotional support words
+    if (
+      messageLower.includes("anxious") ||
+      messageLower.includes("stressed") ||
+      messageLower.includes("worried") ||
+      messageLower.includes("nervous")
+    ) {
+      return "Quack quack! (Duck nuzzles you reassuringly - you feel better!)";
+    }
+
+    // Special responses for help/support requests
+    if (
+      messageLower.includes("help") ||
+      messageLower.includes("support") ||
+      messageLower.includes("comfort")
+    ) {
+      return "Quack! (Duck is always here for you - you feel recharged!)";
+    }
+
+    // Default supportive response - energy is already restored in sendMessage
+    return (
+      quackVariations[Math.floor(Math.random() * quackVariations.length)] +
+      " (Duck's presence is comforting!)"
+    );
   }
 
   addMessage(sender, text) {
@@ -472,89 +506,70 @@ class ConversationManager {
     description.textContent = character.description || "A mysterious figure.";
   }
 
+  showConversation() {
+    this.conversationPanel.style.display = "block";
+    gsap.fromTo(
+      this.conversationPanel,
+      { opacity: 0, scale: 0.8 },
+      { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }
+    );
+  }
+
+  hideConversation() {
+    this.conversationPanel.style.display = "none";
+  }
+
   clearMessages() {
     const messagesContainer = this.conversationPanel.querySelector(
       ".conversation-messages"
     );
     messagesContainer.innerHTML = "";
-    this.messageHistory = [];
   }
 
-  showConversation() {
-    this.conversationPanel.style.display = "flex";
-    gsap.fromTo(
-      this.conversationPanel,
-      { opacity: 0, scale: 0.8, y: 50 },
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.4,
-        ease: "back.out(1.7)",
-      }
-    );
-  }
+  endConversation() {
+    if (!this.isConversationActive || this.isClosing) {
+      return;
+    }
 
-  hideConversation() {
+    console.log(`💬 Ending conversation with ${this.currentCharacter}`);
+    this.isClosing = true;
+
     gsap.to(this.conversationPanel, {
       opacity: 0,
       scale: 0.8,
-      y: 50,
-      duration: 0.3,
+      duration: 0.2,
       ease: "power2.in",
       onComplete: () => {
-        this.conversationPanel.style.display = "none";
+        this.hideConversation();
+        this.currentCharacter = null;
+        this.isConversationActive = false;
         this.isClosing = false;
+        this.isWaitingForResponse = false;
+
+        // Re-enable world interactions
+        this.gameEngine.interactionHandler.setInteractionsEnabled(true);
+
+        // Emit event
+        GameEvents.emit(GAME_EVENTS.CONVERSATION_ENDED);
+
+        console.log("💬 Conversation ended");
       },
     });
   }
 
-  endConversation() {
-    if (!this.isConversationActive || this.isClosing) return;
-
-    console.log(`💬 Ending conversation with ${this.currentCharacter}`);
-
-    this.isClosing = true;
-    this.isConversationActive = false;
-    this.hideConversation();
-
-    // Re-enable world interactions
-    this.gameEngine.interactionHandler.setInteractionsEnabled(true);
-
-    // Emit event
-    GameEvents.emit(GAME_EVENTS.CONVERSATION_ENDED, {
-      characterKey: this.currentCharacter,
-      messageCount: this.messageHistory.length,
-    });
-
-    // Clear current conversation data
-    this.currentCharacter = null;
-    this.messageHistory = [];
-    this.isWaitingForResponse = false;
-
-    console.log("💬 Conversation ended");
+  // Utility method to check if conversation is active
+  isActive() {
+    return this.isConversationActive;
   }
 
-  // Get current conversation status
-  getStatus() {
-    return {
-      isActive: this.isConversationActive,
-      currentCharacter: this.currentCharacter,
-      messageCount: this.messageHistory.length,
-      isWaiting: this.isWaitingForResponse,
-      isClosing: this.isClosing,
-    };
-  }
-
+  // Clean up
   destroy() {
-    // End any active conversation
-    if (this.isConversationActive) {
-      this.endConversation();
-    }
-
-    // Remove conversation panel
     if (this.conversationPanel && this.conversationPanel.parentNode) {
       this.conversationPanel.parentNode.removeChild(this.conversationPanel);
+    }
+
+    if (this.aiService) {
+      this.aiService.destroy();
     }
 
     console.log("🗑️ Conversation manager destroyed");

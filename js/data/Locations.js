@@ -12,8 +12,17 @@ const locations = {
   [LEVEL1_LIVINGROOM]: {
     description:
       "A homey kitchen where you and duck share meals. The smell of fresh bread helps calm your nerves.",
-    characters: [],
+    characters: [TUTORIAL_PIG],
     items: [YOU_DUCK, ITEM_HELP, ITEM_MAGGLASS],
+    locations: [LEVEL1_HOUSE],
+    background: LEVEL1_LIVINGROOM,
+  },
+
+  [LEVEL1_GARDEN]: {
+    description:
+      "A homey kitchen where you and duck share meals. The smell of fresh bread helps calm your nerves.",
+    characters: [TUTORIAL_PIG],
+    items: [YOU_UNSURE],
     locations: [LEVEL1_HOUSE],
     background: LEVEL1_LIVINGROOM,
   },
@@ -94,7 +103,7 @@ const locations = {
   [LEVEL2_LIBRARY]: {
     description:
       "A library filled with riddles and brain teasers. Intellectual challenges await within.",
-    characters: [],
+    characters: [NPC_DUCK],
     items: [YOU_UNSURE, ITEM_KING],
     locations: [LEVEL2_HALLINSIDE],
     background: LEVEL2_LIBRARY,

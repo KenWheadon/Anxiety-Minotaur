@@ -1,4 +1,4 @@
-// js/ui/EnergyUI.js - Social Energy Display for Level 2
+// js/ui/EnergyUI.js - Social Energy Display for All Levels
 
 class EnergyUI {
   constructor(gameEngine) {
@@ -13,13 +13,9 @@ class EnergyUI {
   }
 
   setupEventListeners() {
-    // Listen for level changes to show/hide energy UI
+    // Listen for level changes to show energy UI in all levels
     GameEvents.on(GAME_EVENTS.LEVEL_CHANGED, (data) => {
-      if (data.level === 2) {
-        this.show();
-      } else {
-        this.hide();
-      }
+      this.show(); // Show in all levels now
     });
 
     // Listen for conversation events to update energy display
@@ -245,10 +241,6 @@ class EnergyUI {
     if (!this.isVisible || !this.energyBar || !this.energyText) return;
 
     const gameState = this.gameEngine.gameState;
-
-    // Only update if we're in Level 2
-    if (!gameState.shouldTrackSocialEnergy()) return;
-
     const currentEnergy = gameState.socialEnergy;
     const maxEnergy = gameState.maxSocialEnergy;
     const percentage = (currentEnergy / maxEnergy) * 100;
@@ -339,10 +331,6 @@ class EnergyUI {
   // Get current energy status for external use
   getEnergyStatus() {
     const gameState = this.gameEngine.gameState;
-
-    if (!gameState.shouldTrackSocialEnergy()) {
-      return null;
-    }
 
     return {
       current: gameState.socialEnergy,

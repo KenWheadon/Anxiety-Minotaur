@@ -1,4 +1,4 @@
-// js/core/GameEngine.js - Updated with Start Screen integration
+// js/core/GameEngine.js - Updated with EnergyUI and KeywordGenerationManager
 
 class GameEngine {
   constructor() {
@@ -6,11 +6,14 @@ class GameEngine {
     this.currentLocation = CONFIG.DEFAULT_LOCATION;
     this.gameState = new GameState();
     this.loadingScreen = new LoadingScreen();
-    this.startScreen = new StartScreen(this); // NEW: Add start screen
+    this.startScreen = new StartScreen(this);
     this.renderer = new Renderer();
     this.interactionHandler = new InteractionHandler(this);
     this.conversationManager = new ConversationManager(this);
+
+    // Initialize KeywordGenerationManager BEFORE other systems that might depend on it
     this.keywordGenerationManager = new KeywordGenerationManager(this);
+
     this.locationNavigator = new LocationNavigator(this);
     this.levelManager = new LevelManager(this);
     this.achievementManager = new AchievementManager(this);
@@ -23,9 +26,12 @@ class GameEngine {
     this.audioManager = this.renderer.assetManager.getAudioManager();
     this.audioSettingsUI = new AudioSettingsUI(this.audioManager);
 
+    // FIXED: Initialize EnergyUI
+    this.energyUI = new EnergyUI(this);
+
     this.isReady = false;
     this.currentLevel = CONFIG.DEFAULT_LEVEL;
-    this.gameStarted = false; // NEW: Track if gameplay has started
+    this.gameStarted = false;
 
     // Set up the callback for when Level 3 is completed (final victory)
     this.achievementManager.setAllAchievementsUnlockedCallback(() => {
@@ -41,58 +47,72 @@ class GameEngine {
     this.setupAudioEventListeners();
   }
 
-  // Set up audio event listeners for game events
+  // Set up audio event listeners for level changes
   setupAudioEventListeners() {
-    // Play sound for character interactions
-    GameEvents.on(GAME_EVENTS.CHARACTER_INTERACTION, () => {
-      this.audioManager.playSoundEffect("characterInteract", 0.8);
-    });
-
-    // Play sound for item examinations
-    GameEvents.on(GAME_EVENTS.ITEM_EXAMINED, () => {
-      this.audioManager.playSoundEffect("discovery", 0.6);
-    });
-
-    // Play sound for location changes
-    GameEvents.on(GAME_EVENTS.LOCATION_CHANGED, () => {
-      this.audioManager.playSoundEffect("locationChange", 0.5);
-    });
-
-    // Play sound for achievements
-    GameEvents.on(GAME_EVENTS.ACHIEVEMENT_UNLOCKED, () => {
-      this.audioManager.playSoundEffect("achievement", 0.8);
-    });
-
-    // Play sound for conversation start
-    GameEvents.on(GAME_EVENTS.CONVERSATION_STARTED, () => {
-      this.audioManager.playSoundEffect("chatOpen", 0.5);
-    });
-
-    // Play background music when level changes
+    // Listen for level changes to update background music
     GameEvents.on(GAME_EVENTS.LEVEL_CHANGED, (data) => {
       console.log(
         `🎵 Level changed to ${data.level}, starting background music`
       );
-      this.audioManager.playBackgroundMusic(data.level, true);
+      this.playBackgroundMusic(data.level);
     });
 
-    console.log("🎵 Audio event listeners set up");
+    // Audio control keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      // ESC key to toggle audio settings (when not in conversation)
+      if (e.key === "Escape" && !this.conversationManager.isActive()) {
+        e.preventDefault();
+        this.audioSettingsUI.toggleSettingsPanel();
+      }
+
+      // M key to toggle mute
+      if (e.key === "m" || e.key === "M") {
+        if (!this.conversationManager.isActive()) {
+          e.preventDefault();
+          this.toggleMute();
+        }
+      }
+    });
   }
 
-  async start() {
-    console.log("Starting Anxiety Minotaur...");
-
-    // UPDATED: Show loading screen first, then start screen
-    this.loadingScreen.show();
-
-    // Wait for local config to load in development
-    if (CONFIG.IS_DEVELOPMENT) {
-      console.log("🔧 Development mode detected, waiting for local config...");
-      await CONFIG.waitForLocalConfig();
+  // Development environment detection
+  setupDevelopmentEnvironment() {
+    if (CONFIG.DEBUG) {
+      // Expose debug interface
+      window.gameDebug = {
+        gameEngine: this,
+        gameState: this.gameState,
+        currentLocation: () => this.currentLocation,
+        currentLevel: () => this.currentLevel,
+        achievements: () => this.gameState.getUnlockedAchievements(),
+        energy: () => this.gameState.socialEnergy,
+        resetGame: () => this.reset(),
+        loadLocation: (locationKey) => this.loadLocation(locationKey),
+        skipToLevel: (level) => this.skipToLevel(level),
+      };
+      console.log("🐛 Debug mode enabled. Access via window.gameDebug");
     }
+  }
 
-    // Log environment info after config is ready
-    await CONFIG.logEnvironment();
+  // Skip to a specific level (development helper)
+  async skipToLevel(level) {
+    if (!CONFIG.DEBUG) return;
+
+    console.log(`🔧 DEV: Skipping to level ${level}`);
+    this.currentLevel = level;
+    this.gameState.currentLevel = level;
+    this.gameState.initializeForLevel(level);
+
+    await this.levelManager.loadLevel(level);
+    this.gameState.save();
+
+    console.log(`✅ DEV: Jumped to level ${level}`);
+  }
+
+  // Main game initialization
+  async start() {
+    console.log("🎮 Starting game engine...");
+    this.setupDevelopmentEnvironment();
 
     // Set up asset manager progress callback
     this.renderer.assetManager.setProgressCallback((progress) => {
@@ -114,7 +134,7 @@ class GameEngine {
     }
   }
 
-  // NEW: Separated gameplay initialization from start()
+  // Separated gameplay initialization from start()
   async startGameplay() {
     if (this.gameStarted) {
       console.log("⚠️ Gameplay already started");
@@ -186,6 +206,9 @@ class GameEngine {
         this.gameState.currentLocation = CONFIG.DEFAULT_LOCATION;
       }
 
+      // Initialize game state for current level
+      this.gameState.initializeForLevel(this.currentLevel);
+
       // Set up event listeners for cleanup
       this.setupEventListeners();
 
@@ -193,409 +216,247 @@ class GameEngine {
       this.isReady = true;
       console.log("✅ Game initialization complete!");
 
-      // Load initial location directly, bypassing level validation
-      await this.loadLocationDirect(this.currentLocation);
+      // Load the current location
+      await this.loadLocation(this.currentLocation);
 
       // Start background music for current level
-      this.startBackgroundMusicForCurrentLevel();
+      console.log(
+        `🎵 Starting background music for level ${this.currentLevel}`
+      );
+      this.playBackgroundMusic(this.currentLevel);
 
-      // Hide loading screen if still showing
-      this.loadingScreen.hide();
-
-      // Start game loop
-      this.gameLoop();
+      // Save initial state
+      this.gameState.save();
     } catch (error) {
       console.error("❌ Failed to start gameplay:", error);
       this.handleStartupError(error);
     }
   }
 
-  // Enable audio interaction (required for some browsers)
-  enableAudioInteraction() {
-    const enableAudio = () => {
-      this.audioManager.resumeAudioContext();
-      document.removeEventListener("click", enableAudio);
-      document.removeEventListener("keydown", enableAudio);
-      console.log("🎵 Audio interaction enabled");
-    };
+  handleStartupError(error) {
+    console.error("🚨 Critical startup error:", error);
 
-    document.addEventListener("click", enableAudio, { once: true });
-    document.addEventListener("keydown", enableAudio, { once: true });
-  }
-
-  // Start background music for current level
-  startBackgroundMusicForCurrentLevel() {
-    if (this.currentLevel && this.audioManager) {
-      console.log(
-        `🎵 Starting background music for level ${this.currentLevel}`
-      );
-      this.audioManager.playBackgroundMusic(this.currentLevel, true);
-    }
+    // Show error message to user
+    document.body.innerHTML = `
+      <div style="
+        position: fixed; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        background: rgba(0,0,0,0.9); 
+        color: white; 
+        padding: 30px; 
+        border-radius: 10px; 
+        text-align: center;
+        max-width: 500px;
+        z-index: 10000;
+      ">
+        <h2>🚨 Game Loading Error</h2>
+        <p>Sorry, there was a problem starting the game.</p>
+        <p><strong>Error:</strong> ${error.message}</p>
+        <button onclick="location.reload()" style="
+          background: #4CAF50; 
+          color: white; 
+          border: none; 
+          padding: 10px 20px; 
+          border-radius: 5px; 
+          cursor: pointer; 
+          margin-top: 20px;
+        ">Try Again</button>
+      </div>
+    `;
   }
 
   setupEventListeners() {
-    // Listen for location changes to close open descriptions
-    GameEvents.on(GAME_EVENTS.LOCATION_CHANGED, () => {
-      this.closeAllOpenDescriptions();
-    });
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (!this.isReady) return;
 
-    // Listen for level changes to update data
-    GameEvents.on(GAME_EVENTS.LEVEL_CHANGED, (data) => {
-      console.log(`🎯 Level changed to: ${data.level}`);
-      this.currentLevel = data.level;
-      this.onLevelChanged(data);
-    });
+      // Location navigation shortcuts (1-9)
+      if (
+        e.key >= "1" &&
+        e.key <= "9" &&
+        !this.conversationManager.isActive()
+      ) {
+        const locationIndex = parseInt(e.key) - 1;
+        this.locationNavigator.navigateByIndex(locationIndex);
+      }
 
-    // Enhanced click sound effects (avoid keyboard shortcuts entirely)
-    document.addEventListener("click", (e) => {
-      // Play click sound for UI elements
-      if (e.target.matches("button, .interactable, [data-clickable]")) {
-        this.audioManager.playSoundEffect("click", 0.3);
+      // Achievement panel toggle (A key)
+      if (e.key === "a" || e.key === "A") {
+        if (!this.conversationManager.isActive()) {
+          e.preventDefault();
+          this.achievementManager.toggleAchievementPanel();
+        }
+      }
+
+      // Exploration drawer toggle (E key)
+      if (e.key === "e" || e.key === "E") {
+        if (!this.conversationManager.isActive()) {
+          e.preventDefault();
+          this.explorationDrawer.toggleDrawer();
+        }
       }
     });
+
+    // Handle page unload
+    window.addEventListener("beforeunload", () => {
+      this.gameState.save();
+      this.destroy();
+    });
   }
 
-  // Handle level change events
-  onLevelChanged(levelData) {
-    // Update current locations/characters/items from level data
-    this.updateGameDataFromLevel(levelData.levelData);
-
-    // Save the level change
-    this.gameState.currentLevel = levelData.level;
-    this.gameState.save();
-  }
-
-  // Update global game data from current level
-  updateGameDataFromLevel(levelData) {
-    if (!levelData) return;
-
-    // Update global references to current level's data
-    if (levelData.locations) {
-      Object.assign(locations, levelData.locations);
+  async loadLocation(locationKey) {
+    if (!this.isReady) {
+      console.warn("🚫 Game not ready, cannot load location");
+      return;
     }
 
-    if (levelData.characters) {
-      Object.assign(characters, levelData.characters);
-    }
-
-    if (levelData.items) {
-      Object.assign(items, levelData.items);
-    }
-
-    if (levelData.achievements) {
-      Object.assign(achievements, levelData.achievements);
-    }
-
-    console.log("🔄 Updated game data from level");
-  }
-
-  closeAllOpenDescriptions() {
-    // Close all floating tooltips
-    if (this.interactionHandler) {
-      this.interactionHandler.closeAllTooltips();
-    }
-
-    // Close location previews
-    if (this.locationNavigator) {
-      this.locationNavigator.hideLocationPreview();
-    }
-
-    // Close exploration drawer
-    if (this.explorationDrawer && this.explorationDrawer.isOpen) {
-      this.explorationDrawer.hideDrawer();
-    }
-
-    // Close audio settings if open
-    if (this.audioSettingsUI && this.audioSettingsUI.isOpen) {
-      this.audioSettingsUI.hideSettingsPanel();
-    }
-
-    console.log("🧹 Closed all open descriptions due to location change");
-  }
-
-  handleStartupError(error) {
-    // Show error message on loading screen
-    const statusElement =
-      this.loadingScreen.loadingElement?.querySelector(".loading-status");
-    if (statusElement) {
-      statusElement.textContent =
-        "Failed to load game. Please refresh the page.";
-      statusElement.style.color = "#ff4444";
-    }
-
-    // Log detailed error
-    console.error("Game startup failed:", error);
-
-    // Try to continue with minimal functionality
-    setTimeout(() => {
-      console.log("Attempting to continue with reduced functionality...");
-      this.loadingScreen.hide();
-      this.startMinimalMode();
-    }, 3000);
-  }
-
-  async startMinimalMode() {
-    try {
-      this.currentLocation = CONFIG.DEFAULT_LOCATION;
-      this.currentLevel = CONFIG.DEFAULT_LEVEL;
-      this.isReady = true;
-      this.gameStarted = true;
-      await this.loadLocationDirect(this.currentLocation);
-
-      // Try to start background music even in minimal mode
-      this.startBackgroundMusicForCurrentLevel();
-
-      this.gameLoop();
-      console.log("⚠️ Game started in minimal mode");
-    } catch (error) {
-      console.error("❌ Even minimal mode failed:", error);
-    }
-  }
-
-  // Load location directly without level manager validation
-  async loadLocationDirect(locationKey) {
     console.log(`🗺️ Loading location directly: ${locationKey}`);
 
-    // Use global locations object directly
-    if (!locations[locationKey]) {
-      console.error(`❌ Location not found: ${locationKey}`);
-      // Fallback to configured default
-      locationKey = CONFIG.DEFAULT_LOCATION;
-      console.log(`🔄 Falling back to: ${locationKey}`);
-    }
+    // Play location change sound
+    this.playSoundEffect("locationChange", 0.35);
 
-    this.currentLocation = locationKey;
-    this.gameState.visitLocation(locationKey);
-
-    // Close any open descriptions when changing locations
-    this.closeAllOpenDescriptions();
+    // Close any open UI elements that might interfere
+    this.closeUIElements();
 
     try {
-      // Render location using global locations object
+      // Get location data
       const locationData = locations[locationKey];
+      if (!locationData) {
+        throw new Error(`Location ${locationKey} not found`);
+      }
+
       console.log(`📍 Location data:`, locationData);
 
+      // Update current location
+      this.currentLocation = locationKey;
+      this.gameState.currentLocation = locationKey;
+
+      // FIXED: Only pass locationData to renderLocation (remove locationKey parameter)
       await this.renderer.renderLocation(locationData);
-      this.locationNavigator.renderNavigation(locationKey);
+
+      // Update navigation
+      this.locationNavigator.updateNavigation(locationKey);
+
+      // Save game state
+      this.gameState.save();
 
       console.log(`✅ Location loaded successfully: ${locationKey}`);
+
+      // Emit location changed event
+      GameEvents.emit(GAME_EVENTS.LOCATION_CHANGED, {
+        location: locationKey,
+        locationData: locationData,
+      });
     } catch (error) {
       console.error(`❌ Failed to load location ${locationKey}:`, error);
-
-      // Try ultimate fallback
-      if (locationKey !== CONFIG.DEFAULT_LOCATION) {
-        console.log("🔄 Attempting ultimate fallback...");
-        await this.loadLocationDirect(CONFIG.DEFAULT_LOCATION);
-      }
     }
   }
 
-  // Keep the original loadLocation method for compatibility
-  async loadLocation(locationKey) {
-    return await this.loadLocationDirect(locationKey);
+  closeUIElements() {
+    console.log("🧹 Closed all open descriptions due to location change");
+
+    // Close any open item/character descriptions
+    const openDescriptions = document.querySelectorAll(
+      ".detailed-tooltip.visible"
+    );
+    openDescriptions.forEach((desc) => {
+      desc.classList.remove("visible");
+    });
   }
 
-  // Handle victory with audio and cutscene
+  // Victory condition handling
   handleVictory() {
-    console.log(`🎉 Victory triggered!`);
+    console.log("🎉 VICTORY! All achievements unlocked!");
 
-    // Stop background music and play victory sound
-    this.audioManager.stopBackgroundMusic(true);
-    setTimeout(() => {
-      this.audioManager.playSoundEffect("achievement", 1.0);
-    }, 1000);
-
-    // Disable all interactions immediately
-    if (this.interactionHandler) {
-      this.interactionHandler.setInteractionsEnabled(false);
-    }
+    // Disable interactions to prevent further input
+    this.interactionHandler.setInteractionsEnabled(false);
 
     // Close any open conversations
-    if (
-      this.conversationManager &&
-      this.conversationManager.isConversationActive
-    ) {
+    if (this.conversationManager.isActive()) {
       this.conversationManager.endConversation();
     }
 
-    // Close any open UI panels
-    this.closeAllOpenDescriptions();
-
-    // Show victory screen with cutscene if available
-    const withCutscene = true; // Always attempt cutscene for first victory
-    console.log(`🎬 Calling victory screen with cutscene: ${withCutscene}`);
-
-    this.victoryScreen.show(withCutscene);
-
-    // Save the game state (so they can see their final stats)
-    this.save();
-
-    console.log("🎉 Victory sequence initiated");
+    // Show victory screen with optional cutscene
+    this.victoryScreen.show(true); // true = try to play cutscene first
   }
 
-  // Handle game over condition with audio and cutscene
+  // Game over condition handling
   handleGameOver(achievementId) {
-    console.log(`💀 Game Over triggered by achievement: ${achievementId}`);
+    console.log(`💀 GAME OVER! Achievement triggered: ${achievementId}`);
 
-    // Stop background music and play dramatic sound
-    this.audioManager.stopBackgroundMusic(true);
-    setTimeout(() => {
-      this.audioManager.playSoundEffect("achievement", 0.5); // Lower volume for dramatic effect
-    }, 500);
-
-    // Disable all interactions immediately
-    if (this.interactionHandler) {
-      this.interactionHandler.setInteractionsEnabled(false);
-    }
+    // Disable interactions to prevent further input
+    this.interactionHandler.setInteractionsEnabled(false);
 
     // Close any open conversations
-    if (
-      this.conversationManager &&
-      this.conversationManager.isConversationActive
-    ) {
+    if (this.conversationManager.isActive()) {
       this.conversationManager.endConversation();
     }
 
-    // Close any open UI panels
-    this.closeAllOpenDescriptions();
-
-    // Show game over screen with cutscene if on Level 3
-    const isLevel3 = this.levelManager && this.levelManager.currentLevel === 3;
-    const withCutscene =
-      isLevel3 &&
-      this.cutsceneManager &&
-      this.cutsceneManager.hasCutscene("level3_gameover");
-
-    this.gameOverScreen.show(withCutscene);
-
-    // Save the game state (so they can see their final stats)
-    this.save();
-
-    console.log("💀 Game Over sequence initiated");
+    // Show game over screen
+    this.gameOverScreen.show(achievementId);
   }
 
-  gameLoop() {
-    // Main game loop
-    if (this.renderer) {
-      this.renderer.update();
-    }
-
-    // Update game state timing
-    if (this.gameState) {
-      this.gameState.updatePlayTime();
-    }
-
-    requestAnimationFrame(() => this.gameLoop());
-  }
-
-  // Get detailed game status
-  getStatus() {
-    return {
-      isReady: this.isReady,
-      gameStarted: this.gameStarted, // NEW: Include game started status
-      currentLocation: this.currentLocation,
-      currentLevel: this.levelManager?.currentLevel || this.currentLevel,
-      assetStats: this.renderer?.assetManager?.getStats(),
-      gameStats: this.gameState?.getStats(),
-      achievementStats: this.achievementManager?.getStats(),
-      explorationStats: this.explorationDrawer?.getStats(),
-      conversationStatus: this.conversationManager?.getStatus(),
-      isGameOver: this.gameOverScreen?.isGameOverShowing() || false,
-      cutsceneStatus: this.cutsceneManager?.getStatus(),
-      audioStats: this.audioManager?.getStats(),
-      startScreenStatus: this.startScreen?.getStatus(), // NEW: Start screen status
-      levelStats: this.levelManager
-        ? {
-            currentLevel: this.levelManager.currentLevel,
-            totalLevels: this.levelManager.getTotalLevels(),
-          }
-        : {
-            currentLevel: this.currentLevel,
-            totalLevels: 3,
-          },
-    };
-  }
-
-  // Save game state
-  save() {
-    if (this.gameState) {
-      this.gameState.save();
-    }
-
-    // Also save audio settings
-    if (this.audioManager) {
-      this.audioManager.saveSettings();
-    }
-  }
-
-  // UPDATED: Reset game with start screen option
+  // Reset game state (keep discoveries and audio settings)
   reset() {
-    // Close ALL open UIs including game over screen
-    this.closeAllOpenDescriptions();
+    console.log("🔄 Resetting game state...");
 
-    if (
-      this.conversationManager &&
-      this.conversationManager.isConversationActive
-    ) {
-      this.conversationManager.endConversation();
+    // Reset core game state but preserve discoveries and audio settings
+    this.gameState.reset();
+
+    // Reset all system states
+    this.currentLocation = CONFIG.DEFAULT_LOCATION;
+    this.currentLevel = CONFIG.DEFAULT_LEVEL;
+    this.gameStarted = false;
+    this.isReady = false;
+
+    // Reset managers
+    if (this.conversationManager) {
+      this.conversationManager.reset();
     }
 
-    // Hide game over screen if showing
-    if (this.gameOverScreen && this.gameOverScreen.isGameOverShowing()) {
-      this.gameOverScreen.hide();
+    if (this.achievementManager) {
+      this.achievementManager.reset();
     }
 
-    // Hide victory screen if showing
-    if (this.victoryScreen && this.victoryScreen.isShowing) {
+    if (this.levelManager) {
+      this.levelManager.reset();
+    }
+
+    if (this.interactionHandler) {
+      this.interactionHandler.reset();
+    }
+
+    if (this.locationNavigator) {
+      this.locationNavigator.reset();
+    }
+
+    if (this.energyUI) {
+      this.energyUI.reset();
+    }
+
+    if (this.keywordGenerationManager) {
+      this.keywordGenerationManager.reset();
+    }
+
+    // Reset UI screens
+    if (this.victoryScreen) {
       this.victoryScreen.hide();
     }
 
-    // Stop any playing cutscenes
-    if (this.cutsceneManager && this.cutsceneManager.isPlaying) {
-      this.cutsceneManager.completeCutscene();
+    if (this.gameOverScreen) {
+      this.gameOverScreen.hide();
     }
 
-    // Reset audio to default level background music
-    if (this.audioManager) {
-      this.audioManager.stopBackgroundMusic(false);
+    if (this.cutsceneManager) {
+      this.cutsceneManager.reset();
     }
 
-    // Reset game state (this will reset achievements but NOT discoveries)
-    if (this.gameState) {
-      this.gameState.reset();
-    }
+    // NOTE: We DON'T reset explorationDrawer.discoveries to preserve discovery progress
+    // NOTE: We DON'T reset audio settings to preserve user preferences
 
-    // Reset achievements (as before)
-    if (this.achievementManager) {
-      this.achievementManager.resetAll();
-    }
-
-    // Reset victory screen unlock status
-    if (this.victoryScreen) {
-      this.victoryScreen.isUnlocked = false;
-      this.victoryScreen.victoryButton.style.display = "none";
-    }
-
-    // Reset to configured default level
-    this.currentLocation = CONFIG.DEFAULT_LOCATION;
-    this.currentLevel = CONFIG.DEFAULT_LEVEL;
-    this.gameStarted = false; // NEW: Reset game started flag
-
-    if (this.levelManager) {
-      try {
-        this.levelManager.currentLevel = CONFIG.DEFAULT_LEVEL;
-        this.levelManager.loadLevel(CONFIG.DEFAULT_LEVEL);
-      } catch (error) {
-        console.warn("Level manager reset failed, using direct approach");
-      }
-    }
-
-    // Re-enable interactions
-    if (this.interactionHandler) {
-      this.interactionHandler.setInteractionsEnabled(true);
-    }
-
-    // NEW: Show start screen instead of going directly to game
+    // Show start screen again
     this.startScreen.show();
 
     console.log(
@@ -668,7 +529,6 @@ class GameEngine {
     }
 
     if (this.startScreen) {
-      // NEW: Destroy start screen
       this.startScreen.destroy();
     }
 
@@ -706,6 +566,17 @@ class GameEngine {
 
     if (this.loadingScreen) {
       this.loadingScreen.destroy();
+    }
+
+    // FIXED: Destroy EnergyUI
+    if (this.energyUI) {
+      this.energyUI.destroy();
+    }
+
+    // FIXED: Destroy KeywordGenerationManager
+    if (this.keywordGenerationManager) {
+      // KeywordGenerationManager doesn't have a destroy method, but clean up if needed
+      this.keywordGenerationManager = null;
     }
 
     console.log("🗑️ Game engine destroyed");
