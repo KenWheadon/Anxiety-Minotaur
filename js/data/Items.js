@@ -101,8 +101,8 @@ const items = {
   [ITEM_KATE]: {
     description:
       "A precisely machined brass gear with perfect teeth and smooth rotation. The mechanical precision is mesmerizing - oddly reminds you of something.", //The thing you are reminded of is Kate's KEY
-    X: 300,
-    Y: 550,
+    X: 1816,
+    Y: 949,
     scale: 1,
     img: ITEM_KATE,
     clueFor: TRAP_KATE,
@@ -180,9 +180,9 @@ const items = {
 
   [ITEM_STARSBOOK]: {
     description:
-      "A book detailing how to defend from adventurers by getting intel and recruiting the right monsters and trap maker.",
-    X: 300,
-    Y: 400,
+      "A book about how to read the stars and tell what type of adventurer will be attacking next. I don't know how yet, but there should be others will this knowledge already.",
+    X: 185,
+    Y: 835,
     scale: 1,
     img: ITEM_STARSBOOK,
   },
@@ -190,8 +190,8 @@ const items = {
   [ITEM_POTIONGREEN]: {
     description:
       "A round, bulbous bottle made of thick green glass, containing a luminescent liquid that bubbles continuously with an unsettling glow.",
-    X: 300,
-    Y: 400,
+    X: 1490,
+    Y: 853,
     scale: 1,
     img: ITEM_POTIONGREEN,
   },
@@ -199,8 +199,8 @@ const items = {
   [ITEM_POTIONRED]: {
     description:
       "A tall, slender bottle made of clear crystal. The cork is sealed with black wax and marked with an alchemical symbol.",
-    X: 300,
-    Y: 400,
+    X: 952,
+    Y: 626,
     scale: 1,
     img: ITEM_POTIONRED,
   },

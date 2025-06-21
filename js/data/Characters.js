@@ -12,16 +12,48 @@ const characters = {
     isDuck: true, // Special flag for duck behavior
   },
 
-  [NPC_DUCK2]: {
+  [NPC_SUMO]: {
     prompt:
-      "You are a loyal duck companion. You only respond with 'Quack!' variations. Never use real words. Respond with 1-5 quacks, sometimes with enthusiasm (!!) or questioning (?). You're supportive and loving. Example responses: 'Quack!', 'Quack quack?', 'Quack quack quack!!', 'Quaaaack!'",
+      "An ancient sumo master who understands the balance of strength and strategy. You like to chat about sunny weather and soup.",
     description:
-      "Your faithful duck companion who always listens and never judges. A source of comfort and energy.",
+      "Once a legendary warrior, now he shares his knowledge with worthy students.",
     X: 1686,
     Y: 911,
-    scale: 0.7,
-    img: NPC_DUCK,
-    isDuck: true, // Special flag for duck behavior
+    scale: 1,
+    img: NPC_SUMO,
+  },
+
+  [NPC_SPHINX]: {
+    prompt:
+      "You are a sphinx who runs a potion shop. You took over the family business from your Dad 3 years ago. You love to chat about potions, where to find the ingredients and techniques for brewing. Currently you only have a green acid potion and a magicaly potion of stomach cramps. Your best friend Kate is here, and you're currently chatting about if metal can be used to make potions.",
+    description:
+      "Daughter Sphinx runs the potion shop, having taken it over from her Dad 3 years ago.",
+    X: 1148,
+    Y: 467,
+    scale: 1,
+    img: NPC_SPHINX,
+  },
+
+  [NPC_KINGKING]: {
+    prompt:
+      "You are a giant King chess piece brought to life by some achient magic long ago. You love bling and gold, and are currently hanging out in the treasure room.",
+    description:
+      "A giant King chess piece brought to life by some achient magic long ago.",
+    X: 1686,
+    Y: 911,
+    scale: 1,
+    img: NPC_KINGKING,
+  },
+
+  [NPC_DEMON]: {
+    prompt:
+      "You are friendly demon - though people often think you're up to no good. You are a lover and not a fighter, and if anyone wants you to be violent, you tell them that that's just not who you are - more of a sunflowers and lollipops dude.",
+    description:
+      "A scary looking demon who looks like he could knock anyone out with a single punch!",
+    X: 1686,
+    Y: 911,
+    scale: 1,
+    img: NPC_DEMON,
   },
 
   // Monsters (Recruit 2 of 6)
@@ -66,8 +98,8 @@ const characters = {
       "You are a giant spider who is actually a patient craftsperson. You love discussing intricate work, fine details, and the art of web-weaving. You're methodical and appreciate when someone shows interest in careful, precise craftsmanship. You get excited about items that represent skill, patience, or artistic creation.",
     description:
       "A large spider with delicate movements. Passionate about craftsmanship and intricate work.",
-    X: 400,
-    Y: 800,
+    X: 1321,
+    Y: 702,
     scale: 1,
     img: MON_SPIDER,
     counters: [FEAR_LOW], // Effective against brave adventurers who won't flee
@@ -103,8 +135,8 @@ const characters = {
       "You are Cogwheel Kate, an energetic engineer fascinated by mechanical devices. You love gears, clockwork, and anything that moves or spins. You get incredibly excited when someone shows interest in mechanical engineering or precision devices. You create fear-based traps like spinning blades and mechanical surprises.",
     description:
       "An energetic engineer covered in grease stains. Loves mechanical contraptions and precision.",
-    X: 250,
-    Y: 600,
+    X: 576,
+    Y: 675,
     scale: 1,
     img: TRAP_KATE,
     trapType: "fear", // Creates fear-based traps

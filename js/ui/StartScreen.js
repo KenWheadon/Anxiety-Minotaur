@@ -12,7 +12,7 @@ class StartScreen {
     this.createStartScreenUI();
     this.setupEventListeners();
 
-    console.log("🎮 Start Screen initialized (Minotaur's Labyrinth)");
+    console.log("🎮 Start Screen initialized (Anxiety Minotaur)");
   }
 
   createStartScreenUI() {
@@ -24,7 +24,7 @@ class StartScreen {
         
         <div class="start-screen-overlay">
           <div class="game-title">
-            <h1>Minotaur's Labyrinth</h1>
+            <h1>Anxiety Minotaur</h1>
             <h2>A Social Puzzle Adventure</h2>
           </div>
           

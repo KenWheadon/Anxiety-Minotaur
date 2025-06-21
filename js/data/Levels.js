@@ -26,7 +26,7 @@ const LEVELS = {
     name: "Labyrinth Preparation",
     description:
       "Explore the around the labyrinth, recruit 2 monsters and 1 trap maker, and gather intelligence on the incoming adventurer. Manage your social energy wisely!",
-    startLocation: LEVEL2_CRYSTALCAVE,
+    startLocation: LEVEL2_POTIONINSIDE,
     completionAchievement: RECRUITMENT_COMPLETE,
     completionMessage:
       "All preparations complete! Time to face the adventurer!",

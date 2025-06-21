@@ -59,7 +59,7 @@ const locations = {
     description:
       "A quaint potion shop, the Sphinx family has been running it for hundreds of years, and each year the potion on top is said to get a bit bigger.",
     characters: [MON_TROLL, MON_SPIDER],
-    items: [ITEM_KING, ITEM_STARSBOOK],
+    items: [ITEM_STARSBOOK],
     locations: [LEVEL2_OUTSIDELAB, LEVEL2_HALL, LEVEL2_POTIONINSIDE],
     background: LEVEL2_POTIONSHOP,
   },
@@ -95,7 +95,7 @@ const locations = {
     description:
       "A library filled with riddles and brain teasers. Intellectual challenges await within.",
     characters: [],
-    items: [YOU_UNSURE],
+    items: [YOU_UNSURE, ITEM_KING],
     locations: [LEVEL2_HALL],
     background: LEVEL2_LIBRARY,
   },
