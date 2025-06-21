@@ -1,4 +1,4 @@
-// js/ui/StartScreen.js - CLEANED VERSION with CSS removed
+// js/ui/StartScreen.js - CLEANED VERSION with updated loadImage calls
 
 class StartScreen {
   constructor(gameEngine) {
@@ -41,11 +41,18 @@ class StartScreen {
         <div class="start-screen-background"></div>
         <div class="start-screen-overlay">
           <div class="game-title">
-            <h1>Anxiety</h1>
-            <h2>Minotaur</h2>
+            <div class="game-title-images">
+              <div class="title-image title-image-left" id="title-image-left"></div>
+              <div class="title-image title-image-right" id="title-image-right"></div>
+            </div>
+            <div class="game-title-content">
+              <h1>Anxiety</h1>
+              <h2>Minotaur</h2>
+            </div>
           </div>
           
           <div class="start-screen-info">
+            <h3>🏠 Tutorial: Helping Your Neighbor</h3>
             <p>Your gardener neighbor needs help identifying some seeds. Explore your home, talk to your duck for comfort, and help solve the mystery!</p>
             
             <div class="tutorial-sections">
@@ -127,6 +134,8 @@ class StartScreen {
       const backgroundElement = this.startScreenElement.querySelector(
         ".start-screen-background"
       );
+
+      // UPDATED: Use the new loadBackground method which now handles just the filename
       const backgroundImage =
         await this.gameEngine.renderer.assetManager.loadBackground("level0_bg");
 
@@ -134,8 +143,63 @@ class StartScreen {
         backgroundElement.style.backgroundImage = `url(${backgroundImage.src})`;
         console.log("🖼️ Tutorial start screen background loaded");
       }
+
+      // Load title images (using duck for now - you can replace these paths)
+      await this.loadTitleImages();
     } catch (error) {
       console.warn("🎮 Error loading tutorial start screen assets:", error);
+    }
+  }
+
+  async loadTitleImages() {
+    try {
+      // UPDATED: Load left image using just the filename - new loadImage handles the rest
+      const leftImageElement =
+        this.startScreenElement.querySelector("#title-image-left");
+      const leftImage = await this.gameEngine.renderer.assetManager.loadImage(
+        "npc_duck" // Just the filename, no path or folder
+      );
+
+      if (leftImage && leftImage.src) {
+        leftImageElement.style.backgroundImage = `url(${leftImage.src})`;
+        console.log("🖼️ Left title image loaded");
+      }
+
+      // UPDATED: Load right image using just the filename or constant
+      const rightImageElement =
+        this.startScreenElement.querySelector("#title-image-right");
+
+      // Extract filename from constant if it contains path info
+      const rightImageFilename = NPC_DUCK.includes("/")
+        ? NPC_DUCK.split("/").pop()
+        : NPC_DUCK;
+
+      const rightImage = await this.gameEngine.renderer.assetManager.loadImage(
+        rightImageFilename // Just the filename
+      );
+
+      if (rightImage && rightImage.src) {
+        rightImageElement.style.backgroundImage = `url(${rightImage.src})`;
+        console.log("🖼️ Right title image loaded");
+      }
+    } catch (error) {
+      console.warn("🎮 Could not load title images:", error);
+      // Fallback: add emoji characters if images fail
+      const leftImageElement =
+        this.startScreenElement.querySelector("#title-image-left");
+      const rightImageElement =
+        this.startScreenElement.querySelector("#title-image-right");
+
+      leftImageElement.textContent = "🦆";
+      rightImageElement.textContent = "🦆";
+      leftImageElement.style.fontSize = "60px";
+      rightImageElement.style.fontSize = "60px";
+      leftImageElement.style.display = "flex";
+      rightImageElement.style.display = "flex";
+      leftImageElement.style.alignItems = "center";
+      rightImageElement.style.alignItems = "center";
+      leftImageElement.style.justifyContent = "center";
+      rightImageElement.style.justifyContent = "center";
     }
   }
 

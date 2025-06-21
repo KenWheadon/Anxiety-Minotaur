@@ -40,18 +40,18 @@ const items = {
   [PIG_DIG]: {
     description:
       "You can see the pig in the distance, digging holes in the garden, preparing for planting. They look like they're waiting to know what seeds to plant.",
-    X: 173,
-    Y: 348,
-    scale: 1,
+    X: 1050,
+    Y: 800,
+    scale: 0.65,
     img: PIG_DIG,
   },
 
   [TUTORIAL_SEED]: {
     description:
       "A seed packet that was delivered today. The gardener pig needs help identifying what type of seeds these are.",
-    X: 173,
-    Y: 348,
-    scale: 1,
+    X: 1850,
+    Y: 670,
+    scale: 0.8,
     img: TUTORIAL_SEED,
   },
 
@@ -86,8 +86,8 @@ const items = {
   [YOU_SCARED]: {
     description:
       "You're feeling a bit nervous about talking to the pig, but you know they need help and you want to be a good neighbor. They always help out with your gardening after all.",
-    X: 300,
-    Y: 400,
+    X: 472,
+    Y: 615,
     scale: 1,
     img: YOU_SCARED,
   },
@@ -95,9 +95,9 @@ const items = {
   [YOU_UNSURE]: {
     description:
       "You're in the garden now, looking around for clues about what the pig might need. The fresh air helps you think more clearly.",
-    X: 1144,
-    Y: 626,
-    scale: 1,
+    X: 510,
+    Y: 515,
+    scale: 0.6,
     img: YOU_UNSURE,
   },
 };

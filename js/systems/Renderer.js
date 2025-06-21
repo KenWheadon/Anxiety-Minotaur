@@ -103,10 +103,9 @@ class Renderer {
     element.dataset.key = key;
     element.title = data.description;
 
-    // Load and set image first to get dimensions
-    const imagePath =
-      type === "character" ? `characters/${data.img}` : `items/${data.img}`;
-    const image = await this.assetManager.loadImage(imagePath, type);
+    // UPDATED: Just pass the image filename to loadImage
+    // The new loadImage function handles finding the correct folder automatically
+    const image = await this.assetManager.loadImage(data.img);
 
     // Get actual image dimensions (fallback to 64 if not available)
     let imageWidth = 64;

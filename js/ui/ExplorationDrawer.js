@@ -741,6 +741,7 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
     }
   }
 
+  // UPDATED: createExplorationItemElement method with new image loading
   createExplorationItemElement(item) {
     const element = document.createElement("div");
     element.className = `exploration-item ${
@@ -751,20 +752,28 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
 
     if (item.discovered) {
       let imageStyle = "";
-      const imagePath = `images/${
-        item.type === "character" ? "characters" : "items"
-      }/${item.image}.png`;
 
+      // UPDATED: Use the new getImage method that works with filenames
       if (this.gameEngine.renderer && this.gameEngine.renderer.assetManager) {
+        // Just pass the image filename - getImage now searches all cached images
         const preloadedImage = this.gameEngine.renderer.assetManager.getImage(
-          `${item.type === "character" ? "characters" : "items"}/${item.image}`
+          item.image // Just the filename, no path needed
         );
+
         if (preloadedImage) {
           imageStyle = `background-image: url(${preloadedImage.src})`;
         } else {
+          // Fallback: construct path manually if not found in cache
+          const imagePath = `images/${
+            item.type === "character" ? "characters" : "items"
+          }/${item.image}.png`;
           imageStyle = `background-image: url(${imagePath})`;
         }
       } else {
+        // Fallback: construct path manually if assetManager not available
+        const imagePath = `images/${
+          item.type === "character" ? "characters" : "items"
+        }/${item.image}.png`;
         imageStyle = `background-image: url(${imagePath})`;
       }
 
@@ -792,9 +801,16 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
     return element;
   }
 
+  // UPDATED: showItemDetails method with new image loading
   showItemDetails(item) {
     const modal = document.createElement("div");
     modal.className = "exploration-detail-modal";
+
+    // UPDATED: Construct image path properly for the detail modal
+    const imagePath = `images/${
+      item.type === "character" ? "characters" : "items"
+    }/${item.image}.png`;
+
     modal.innerHTML = `
       <div class="exploration-detail-content">
         <div class="exploration-detail-header">
@@ -802,9 +818,7 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
           <button class="close-detail">×</button>
         </div>
         <div class="exploration-detail-body">
-          <div class="exploration-detail-image" style="background-image: url(images/${
-            item.type === "character" ? "characters" : "items"
-          }/${item.image}.png)"></div>
+          <div class="exploration-detail-image" style="background-image: url(${imagePath})"></div>
           <div class="exploration-detail-info">
             <p><strong>Type:</strong> ${item.type}</p>
             <p><strong>Location:</strong> ${item.location}</p>

@@ -33,8 +33,8 @@ const characters = {
       "You are a friendly gardener pig who loves plants and gardening. You're having trouble with your eyesight and can't find the seed packet that was delivered today. You need help identifying what type of seeds they are so you know how to plant them properly. You're currently in the living room waiting to talk about this problem. You should ask the player if they've seen the seeds and could help identify what type they are. You get excited when someone mentions the correct plant type. Be helpful and encouraging, but explain that you really need to know the specific type of plant before you can garden properly.",
     description:
       "Your friendly neighbor, a gardener pig who loves plants but is having trouble with their eyesight. They seem to need help with something garden-related.",
-    X: 1683,
-    Y: 922,
+    X: 1567,
+    Y: 770,
     scale: 0.7,
     img: TUTORIAL_PIG,
   },

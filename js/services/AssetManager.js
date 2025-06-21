@@ -1,4 +1,4 @@
-// js/services/AssetManager.js - Updated with AudioManager integration
+// js/services/AssetManager.js - Updated with cleaner loadImage integration
 
 class AssetManager {
   constructor() {
@@ -20,6 +20,28 @@ class AssetManager {
       background: "#8BC34A",
       ui: "#FF9800",
     };
+  }
+
+  // HELPER: Extract filename from path (e.g., "characters/npc_duck" -> "npc_duck")
+  extractFilename(path) {
+    if (path.includes("/")) {
+      return path.split("/").pop();
+    }
+    return path;
+  }
+
+  // HELPER: Get folder type from filename by checking which folder it exists in
+  // This is used for placeholder generation when we only have filename
+  async getFolderTypeForFilename(filename) {
+    const folders = ["characters", "backgrounds", "items"];
+    for (const folder of folders) {
+      const fullPath = `images/${folder}/${filename}.png`;
+      if (this.images.has(fullPath)) {
+        return folder;
+      }
+    }
+    // Default to "item" if not found
+    return "item";
   }
 
   // Set progress callback for loading indicators
@@ -59,7 +81,9 @@ class AssetManager {
     const promises = allAssets.map(async (asset) => {
       try {
         if (asset.type === "image") {
-          await this.loadImage(asset.path, asset.category);
+          // UPDATED: Extract filename from asset.path before calling loadImage
+          const filename = this.extractFilename(asset.path);
+          await this.loadImage(filename);
         } else if (asset.type === "sound") {
           await this.loadSound(asset.path);
         }
@@ -91,32 +115,32 @@ class AssetManager {
     return this.preloadProgress;
   }
 
-  // Get all assets used in the game
+  // UPDATED: Get all assets used in the game - now stores just filenames for consistency
   getAllGameAssets() {
     const assets = [];
 
-    // Background images
+    // Background images - store just the background name as filename
     Object.entries(locations).forEach(([key, location]) => {
       assets.push({
-        path: `backgrounds/${location.background}`,
+        path: location.background, // Just the filename, not full path
         type: "image",
         category: "background",
       });
     });
 
-    // Character images
+    // Character images - store just the image name as filename
     Object.entries(characters).forEach(([key, character]) => {
       assets.push({
-        path: `characters/${character.img}`,
+        path: character.img, // Just the filename, not full path
         type: "image",
         category: "character",
       });
     });
 
-    // Item images
+    // Item images - store just the image name as filename
     Object.entries(items).forEach(([key, item]) => {
       assets.push({
-        path: `items/${item.img}`,
+        path: item.img, // Just the filename, not full path
         type: "image",
         category: "item",
       });
@@ -142,30 +166,63 @@ class AssetManager {
     return assets;
   }
 
-  // Load image with fallback to colored placeholder
-  async loadImage(path, type = "character") {
-    const fullPath = `images/${path}.png`;
+  // Load image with fallback to colored placeholder - SIMPLE ROBUST VERSION
+  async loadImage(filename) {
+    const folders = ["characters", "backgrounds", "items"];
+    let lastError = null;
 
-    if (this.images.has(fullPath)) {
-      return this.images.get(fullPath);
+    // Check each subfolder for the image
+    for (const folder of folders) {
+      const fullPath = `images/${folder}/${filename}.png`;
+
+      // Check if already cached
+      if (this.images.has(fullPath)) {
+        return this.images.get(fullPath);
+      }
+
+      // Check if already loading to prevent race conditions
+      if (this.loadingPromises.has(fullPath)) {
+        return this.loadingPromises.get(fullPath);
+      }
+
+      // Try to load from this path
+      try {
+        console.log(`🔍 Trying to load ${filename} from ${folder} folder...`);
+
+        const loadPromise = this._loadImageInternal(fullPath, folder, filename);
+        this.loadingPromises.set(fullPath, loadPromise);
+
+        const result = await loadPromise;
+        this.loadingPromises.delete(fullPath);
+
+        console.log(`✅ Successfully loaded ${filename} from ${folder} folder`);
+        return result;
+      } catch (error) {
+        this.loadingPromises.delete(fullPath);
+        lastError = error;
+        console.log(
+          `❌ ${filename} not found in ${folder} folder, trying next...`
+        );
+        // Continue to next folder
+      }
     }
 
-    // Check if already loading to prevent race conditions
-    if (this.loadingPromises.has(fullPath)) {
-      return this.loadingPromises.get(fullPath);
-    }
+    // If we get here, the image wasn't found in any subfolder
+    console.warn(
+      `Image ${filename}.png not found in any subfolder. Last error:`,
+      lastError
+    );
 
-    const loadPromise = this._loadImageInternal(fullPath, type, path);
-    this.loadingPromises.set(fullPath, loadPromise);
+    // Create a placeholder using the best guess for folder type
+    const placeholderType = this.guessImageType(filename);
+    const placeholder = this.createPlaceholderImage(placeholderType, filename);
 
-    try {
-      const result = await loadPromise;
-      this.loadingPromises.delete(fullPath);
-      return result;
-    } catch (error) {
-      this.loadingPromises.delete(fullPath);
-      throw error;
-    }
+    // Cache the placeholder using the most likely path
+    const fallbackPath = `images/${placeholderType}/${filename}.png`;
+    this.images.set(fallbackPath, placeholder);
+    this.failedAssets.add(fallbackPath);
+
+    return placeholder;
   }
 
   async _loadImageInternal(fullPath, type, originalPath) {
@@ -180,13 +237,9 @@ class AssetManager {
         };
 
         img.onerror = () => {
-          console.warn(
-            `❌ Failed to load image: ${fullPath}, using placeholder`
-          );
-          const placeholder = this.createPlaceholderImage(type, originalPath);
-          this.images.set(fullPath, placeholder);
+          console.warn(`❌ Failed to load image: ${fullPath}`);
           this.failedAssets.add(fullPath);
-          resolve(placeholder);
+          reject(new Error(`Failed to load ${fullPath}`));
         };
       });
 
@@ -194,10 +247,8 @@ class AssetManager {
       return await loadPromise;
     } catch (error) {
       console.warn(`Error loading image ${fullPath}:`, error);
-      const placeholder = this.createPlaceholderImage(type, originalPath);
-      this.images.set(fullPath, placeholder);
       this.failedAssets.add(fullPath);
-      return placeholder;
+      throw error;
     }
   }
 
@@ -232,11 +283,12 @@ class AssetManager {
     return img;
   }
 
-  // Load background image with fallback
+  // UPDATED: Load background image with fallback - now just passes filename
   async loadBackground(name) {
-    const path = `backgrounds/${name}`;
     try {
-      return await this.loadImage(path, "background");
+      // Extract filename if a path was passed (for backward compatibility)
+      const filename = this.extractFilename(name);
+      return await this.loadImage(filename);
     } catch (error) {
       console.warn(`Failed to load background ${name}, using solid color`);
       return this.createPlaceholderBackground(name);
@@ -382,32 +434,42 @@ class AssetManager {
     this.audioManager.stopBackgroundMusic(true);
   }
 
-  // Get image (returns placeholder if original failed)
-  getImage(path) {
-    const fullPath = `images/${path}.png`;
-    return this.images.get(fullPath);
+  // UPDATED: Get image - now searches through all cached images by filename
+  getImage(filenameOrPath) {
+    // Extract filename if a path was passed
+    const filename = this.extractFilename(filenameOrPath);
+
+    // Search through all cached images to find one with this filename
+    for (const [fullPath, image] of this.images.entries()) {
+      if (fullPath.includes(`/${filename}.png`)) {
+        return image;
+      }
+    }
+
+    // If not found, return null
+    return null;
   }
 
-  // Preload all assets for a location (now mostly cached)
+  // UPDATED: Preload all assets for a location - now passes just filenames
   async preloadLocationAssets(locationData) {
     const promises = [];
 
-    // Load background
+    // Load background - just pass the background name
     promises.push(this.loadBackground(locationData.background));
 
-    // Load character images
+    // Load character images - extract just the filename
     locationData.characters.forEach((charKey) => {
       const char = characters[charKey];
       if (char) {
-        promises.push(this.loadImage(`characters/${char.img}`, "character"));
+        promises.push(this.loadImage(char.img));
       }
     });
 
-    // Load item images
+    // Load item images - extract just the filename
     locationData.items.forEach((itemKey) => {
       const item = items[itemKey];
       if (item) {
-        promises.push(this.loadImage(`items/${item.img}`, "item"));
+        promises.push(this.loadImage(item.img));
       }
     });
 
