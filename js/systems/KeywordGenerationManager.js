@@ -303,12 +303,12 @@ class KeywordGenerationManager {
     };
 
     // Add to Level 1 house location
-    if (locations[LEVEL1_HOUSE]) {
-      if (!locations[LEVEL1_HOUSE].characters.includes("tutorial_pig")) {
-        locations[LEVEL1_HOUSE].characters.push("tutorial_pig");
+    if (locations[BEDROOM]) {
+      if (!locations[BEDROOM].characters.includes("tutorial_pig")) {
+        locations[BEDROOM].characters.push("tutorial_pig");
       }
-      if (!locations[LEVEL1_HOUSE].items.includes("tutorial_seed")) {
-        locations[LEVEL1_HOUSE].items.push("tutorial_seed");
+      if (!locations[BEDROOM].items.includes("tutorial_seed")) {
+        locations[BEDROOM].items.push("tutorial_seed");
       }
     }
 

@@ -5,11 +5,11 @@ const LEVELS = {
     name: "Home Sweet Home",
     description:
       "Prepare yourself mentally for the challenge ahead. When you're ready, tell duck it's time to start the day.",
-    startLocation: LEVEL1_HOUSE,
+    startLocation: BEDROOM,
     completionAchievement: READY_FOR_THE_DAY,
     completionMessage:
       "Time to head to the labyrinth and find the right allies!",
-    locations: [LEVEL1_HOUSE, LEVEL1_LIVINGROOM],
+    locations: [BEDROOM, LIVINGROOM, GARDEN],
     characters: [NPC_DUCK],
     items: [
       ITEM_DUCK,
@@ -18,6 +18,8 @@ const LEVELS = {
       ITEM_HELP,
       YOU_IDLE,
       YOU_DUCK,
+      PIG_DIG,
+      TUTORIAL_PIG,
     ],
     achievements: [READY_FOR_THE_DAY, TALKED_TO_DUCK, READ_MOMS_LETTER],
   },

@@ -1,30 +1,30 @@
 const locations = {
   // Level 1 locations - Minotaur's Home
-  [LEVEL1_HOUSE]: {
+  [BEDROOM]: {
     description:
       "Your cozy bedroom with personal mementos. Today's the big day - your first adventurer challenge!",
     characters: [NPC_DUCK],
     items: [YOU_IDLE, ITEM_DUCK, ITEM_MAMALETTER],
-    locations: [LEVEL1_LIVINGROOM],
-    background: LEVEL1_HOUSE,
+    locations: [LIVINGROOM],
+    background: BEDROOM,
   },
 
-  [LEVEL1_LIVINGROOM]: {
+  [LIVINGROOM]: {
     description:
       "A homey kitchen where you and duck share meals. The smell of fresh bread helps calm your nerves.",
     characters: [TUTORIAL_PIG],
     items: [YOU_DUCK, ITEM_HELP, ITEM_MAGGLASS],
-    locations: [LEVEL1_HOUSE],
-    background: LEVEL1_LIVINGROOM,
+    locations: [BEDROOM, GARDEN],
+    background: LIVINGROOM,
   },
 
-  [LEVEL1_GARDEN]: {
+  [GARDEN]: {
     description:
-      "A homey kitchen where you and duck share meals. The smell of fresh bread helps calm your nerves.",
-    characters: [TUTORIAL_PIG],
-    items: [YOU_UNSURE],
-    locations: [LEVEL1_HOUSE],
-    background: LEVEL1_LIVINGROOM,
+      "The outside of your cottage, deeply tucked away in a stone labyrinth.",
+    characters: [NPC_DUCK2],
+    items: [YOU_UNSURE, TUTORIAL_SEED, PIG_DIG],
+    locations: [LIVINGROOM],
+    background: GARDEN,
   },
 
   // Level 2 locations - The Labyrinth (10 areas)

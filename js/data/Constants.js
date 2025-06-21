@@ -3,9 +3,9 @@
 const LEVELE0_BG = "level0_bg";
 
 // Location constants (Level 1 - Home)
-const LEVEL1_HOUSE = "level1_house";
-const LEVEL1_LIVINGROOM = "level1_livingroom";
-const LEVEL1_GARDEN = "level1_garden";
+const BEDROOM = "BEDROOM";
+const LIVINGROOM = "LIVINGROOM";
+const GARDEN = "GARDEN";
 
 // Location constants (Level 2 - Labyrinth)
 const LEVEL2_OUTSIDELAB = "level2_outsidelab";
@@ -64,6 +64,7 @@ const ITEM_HELP = "item_help";
 const ITEM_MAGGLASS = "item_magglass";
 const ITEM_MAMALETTER = "item_mamaletter";
 const TUTORIAL_SEED = "tutorial_seed";
+const PIG_DIG = "pig_dig";
 
 // Item constants (Level 2 - Monster Clues)
 const ITEM_SKELETON = "item_skeleton";

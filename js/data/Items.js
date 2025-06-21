@@ -36,6 +36,22 @@ const items = {
     img: ITEM_MAGGLASS,
   },
 
+  [PIG_DIG]: {
+    description: "----",
+    X: 173,
+    Y: 348,
+    scale: 1,
+    img: PIG_DIG,
+  },
+
+  [TUTORIAL_SEED]: {
+    description: "---",
+    X: 173,
+    Y: 348,
+    scale: 1,
+    img: TUTORIAL_SEED,
+  },
+
   // Level 2 Items - Monster Clues
   [ITEM_SKELETON]: {
     description:
