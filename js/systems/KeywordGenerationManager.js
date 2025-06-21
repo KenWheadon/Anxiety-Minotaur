@@ -1,16 +1,32 @@
 // js/systems/KeywordGenerationManager.js
-// FIXED: Dynamic Keyword Generation for Anxiety Minotaur Tutorial
+// FIXED: Dynamic Keyword Generation for Anxiety Minotaur Tutorial with Lazy Initialization
 
 class KeywordGenerationManager {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
     this.characterKeywords = new Map(); // Character ID -> single keyword
     this.unlockedCharacters = new Set();
+    this.isInitialized = false;
 
-    // Generate keywords and update descriptions immediately
+    // Setup event listeners but don't generate keywords yet
+    this.setupEventListeners();
+
+    console.log("🔑 Keyword Generation Manager created (not initialized)");
+  }
+
+  // FIXED: Lazy initialization - called when game is ready
+  async initialize() {
+    if (this.isInitialized) {
+      console.log("🔑 Keyword manager already initialized");
+      return;
+    }
+
+    console.log("🔑 Initializing keyword generation manager...");
+
+    // Generate keywords and update descriptions
     this.generateAllKeywords();
     this.updateAllItemDescriptions();
-    this.setupEventListeners();
+    this.isInitialized = true;
 
     console.log("🔑 Keyword Generation Manager initialized for tutorial");
   }
@@ -28,10 +44,10 @@ class KeywordGenerationManager {
 
     console.log(`🔑 Tutorial pig keyword: "${selectedKeyword}"`);
 
-    // FIXED: Update the achievement's trigger keywords with the selected keyword
-    if (achievements[TUTORIAL_COMPLETE]) {
-      achievements[TUTORIAL_COMPLETE].triggerKeywords = [selectedKeyword];
-    }
+    // Emit event for dependency injection instead of direct modification
+    GameEvents.emit("KEYWORDS_GENERATED", {
+      characterKeywords: new Map(this.characterKeywords),
+    });
 
     console.log("🎲 Tutorial keyword generation complete");
   }
@@ -57,6 +73,11 @@ class KeywordGenerationManager {
 
   // FIXED: Check for the exact keyword match for a specific character
   checkForKeyword(characterId, playerMessage) {
+    if (!this.isInitialized) {
+      console.warn("🔑 Keyword manager not initialized yet");
+      return false;
+    }
+
     const keyword = this.characterKeywords.get(characterId);
     if (!keyword) {
       console.log(`🔑 No keyword found for ${characterId}`);
@@ -88,9 +109,11 @@ class KeywordGenerationManager {
     this.showUnlockEffect(characterId);
 
     // Emit event for achievement system
-    GameEvents.emit("CHARACTER_UNLOCKED", {
-      characterId,
+    GameEvents.emit(GAME_EVENTS.CHARACTER_UNLOCK, {
+      type: "character_unlock",
+      characterKey: characterId,
       keyword: this.characterKeywords.get(characterId),
+      timestamp: Date.now(),
     });
 
     console.log(`✅ Character unlocked: ${characterId}`);
@@ -159,15 +182,17 @@ class KeywordGenerationManager {
   // Setup event listeners for conversation integration
   setupEventListeners() {
     // Listen for conversation messages to check for keywords
-    GameEvents.on("CONVERSATION_MESSAGE_SENT", (data) => {
-      const { characterId, message } = data;
+    GameEvents.on(GAME_EVENTS.CONVERSATION_MESSAGE, (eventData) => {
+      if (!this.isInitialized) return;
+
+      const { characterKey, message } = eventData;
 
       // Skip if already unlocked
-      if (this.unlockedCharacters.has(characterId)) return;
+      if (this.unlockedCharacters.has(characterKey)) return;
 
       // Check for keyword match
-      if (this.checkForKeyword(characterId, message)) {
-        this.unlockCharacter(characterId);
+      if (this.checkForKeyword(characterKey, message)) {
+        this.unlockCharacter(characterKey);
       }
     });
 
@@ -194,6 +219,11 @@ class KeywordGenerationManager {
 
   // Debug method to show keywords
   debugShowKeywords() {
+    if (!this.isInitialized) {
+      console.log("🔍 Keyword manager not initialized yet");
+      return;
+    }
+
     console.log("🔍 DEBUG - Tutorial Keywords:");
     this.characterKeywords.forEach((keyword, characterId) => {
       console.log(`  ${characterId}: "${keyword}"`);
@@ -204,8 +234,12 @@ class KeywordGenerationManager {
   reset() {
     this.characterKeywords.clear();
     this.unlockedCharacters.clear();
-    this.generateAllKeywords();
-    this.updateAllItemDescriptions();
+    this.isInitialized = false;
     console.log("🔄 Keyword system reset for new tutorial");
+  }
+
+  // Check if initialized (for external checks)
+  getInitializationStatus() {
+    return this.isInitialized;
   }
 }

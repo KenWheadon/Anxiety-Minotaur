@@ -1,4 +1,4 @@
-// js/systems/ConversationManager.js - Tutorial focused conversation system
+// js/systems/ConversationManager.js - FIXED: Energy management and event handling
 
 class ConversationManager {
   constructor(gameEngine) {
@@ -102,13 +102,8 @@ class ConversationManager {
       `💬 START TUTORIAL CONVERSATION - Current: ${this.currentCharacter}, New: ${characterKey}`
     );
 
-    // Check social energy before starting (all non-duck NPCs)
-    if (this.shouldCheckSocialEnergy(character)) {
-      if (this.gameEngine.gameState.socialEnergy <= 0) {
-        this.showEnergyWarning();
-        return;
-      }
-    }
+    // FIXED: NO energy check here - energy only deducted when sending messages
+    // This allows players to open conversations freely
 
     // If clicking the same character while conversation is active, do nothing
     if (
@@ -137,14 +132,6 @@ class ConversationManager {
     // Double-check we're not in a closing state after waiting
     if (this.isClosing) {
       await this.waitForClose();
-    }
-
-    // Deduct social energy AFTER confirming conversation will start (non-duck only)
-    if (this.shouldCheckSocialEnergy(character)) {
-      this.gameEngine.gameState.socialEnergy--;
-      console.log(
-        `💔 Social energy: ${this.gameEngine.gameState.socialEnergy}/${CONFIG.MAX_SOCIAL_ENERGY}`
-      );
     }
 
     this.currentCharacter = characterKey;
@@ -176,10 +163,13 @@ class ConversationManager {
     // Focus input
     this.conversationPanel.querySelector(".conversation-input").focus();
 
-    // Emit event
-    GameEvents.emit(GAME_EVENTS.CHARACTER_INTERACTION, {
+    // Emit event with standardized data structure
+    GameEvents.emit(GAME_EVENTS.CHARACTER_INTERACT, {
+      type: "interaction",
+      interactionType: "character",
       characterKey,
       character,
+      timestamp: Date.now(),
     });
 
     console.log(
@@ -193,7 +183,7 @@ class ConversationManager {
     return !character.isDuck;
   }
 
-  // Show energy warning
+  // FIXED: Show energy warning when trying to send a message without energy
   showEnergyWarning() {
     const warning = this.conversationPanel.querySelector(".energy-warning");
     if (warning) {
@@ -290,6 +280,16 @@ class ConversationManager {
       return;
     }
 
+    const character = characters[this.currentCharacter];
+
+    // FIXED: Check social energy BEFORE sending message (not when opening chat)
+    if (this.shouldCheckSocialEnergy(character)) {
+      if (this.gameEngine.gameState.socialEnergy <= 0) {
+        this.showEnergyWarning();
+        return; // Don't send message if no energy
+      }
+    }
+
     console.log(
       `💬 Sending tutorial message to ${this.currentCharacter}: "${message}"`
     );
@@ -304,7 +304,6 @@ class ConversationManager {
     this.addMessage("player", message);
 
     // Show typing indicator for non-duck characters
-    const character = characters[this.currentCharacter];
     if (!character?.isDuck) {
       this.showTypingIndicator();
     }
@@ -347,6 +346,14 @@ class ConversationManager {
       // Add character response
       this.addMessage("character", response);
 
+      // FIXED: Only deduct energy AFTER successful message send
+      if (this.shouldCheckSocialEnergy(character)) {
+        this.gameEngine.gameState.socialEnergy--;
+        console.log(
+          `💔 Social energy spent: ${this.gameEngine.gameState.socialEnergy}/${CONFIG.MAX_SOCIAL_ENERGY}`
+        );
+      }
+
       // Save to conversation history (including duck conversations)
       this.gameEngine.gameState.addConversation(
         this.currentCharacter,
@@ -355,15 +362,15 @@ class ConversationManager {
       );
       console.log(`💬 Tutorial conversation saved to game state`);
 
-      // FIXED: Emit conversation message for keyword detection
-      GameEvents.emit("CONVERSATION_MESSAGE_SENT", {
-        characterId: this.currentCharacter,
+      // FIXED: Emit standardized conversation event
+      GameEvents.emit(GAME_EVENTS.CONVERSATION_MESSAGE, {
+        type: "conversation",
+        characterKey: this.currentCharacter,
+        character: character,
         message: message,
         response: response,
+        timestamp: Date.now(),
       });
-
-      // Check for achievement triggers
-      this.checkAchievementTriggers(message, response);
     } catch (error) {
       console.error("💬 ERROR generating response:", error);
       this.hideTypingIndicator();
@@ -443,23 +450,6 @@ class ConversationManager {
     indicator.classList.remove("active");
   }
 
-  checkAchievementTriggers(playerMessage, characterResponse) {
-    console.log(
-      `🏆 CHECKING TUTORIAL ACHIEVEMENTS for ${this.currentCharacter}`
-    );
-    console.log(`🏆 Player message: "${playerMessage}"`);
-    console.log(`🏆 Character response: "${characterResponse}"`);
-
-    // Check if the response contains achievement trigger words using AchievementManager
-    if (this.gameEngine.achievementManager) {
-      this.gameEngine.achievementManager.checkTriggers(
-        this.currentCharacter,
-        playerMessage,
-        characterResponse
-      );
-    }
-  }
-
   updateCharacterInfo(character) {
     const avatar = this.conversationPanel.querySelector(".character-avatar");
     const name = this.conversationPanel.querySelector(".character-name");
@@ -530,7 +520,11 @@ class ConversationManager {
         this.gameEngine.interactionHandler.setInteractionsEnabled(true);
 
         // Emit event
-        GameEvents.emit(GAME_EVENTS.CONVERSATION_ENDED);
+        GameEvents.emit(GAME_EVENTS.CONVERSATION_ENDED, {
+          type: "conversation",
+          action: "ended",
+          timestamp: Date.now(),
+        });
 
         console.log("💬 Tutorial conversation ended");
       },

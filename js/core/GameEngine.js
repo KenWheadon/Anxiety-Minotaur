@@ -1,4 +1,4 @@
-// js/core/GameEngine.js - Tutorial focused game engine for Anxiety Minotaur
+// js/core/GameEngine.js - FIXED: Proper initialization flow and dependency injection
 
 class GameEngine {
   constructor() {
@@ -11,12 +11,15 @@ class GameEngine {
     this.interactionHandler = new InteractionHandler(this);
     this.conversationManager = new ConversationManager(this);
 
-    // Initialize KeywordGenerationManager BEFORE other systems that might depend on it
+    // FIXED: Initialize KeywordGenerationManager but don't generate keywords yet
     this.keywordGenerationManager = new KeywordGenerationManager(this);
 
     this.locationNavigator = new LocationNavigator(this);
     this.levelManager = new LevelManager(this);
+
+    // FIXED: Initialize AchievementManager but don't load achievements yet
     this.achievementManager = new AchievementManager(this);
+
     this.explorationDrawer = new ExplorationDrawer(this);
     this.victoryScreen = new VictoryScreen(this);
     this.cutsceneManager = new CutsceneManager(this);
@@ -44,11 +47,11 @@ class GameEngine {
   // Set up audio event listeners for level changes
   setupAudioEventListeners() {
     // Listen for level changes to update background music
-    GameEvents.on(GAME_EVENTS.LEVEL_CHANGED, (data) => {
+    GameEvents.on(GAME_EVENTS.LEVEL_CHANGED, (eventData) => {
       console.log(
-        `🎵 Level changed to ${data.level}, starting background music`
+        `🎵 Level changed to ${eventData.level}, starting background music`
       );
-      this.playBackgroundMusic(data.level);
+      this.playBackgroundMusic(eventData.level);
     });
 
     // Audio control keyboard shortcuts
@@ -114,7 +117,7 @@ class GameEngine {
     }
   }
 
-  // Separated gameplay initialization from start()
+  // FIXED: Proper initialization order with dependency injection
   async startGameplay() {
     if (this.gameStarted) {
       console.log("⚠️ Tutorial already started");
@@ -138,11 +141,6 @@ class GameEngine {
         console.log(`Loading saved tutorial progress`);
         this.currentLocation =
           this.gameState.currentLocation || CONFIG.DEFAULT_LOCATION;
-
-        // Sync achievements with the achievement manager
-        this.achievementManager.syncFromGameState(
-          this.gameState.unlockedAchievements
-        );
       } else {
         // NEW TUTORIAL: Start fresh
         console.log(`Starting new tutorial at ${CONFIG.DEFAULT_LOCATION}`);
@@ -152,6 +150,23 @@ class GameEngine {
 
       // Initialize game state for tutorial
       this.gameState.initializeForLevel(1);
+
+      // FIXED: Initialize keyword manager with game data
+      console.log("🔑 Initializing keyword generation system...");
+      await this.keywordGenerationManager.initialize();
+
+      // FIXED: Load achievements with keyword data via dependency injection
+      console.log("🏆 Loading achievements with keyword data...");
+      this.achievementManager.loadAchievementsWithKeywords(
+        this.keywordGenerationManager.characterKeywords
+      );
+
+      // Sync achievements from saved game state if loaded
+      if (gameLoaded) {
+        this.achievementManager.syncFromGameState(
+          this.gameState.unlockedAchievements
+        );
+      }
 
       // Set up event listeners for cleanup
       this.setupEventListeners();
@@ -286,11 +301,11 @@ class GameEngine {
 
       console.log(`✅ Tutorial location loaded successfully: ${locationKey}`);
 
-      // Emit location changed event
-      GameEvents.emit(GAME_EVENTS.LOCATION_CHANGED, {
-        location: locationKey,
-        locationData: locationData,
-      });
+      // FIXED: Emit standardized location changed event
+      GameEvents.emit(
+        GAME_EVENTS.LOCATION_CHANGED,
+        EventData.locationChange(locationKey, locationData)
+      );
     } catch (error) {
       console.error(
         `❌ Failed to load tutorial location ${locationKey}:`,

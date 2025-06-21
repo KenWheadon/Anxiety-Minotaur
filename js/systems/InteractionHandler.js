@@ -1,3 +1,5 @@
+// js/systems/InteractionHandler.js - FIXED: Standardized event emissions
+
 class InteractionHandler {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
@@ -163,12 +165,11 @@ class InteractionHandler {
     // Block further interactions during conversation setup
     this.blockInteractions(500);
 
-    // Emit interaction event
-    GameEvents.emit(GAME_EVENTS.CHARACTER_INTERACTION, {
-      characterKey,
-      character,
-      element,
-    });
+    // FIXED: Emit standardized character interaction event
+    GameEvents.emit(
+      GAME_EVENTS.CHARACTER_INTERACT,
+      EventData.interaction("character", characterKey, character, element)
+    );
 
     // Start conversation
     this.gameEngine.conversationManager.startConversation(
@@ -185,7 +186,7 @@ class InteractionHandler {
     console.log(`💬 Starting conversation with ${characterKey}`);
   }
 
-  // FIXED: Enhanced examineItem to close all existing tooltips first - REMOVED CLUE CHECKING
+  // FIXED: Enhanced examineItem to close all existing tooltips first
   examineItem(itemKey, element, event) {
     const item = items[itemKey];
     if (!item) {
@@ -209,15 +210,11 @@ class InteractionHandler {
     // Show detailed description (same as right-click)
     this.showDetailedDescription(itemKey, "item", x, y);
 
-    // Emit examination event
-    GameEvents.emit(GAME_EVENTS.ITEM_EXAMINED, {
-      itemKey,
-      item,
-      element,
-    });
-
-    // REMOVED: clue checking system - no longer needed
-    // this.checkForClues(item.description, itemKey);
+    // FIXED: Emit standardized item interaction event
+    GameEvents.emit(
+      GAME_EVENTS.ITEM_INTERACT,
+      EventData.interaction("item", itemKey, item, element)
+    );
 
     // Play examination sound
     this.gameEngine.renderer.assetManager.playSound(
@@ -348,9 +345,6 @@ class InteractionHandler {
     const key = firstCharacter.dataset.key;
     this.interactWithCharacter(key, firstCharacter);
   }
-
-  // REMOVED: Clue checking and related methods
-  // checkForClues, showClueDiscovered methods removed
 
   blockInteractions(duration) {
     this.isInteractionBlocked = true;

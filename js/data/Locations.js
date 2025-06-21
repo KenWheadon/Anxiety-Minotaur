@@ -16,7 +16,7 @@ const locations = {
     description:
       "Your living room where you sometimes chat with neighbors. The gardener pig is here and seems to need help with something garden-related. There are some useful books and tools around.",
     characters: [TUTORIAL_PIG],
-    items: [YOU_SCARED, ITEM_HELP, ITEM_MAGGLASS, ITEM_STARSBOOK, ITEM_PAINT],
+    items: [YOU_SCARED, ITEM_HELP, ITEM_MAGGLASS, ITEM_STARSBOOK],
     locations: [BEDROOM, GARDEN],
     background: LIVINGROOM,
   },

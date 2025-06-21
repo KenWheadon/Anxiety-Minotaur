@@ -23,7 +23,6 @@ const ITEM_DUCK = "item_duck";
 const ITEM_HELP = "item_help";
 const ITEM_MAGGLASS = "item_magglass";
 const ITEM_STARSBOOK = "item_starbook";
-const ITEM_PAINT = "item_paint";
 const ITEM_MAMALETTER = "item_mamaletter";
 const TUTORIAL_SEED = "tutorial_seed";
 const PIG_DIG = "pig_dig";

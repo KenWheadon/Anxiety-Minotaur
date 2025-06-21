@@ -1,4 +1,4 @@
-// js/systems/AchievementManager.js - Tutorial focused achievement system
+// js/systems/AchievementManager.js - FIXED: Unified keyword checking and dependency injection
 
 class AchievementManager {
   constructor(gameEngine) {
@@ -11,8 +11,8 @@ class AchievementManager {
     this.isShowingNotification = false;
     this.hasNewAchievements = false;
     this.onTutorialCompleteCallback = null; // Callback for tutorial completion
+    this.isInitialized = false;
 
-    this.loadAchievements();
     this.createAchievementUI();
     this.createAchievementButton();
     this.setupEventListeners();
@@ -20,26 +20,44 @@ class AchievementManager {
     console.log("🏆 Achievement manager initialized for tutorial");
   }
 
-  // Set callback for when tutorial is completed
-  setTutorialCompleteCallback(callback) {
-    this.onTutorialCompleteCallback = callback;
-  }
-
-  // Load tutorial achievements
-  loadAchievements() {
+  // FIXED: Dependency injection - load achievements with keyword data
+  loadAchievementsWithKeywords(keywordData) {
     if (typeof achievements !== "undefined") {
       Object.entries(achievements).forEach(([key, achievementData]) => {
+        const achievement = { ...achievementData };
+
+        // Apply keyword data if available
+        if (
+          achievement.characterId &&
+          keywordData.has(achievement.characterId)
+        ) {
+          const keyword = keywordData.get(achievement.characterId);
+          if (key === TUTORIAL_COMPLETE) {
+            achievement.triggerKeywords = [keyword];
+            console.log(`🏆 Applied keyword "${keyword}" to ${key}`);
+          }
+        }
+
         this.achievements.set(key, {
-          ...achievementData,
+          ...achievement,
           id: key,
           unlockedAt: null,
           progress: 0,
         });
       });
-      console.log(`🏆 Loaded ${this.achievements.size} tutorial achievements`);
+
+      this.isInitialized = true;
+      console.log(
+        `🏆 Loaded ${this.achievements.size} tutorial achievements with keyword data`
+      );
     } else {
       console.warn("🏆 No achievements data available");
     }
+  }
+
+  // Set callback for when tutorial is completed
+  setTutorialCompleteCallback(callback) {
+    this.onTutorialCompleteCallback = callback;
   }
 
   createAchievementButton() {
@@ -120,8 +138,20 @@ class AchievementManager {
         });
       });
 
+    // FIXED: Listen for standardized conversation messages
+    GameEvents.on(GAME_EVENTS.CONVERSATION_MESSAGE, (eventData) => {
+      if (!this.isInitialized) {
+        console.warn("🏆 Achievement manager not initialized yet");
+        return;
+      }
+
+      const { characterKey, message, response } = eventData;
+      this.checkTriggers(characterKey, message, response);
+    });
+
     // Listen for achievement unlocks
-    GameEvents.on(GAME_EVENTS.ACHIEVEMENT_UNLOCKED, (achievementId) => {
+    GameEvents.on(GAME_EVENTS.ACHIEVEMENT_UNLOCK, (eventData) => {
+      const achievementId = eventData.achievementKey || eventData.achievementId;
       this.handleAchievementUnlock(achievementId);
     });
 
@@ -142,11 +172,15 @@ class AchievementManager {
     });
   }
 
-  // FIXED: Check triggers for tutorial achievements
+  // FIXED: Unified keyword checking for all characters
   checkTriggers(characterKey, message, response) {
+    if (!this.isInitialized) {
+      console.warn("🏆 Achievement system not ready");
+      return;
+    }
+
     console.log(`🏆 Checking triggers for ${characterKey}`);
     console.log(`🏆 Message: "${message}"`);
-    console.log(`🏆 Response: "${response}"`);
 
     // Find achievements for this character
     const characterAchievements = Array.from(this.achievements.values()).filter(
@@ -164,48 +198,53 @@ class AchievementManager {
         `🏆 Trigger keywords: ${JSON.stringify(achievement.triggerKeywords)}`
       );
 
-      // For duck conversations, check response content
+      const triggerFound = this.checkKeywordTriggers(
+        achievement.triggerKeywords,
+        characterKey,
+        message
+      );
+
+      if (triggerFound) {
+        console.log(
+          `🏆 TRIGGER FOUND! Unlocking achievement: ${achievement.id}`
+        );
+        this.unlockAchievement(achievement.id);
+      }
+    });
+  }
+
+  // FIXED: Unified keyword checking method - both duck and pig check player message
+  checkKeywordTriggers(triggerKeywords, characterKey, message) {
+    if (!triggerKeywords || triggerKeywords.length === 0) {
+      return false;
+    }
+
+    // Normalize message for checking
+    const normalizedMessage = message.toLowerCase();
+
+    // Use word boundary matching for precise detection
+    return triggerKeywords.some((keyword) => {
+      const normalizedKeyword = keyword.toLowerCase();
+
+      // FIXED: Duck checks for 'quack' in player message, pig checks for its specific keyword
+      let found = false;
+
       if (characterKey === NPC_DUCK || characterKey === NPC_DUCK2) {
-        const responseHasTrigger = achievement.triggerKeywords.some(
-          (keyword) => {
-            const normalizedKeyword = keyword.toLowerCase();
-            const normalizedResponse = response.toLowerCase();
-            const found = normalizedResponse.includes(normalizedKeyword);
-            console.log(
-              `🏆 Checking keyword "${normalizedKeyword}" in duck response: ${found}`
-            );
-            return found;
-          }
+        // Duck: check if player said anything containing 'quack'
+        found = normalizedMessage.includes("quack");
+        console.log(
+          `🏆 Duck checking for 'quack' in "${normalizedMessage}": ${found}`
         );
-
-        if (responseHasTrigger) {
-          console.log(
-            `🏆 TRIGGER FOUND! Unlocking achievement: ${achievement.id}`
-          );
-          this.unlockAchievement(achievement.id);
-        }
-      }
-      // For tutorial pig, check if player message contains the keyword
-      else if (characterKey === TUTORIAL_PIG) {
-        const messageHasTrigger = achievement.triggerKeywords.some(
-          (keyword) => {
-            const normalizedKeyword = keyword.toLowerCase();
-            const normalizedMessage = message.toLowerCase().split(/\W+/);
-            const found = normalizedMessage.includes(normalizedKeyword);
-            console.log(
-              `🏆 Checking keyword "${normalizedKeyword}" in player message: ${found}`
-            );
-            return found;
-          }
+      } else {
+        // Other characters: check for exact word match
+        const wordBoundaryRegex = new RegExp(`\\b${normalizedKeyword}\\b`, "i");
+        found = wordBoundaryRegex.test(normalizedMessage);
+        console.log(
+          `🏆 Checking "${normalizedKeyword}" in "${normalizedMessage}": ${found}`
         );
-
-        if (messageHasTrigger) {
-          console.log(
-            `🏆 TRIGGER FOUND! Unlocking achievement: ${achievement.id}`
-          );
-          this.unlockAchievement(achievement.id);
-        }
       }
+
+      return found;
     });
   }
 
@@ -230,6 +269,14 @@ class AchievementManager {
     // Update progress
     this.updateProgress();
     this.updateButtonProgress();
+
+    // Emit standardized achievement event
+    GameEvents.emit(GAME_EVENTS.ACHIEVEMENT_UNLOCK, {
+      type: "achievement",
+      achievementKey: achievementId,
+      achievement: achievement,
+      timestamp: Date.now(),
+    });
 
     // Check for tutorial completion
     if (
@@ -491,6 +538,7 @@ class AchievementManager {
       achievement.unlockedAt = null;
     });
     this.unlockedAchievements.clear();
+    this.isInitialized = false;
     this.updateProgress();
     this.updateButtonProgress();
     console.log("🏆 Tutorial achievements reset");

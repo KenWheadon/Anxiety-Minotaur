@@ -17,7 +17,6 @@ const LEVELS = {
       ITEM_HELP,
       ITEM_MAGGLASS,
       ITEM_STARSBOOK,
-      ITEM_PAINT,
       TUTORIAL_SEED,
       PIG_DIG,
       YOU_IDLE,
