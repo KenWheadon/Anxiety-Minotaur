@@ -35,11 +35,6 @@ class AchievementManager {
 
   // FIXED: Load ALL achievements, not just current level
   loadAchievements() {
-    console.log("🏆 Loading ALL achievements from global achievements object");
-
-    // Clear existing achievements
-    this.achievements.clear();
-
     // FIXED: Load ALL achievements from global achievements object
     if (typeof achievements !== "undefined") {
       Object.entries(achievements).forEach(([key, achievementData]) => {
@@ -73,17 +68,7 @@ class AchievementManager {
         }
       }
     }
-
-    // Fallback: try to guess from achievement constants
-    const level1Achievements = LEVELS[1].achievements;
-    const level2Achievements = LEVELS[2].achievements;
-    const level3Achievements = LEVELS[3].achievements;
-
-    if (level1Achievements.includes(achievementKey)) return 1;
-    if (level2Achievements.includes(achievementKey)) return 2;
-    if (level3Achievements.includes(achievementKey)) return 3;
-
-    return null; // Unknown level
+    return 1; // Unknown level
   }
 
   createAchievementButton() {

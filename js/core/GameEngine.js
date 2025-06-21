@@ -19,7 +19,6 @@ class GameEngine {
     this.achievementManager = new AchievementManager(this);
     this.explorationDrawer = new ExplorationDrawer(this);
     this.victoryScreen = new VictoryScreen(this);
-    this.gameOverScreen = new GameOverScreen(this);
     this.cutsceneManager = new CutsceneManager(this);
 
     // Audio system integration
