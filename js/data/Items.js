@@ -70,8 +70,8 @@ const items = {
   [ITEM_SPIDER]: {
     description:
       "Strong, shimmering thread wound carefully on a wooden spool. The craftsmanship is exquisite - each strand perfectly aligned with patience and artistic precision. It smells faintly.", //the smell is the spiders KEY
-    X: 520,
-    Y: 650,
+    X: 462,
+    Y: 358,
     scale: 1,
     img: ITEM_SPIDER,
     clueFor: MON_SPIDER,
@@ -162,9 +162,9 @@ const items = {
   //extras
   [ITEM_JACKET]: {
     description:
-      "The inside pocket contains a crumpled photo of a young siren with defiant eyes and a cocky grin. One sleeve has battle damage - claw marks that perfectly match Giant Spider's leg span.",
-    X: 300,
-    Y: 400,
+      "Someone through it was funny to put this jacket on a rather large crystal. The inside pocket contains a crumpled photo of a young siren with defiant eyes and a cocky grin.",
+    X: 492,
+    Y: 475,
     scale: 1,
     img: ITEM_JACKET,
   },

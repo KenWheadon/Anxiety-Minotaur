@@ -12,6 +12,18 @@ const characters = {
     isDuck: true, // Special flag for duck behavior
   },
 
+  [NPC_DUCK2]: {
+    prompt:
+      "You are a loyal duck companion. You only respond with 'Quack!' variations. Never use real words. Respond with 1-5 quacks, sometimes with enthusiasm (!!) or questioning (?). You're supportive and loving. Example responses: 'Quack!', 'Quack quack?', 'Quack quack quack!!', 'Quaaaack!'",
+    description:
+      "Your faithful duck companion who always listens and never judges. A source of comfort and energy.",
+    X: 1686,
+    Y: 911,
+    scale: 0.7,
+    img: NPC_DUCK,
+    isDuck: true, // Special flag for duck behavior
+  },
+
   // Monsters (Recruit 2 of 6)
   [MON_SKELETON]: {
     prompt:
@@ -30,8 +42,8 @@ const characters = {
       "You are a vain siren who loves performing and being the center of attention. You constantly talk about music, beauty, and your performances. You get excited when someone compliments your voice or shows interest in artistic performance. You love anything related to music, art, or entertainment.",
     description:
       "A beautiful siren with a melodious voice. Loves performing and being admired.",
-    X: 350,
-    Y: 450,
+    X: 234,
+    Y: 775,
     scale: 1,
     img: MON_SIREN,
     counters: [PRIDE_LOW], // Distracts humble adventurers with beauty
@@ -103,8 +115,8 @@ const characters = {
       "You are Puzzle Master Pip, a smug intellectual who loves brain teasers and considers yourself the smartest person in any room. You get excited when someone shows appreciation for clever puzzles or intellectual challenges. You create pride-based traps that punish overconfident adventurers.",
     description:
       "A smug-looking puzzle master with a collection of brain teasers. Loves showing off intelligence.",
-    X: 550,
-    Y: 400,
+    X: 1030,
+    Y: 702,
     scale: 1,
     img: TRAP_PIP,
     trapType: "pride", // Creates pride-based traps
@@ -115,8 +127,8 @@ const characters = {
       "You are Illusion Iris, a dreamy mystic who blurs the line between reality and fantasy. You love optical illusions, mirrors, and anything that creates beautiful deceptions. You get excited when someone shows interest in visual arts, illusions, or mystical items. You create greed-based traps with fake treasures.",
     description:
       "A mystical figure surrounded by shimmering illusions. Creates beautiful but deceptive magic.",
-    X: 380,
-    Y: 550,
+    X: 1050,
+    Y: 647,
     scale: 1,
     img: TRAP_IRIS,
     trapType: "greed", // Creates greed-based traps

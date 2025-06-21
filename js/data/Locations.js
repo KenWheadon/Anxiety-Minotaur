@@ -49,8 +49,8 @@ const locations = {
   [LEVEL2_CRYSTALCAVE]: {
     description:
       "A mystical cave where crystals hum with magic. Illusions dance in the prismatic light.",
-    characters: [TRAP_IRIS, NPC_DUCK],
-    items: [ITEM_JACKET, ITEM_SPIDER],
+    characters: [TRAP_IRIS, NPC_DUCK2],
+    items: [ITEM_JACKET],
     locations: [LEVEL2_CAVE],
     background: LEVEL2_CRYSTALCAVE,
   },

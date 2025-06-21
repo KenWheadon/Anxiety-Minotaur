@@ -23,6 +23,7 @@ const LEVEL3_BG = "level3_bg";
 
 // Character constants - Duck
 const NPC_DUCK = "npc_duck";
+const NPC_DUCK2 = "npc_duck2";
 const NPC_SUMO = "npc_sumo";
 const NPC_SPHINX = "npc_sphinx";
 const NPC_KINGKING = "npc_kingking";
