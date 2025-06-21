@@ -1,4 +1,4 @@
-// js/systems/AchievementManager.js - Updated to show ALL achievements, not just current level
+// js/systems/AchievementManager.js - Tutorial focused achievement system
 
 class AchievementManager {
   constructor(gameEngine) {
@@ -10,32 +10,23 @@ class AchievementManager {
     this.notificationQueue = [];
     this.isShowingNotification = false;
     this.hasNewAchievements = false;
-    this.onAllAchievementsUnlocked = null; // Callback function - now used for final victory only
-    this.onGameOverCallback = null; // NEW: Callback for game over condition
+    this.onTutorialCompleteCallback = null; // Callback for tutorial completion
 
     this.loadAchievements();
     this.createAchievementUI();
     this.createAchievementButton();
     this.setupEventListeners();
 
-    console.log(
-      "🏆 Achievement manager initialized with ALL achievements visible"
-    );
+    console.log("🏆 Achievement manager initialized for tutorial");
   }
 
-  // Set callback for when all achievements are unlocked (final victory)
-  setAllAchievementsUnlockedCallback(callback) {
-    this.onAllAchievementsUnlocked = callback;
+  // Set callback for when tutorial is completed
+  setTutorialCompleteCallback(callback) {
+    this.onTutorialCompleteCallback = callback;
   }
 
-  // NEW: Set callback for game over condition
-  setGameOverCallback(callback) {
-    this.onGameOverCallback = callback;
-  }
-
-  // FIXED: Load ALL achievements, not just current level
+  // Load tutorial achievements
   loadAchievements() {
-    // FIXED: Load ALL achievements from global achievements object
     if (typeof achievements !== "undefined") {
       Object.entries(achievements).forEach(([key, achievementData]) => {
         this.achievements.set(key, {
@@ -43,36 +34,15 @@ class AchievementManager {
           id: key,
           unlockedAt: null,
           progress: 0,
-          // NEW: Add level info for display purposes
-          level: this.getAchievementLevel(key),
         });
       });
-      console.log(
-        `🏆 Loaded ${this.achievements.size} total achievements from all levels`
-      );
+      console.log(`🏆 Loaded ${this.achievements.size} tutorial achievements`);
     } else {
       console.warn("🏆 No achievements data available");
     }
   }
 
-  // NEW: Helper method to determine which level an achievement belongs to
-  getAchievementLevel(achievementKey) {
-    // Check each level's achievements to see where this belongs
-    if (typeof LEVELS !== "undefined") {
-      for (const [levelNum, levelData] of Object.entries(LEVELS)) {
-        if (
-          levelData.achievements &&
-          levelData.achievements.includes(achievementKey)
-        ) {
-          return parseInt(levelNum);
-        }
-      }
-    }
-    return 1; // Unknown level
-  }
-
   createAchievementButton() {
-    // Create floating achievements button
     this.achievementButton = document.createElement("button");
     this.achievementButton.className = "achievements-trigger";
     this.achievementButton.innerHTML = "🏆";
@@ -81,12 +51,10 @@ class AchievementManager {
 
     document.body.appendChild(this.achievementButton);
 
-    // Add click listener
     this.achievementButton.addEventListener("click", () => {
       this.showAchievementPanel();
     });
 
-    // Update progress indicator
     this.updateButtonProgress();
   }
 
@@ -99,10 +67,8 @@ class AchievementManager {
         `${unlocked}/${total}`
       );
 
-      // Add pulse animation for new achievements
       if (this.hasNewAchievements) {
         this.achievementButton.classList.add("has-new");
-        // Remove the animation after a few seconds
         setTimeout(() => {
           this.achievementButton.classList.remove("has-new");
           this.hasNewAchievements = false;
@@ -112,30 +78,26 @@ class AchievementManager {
   }
 
   createAchievementUI() {
-    // Create achievement panel
     this.achievementPanel = document.createElement("div");
     this.achievementPanel.className = "achievement-panel";
     this.achievementPanel.innerHTML = `
-            <div class="achievement-header">
-                <h2>🏆 All Game Achievements</h2>
-                <div class="achievement-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <span class="progress-text">0 / ${this.achievements.size}</span>
-                </div>
-                <button class="close-achievements">×</button>
-            </div>
-            <div class="achievement-tabs">
-                <button class="achievement-tab active" data-filter="all">All</button>
-                <button class="achievement-tab" data-filter="unlocked">Unlocked</button>
-                <button class="achievement-tab" data-filter="locked">Locked</button>
-                <button class="achievement-tab" data-filter="level1">Level 1</button>
-                <button class="achievement-tab" data-filter="level2">Level 2</button>
-                <button class="achievement-tab" data-filter="level3">Level 3</button>
-            </div>
-            <div class="achievement-list"></div>
-        `;
+      <div class="achievement-header">
+        <h2>🏆 Tutorial Achievements</h2>
+        <div class="achievement-progress">
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+          <span class="progress-text">0 / ${this.achievements.size}</span>
+        </div>
+        <button class="close-achievements">×</button>
+      </div>
+      <div class="achievement-tabs">
+        <button class="achievement-tab active" data-filter="all">All</button>
+        <button class="achievement-tab" data-filter="unlocked">Unlocked</button>
+        <button class="achievement-tab" data-filter="locked">Locked</button>
+      </div>
+      <div class="achievement-list"></div>
+    `;
 
     document.body.appendChild(this.achievementPanel);
     this.hideAchievementPanel();
@@ -163,10 +125,7 @@ class AchievementManager {
       this.handleAchievementUnlock(achievementId);
     });
 
-    // REMOVED: Level change reloading - we now show all achievements always
-    // GameEvents.on(GAME_EVENTS.LEVEL_CHANGED, () => { ... });
-
-    // Keyboard shortcut to open achievements F2
+    // Keyboard shortcut F2
     document.addEventListener("keydown", (e) => {
       const isConversationActive =
         this.gameEngine.conversationManager.isConversationActive;
@@ -175,7 +134,6 @@ class AchievementManager {
         document.activeElement.tagName === "TEXTAREA";
 
       if (!isConversationActive && !isInputFocused) {
-        // Use F2 key for achievements (safe function key)
         if (e.key === "F2") {
           e.preventDefault();
           this.showAchievementPanel();
@@ -184,62 +142,69 @@ class AchievementManager {
     });
   }
 
+  // FIXED: Check triggers for tutorial achievements
   checkTriggers(characterKey, message, response) {
-    console.log(`🏆 AchievementManager.checkTriggers called`);
-    console.log(`🏆 Character: ${characterKey}`);
+    console.log(`🏆 Checking triggers for ${characterKey}`);
     console.log(`🏆 Message: "${message}"`);
     console.log(`🏆 Response: "${response}"`);
 
-    // FIXED: Check ALL achievements, not just current level ones
+    // Find achievements for this character
     const characterAchievements = Array.from(this.achievements.values()).filter(
-      (achievement) => {
-        console.log(
-          `🏆 Checking achievement ${achievement.id}: characterId=${achievement.characterId}, target=${characterKey}`
-        );
-        return (
-          achievement.characterId === characterKey && !achievement.isUnlocked
-        );
-      }
+      (achievement) =>
+        achievement.characterId === characterKey && !achievement.isUnlocked
     );
 
     console.log(
-      `🏆 Found ${characterAchievements.length} possible achievements for ${characterKey} across all levels`
+      `🏆 Found ${characterAchievements.length} possible achievements for ${characterKey}`
     );
 
     characterAchievements.forEach((achievement) => {
-      console.log(
-        `🏆 Checking achievement: ${achievement.id} (Level ${
-          achievement.level || "?"
-        })`
-      );
+      console.log(`🏆 Checking achievement: ${achievement.id}`);
       console.log(
         `🏆 Trigger keywords: ${JSON.stringify(achievement.triggerKeywords)}`
       );
 
-      // Normalize the response text: lowercase and replace underscores with spaces
-      const normalizedResponse = response.toLowerCase().replace(/_/g, " ");
-      console.log(`🏆 Normalized response: "${normalizedResponse}"`);
-
-      // Check if the character's response contains the trigger keyword
-      const responseHasTrigger = achievement.triggerKeywords.some((keyword) => {
-        // Normalize the keyword the same way
-        const normalizedKeyword = keyword.toLowerCase().replace(/_/g, " ");
-        const found = normalizedResponse.includes(normalizedKeyword);
-        console.log(
-          `🏆 Checking normalized keyword "${normalizedKeyword}" in response: ${found}`
+      // For duck conversations, check response content
+      if (characterKey === NPC_DUCK || characterKey === NPC_DUCK2) {
+        const responseHasTrigger = achievement.triggerKeywords.some(
+          (keyword) => {
+            const normalizedKeyword = keyword.toLowerCase();
+            const normalizedResponse = response.toLowerCase();
+            const found = normalizedResponse.includes(normalizedKeyword);
+            console.log(
+              `🏆 Checking keyword "${normalizedKeyword}" in duck response: ${found}`
+            );
+            return found;
+          }
         );
-        return found;
-      });
 
-      if (responseHasTrigger) {
-        console.log(
-          `🏆 TRIGGER FOUND! Unlocking achievement: ${achievement.id} (Level ${
-            achievement.level || "?"
-          })`
+        if (responseHasTrigger) {
+          console.log(
+            `🏆 TRIGGER FOUND! Unlocking achievement: ${achievement.id}`
+          );
+          this.unlockAchievement(achievement.id);
+        }
+      }
+      // For tutorial pig, check if player message contains the keyword
+      else if (characterKey === TUTORIAL_PIG) {
+        const messageHasTrigger = achievement.triggerKeywords.some(
+          (keyword) => {
+            const normalizedKeyword = keyword.toLowerCase();
+            const normalizedMessage = message.toLowerCase().split(/\W+/);
+            const found = normalizedMessage.includes(normalizedKeyword);
+            console.log(
+              `🏆 Checking keyword "${normalizedKeyword}" in player message: ${found}`
+            );
+            return found;
+          }
         );
-        this.unlockAchievement(achievement.id);
-      } else {
-        console.log(`🏆 No trigger found for ${achievement.id}`);
+
+        if (messageHasTrigger) {
+          console.log(
+            `🏆 TRIGGER FOUND! Unlocking achievement: ${achievement.id}`
+          );
+          this.unlockAchievement(achievement.id);
+        }
       }
     });
   }
@@ -266,49 +231,19 @@ class AchievementManager {
     this.updateProgress();
     this.updateButtonProgress();
 
-    // Check for level completion (existing logic)
-    let levelCompleted = false;
-    if (this.gameEngine.levelManager) {
-      levelCompleted =
-        this.gameEngine.levelManager.checkLevelCompletion(achievementId);
-      if (levelCompleted) {
-        console.log(`🎯 Level completed with achievement: ${achievementId}`);
-
-        // Check if we just completed Level 3 (final level) - trigger final victory
-        if (
-          this.gameEngine.levelManager.currentLevel === 3 &&
-          this.onAllAchievementsUnlocked
-        ) {
-          console.log(
-            "🎉 Level 3 completed! Calling final victory callback..."
-          );
-          setTimeout(() => {
-            this.onAllAchievementsUnlocked();
-          }, 3000); // Delay to let the level completion show first
-        }
-
-        return true;
-      }
+    // Check for tutorial completion
+    if (
+      achievementId === TUTORIAL_COMPLETE &&
+      this.onTutorialCompleteCallback
+    ) {
+      console.log("🎉 Tutorial completed! Triggering victory callback...");
+      setTimeout(() => {
+        this.onTutorialCompleteCallback();
+      }, 2000); // Delay to let the achievement notification show
     }
 
-    console.log(
-      `🏆 Achievement unlocked: ${achievement.title} (Level ${
-        achievement.level || "?"
-      })`
-    );
+    console.log(`🏆 Achievement unlocked: ${achievement.title}`);
     return true;
-  }
-
-  // Check if Level 3 is completed (for final victory)
-  isLevel3Complete() {
-    if (!this.gameEngine.levelManager) return false;
-
-    const currentLevel = this.gameEngine.levelManager.currentLevel;
-
-    // Check if we're on Level 3 and have the completion achievement
-    return (
-      currentLevel === 3 && this.unlockedAchievements.has(SPILLED_HIS_GUTS)
-    );
   }
 
   queueNotification(achievement) {
@@ -327,21 +262,19 @@ class AchievementManager {
     this.isShowingNotification = true;
     const achievement = this.notificationQueue.shift();
 
-    // Create notification element with level info
     const notification = document.createElement("div");
     notification.className = "achievement-notification";
-    const levelText = achievement.level ? ` (Level ${achievement.level})` : "";
     notification.innerHTML = `
-            <div class="notification-icon">🏆</div>
-            <div class="notification-content">
-                <div class="notification-title">Achievement Unlocked!${levelText}</div>
-                <div class="notification-description">${achievement.title}</div>
-            </div>
-        `;
+      <div class="notification-icon">🏆</div>
+      <div class="notification-content">
+        <div class="notification-title">Achievement Unlocked!</div>
+        <div class="notification-description">${achievement.title}</div>
+      </div>
+    `;
 
     document.body.appendChild(notification);
 
-    // Play sound (if available)
+    // Play sound
     if (this.gameEngine.renderer && this.gameEngine.renderer.assetManager) {
       this.gameEngine.renderer.assetManager.playSound(
         "effects/achievement.mp3",
@@ -357,7 +290,7 @@ class AchievementManager {
     );
 
     // Wait and animate out
-    await Utils.wait(4000);
+    await this.delay(4000);
 
     gsap.to(notification, {
       opacity: 0,
@@ -379,7 +312,6 @@ class AchievementManager {
     this.renderAchievements("all");
     this.updateProgress();
 
-    // Animate in
     gsap.fromTo(
       this.achievementPanel,
       { opacity: 0, scale: 0.8, y: 50 },
@@ -401,14 +333,12 @@ class AchievementManager {
   }
 
   switchTab(filter) {
-    // Update tab states
     this.achievementPanel
       .querySelectorAll(".achievement-tab")
       .forEach((tab) => {
         tab.classList.toggle("active", tab.dataset.filter === filter);
       });
 
-    // Render achievements for this filter
     this.renderAchievements(filter);
   }
 
@@ -417,7 +347,6 @@ class AchievementManager {
       this.achievementPanel.querySelector(".achievement-list");
     listContainer.innerHTML = "";
 
-    // Filter achievements
     let achievementsToShow = Array.from(this.achievements.values());
 
     switch (filter) {
@@ -427,36 +356,21 @@ class AchievementManager {
       case "locked":
         achievementsToShow = achievementsToShow.filter((a) => !a.isUnlocked);
         break;
-      case "level1":
-        achievementsToShow = achievementsToShow.filter((a) => a.level === 1);
-        break;
-      case "level2":
-        achievementsToShow = achievementsToShow.filter((a) => a.level === 2);
-        break;
-      case "level3":
-        achievementsToShow = achievementsToShow.filter((a) => a.level === 3);
-        break;
-      // "all" shows everything
     }
 
-    // Sort: unlocked first, then by level, then by title
+    // Sort: unlocked first, then by title
     achievementsToShow.sort((a, b) => {
       if (a.isUnlocked !== b.isUnlocked) {
         return b.isUnlocked - a.isUnlocked;
       }
-      if (a.level !== b.level) {
-        return (a.level || 999) - (b.level || 999);
-      }
       return a.title.localeCompare(b.title);
     });
 
-    // Render each achievement
     achievementsToShow.forEach((achievement) => {
       const achievementElement = this.createAchievementElement(achievement);
       listContainer.appendChild(achievementElement);
     });
 
-    // Animate in
     const items = listContainer.querySelectorAll(".achievement-item");
     items.forEach((item, index) => {
       gsap.fromTo(
@@ -484,38 +398,31 @@ class AchievementManager {
         ? `<div class="achievement-unlock-time">Unlocked: ${achievement.unlockedAt.toLocaleDateString()}</div>`
         : "";
 
-    // Show level info
-    const levelHtml = achievement.level
-      ? `<div class="achievement-level">Level ${achievement.level}</div>`
-      : `<div class="achievement-level">Unknown Level</div>`;
-
-    // Show real information for unlocked achievements, hide for locked ones
     let contentHtml;
     if (achievement.isUnlocked) {
       contentHtml = `
         <div class="achievement-title">${achievement.title}</div>
         <div class="achievement-description">${achievement.description}</div>
-        ${levelHtml}
         ${unlockTimeHtml}
       `;
     } else {
-      // Completely hide all information for locked achievements
       contentHtml = `
         <div class="achievement-title">???</div>
-        <div class="achievement-description">???</div>
-        ${levelHtml}
-        <div class="achievement-hint">Keep exploring to unlock this achievement!</div>
+        <div class="achievement-description">${
+          achievement.hint ||
+          "Complete tutorial objectives to unlock this achievement!"
+        }</div>
       `;
     }
 
     element.innerHTML = `
-            <div class="achievement-icon">
-                ${achievement.isUnlocked ? "🏆" : "🔒"}
-            </div>
-            <div class="achievement-content">
-                ${contentHtml}
-            </div>
-        `;
+      <div class="achievement-icon">
+        ${achievement.isUnlocked ? "🏆" : "🔒"}
+      </div>
+      <div class="achievement-content">
+        ${contentHtml}
+      </div>
+    `;
 
     return element;
   }
@@ -537,28 +444,24 @@ class AchievementManager {
     }
   }
 
-  // Handle achievement unlock event
   handleAchievementUnlock(achievementId) {
-    // This method can be used for additional logic when achievements are unlocked
     console.log(`🏆 Achievement unlock event received: ${achievementId}`);
   }
 
-  // Sync achievements from game state on load
+  // Sync achievements from game state
   syncFromGameState(unlockedSet) {
     console.log("🏆 Syncing achievements from game state");
     this.unlockedAchievements = new Set(unlockedSet);
 
-    // Update achievement objects
     this.achievements.forEach((achievement, id) => {
       if (this.unlockedAchievements.has(id)) {
         achievement.isUnlocked = true;
-        // Note: We don't have unlockedAt time from save, but that's ok
       }
     });
 
     this.updateProgress();
     this.updateButtonProgress();
-    console.log("🏆 Achievement sync complete - showing all achievements");
+    console.log("🏆 Achievement sync complete");
   }
 
   // Get achievement statistics
@@ -573,49 +476,16 @@ class AchievementManager {
               (this.unlockedAchievements.size / this.achievements.size) * 100
             )
           : 0,
-      byLevel: {
-        level1: {
-          total: Array.from(this.achievements.values()).filter(
-            (a) => a.level === 1
-          ).length,
-          unlocked: Array.from(this.achievements.values()).filter(
-            (a) => a.level === 1 && a.isUnlocked
-          ).length,
-        },
-        level2: {
-          total: Array.from(this.achievements.values()).filter(
-            (a) => a.level === 2
-          ).length,
-          unlocked: Array.from(this.achievements.values()).filter(
-            (a) => a.level === 2 && a.isUnlocked
-          ).length,
-        },
-        level3: {
-          total: Array.from(this.achievements.values()).filter(
-            (a) => a.level === 3
-          ).length,
-          unlocked: Array.from(this.achievements.values()).filter(
-            (a) => a.level === 3 && a.isUnlocked
-          ).length,
-        },
-      },
     };
   }
 
-  // Get achievements by character
-  getAchievementsByCharacter(characterId) {
-    return Array.from(this.achievements.values()).filter(
-      (achievement) => achievement.characterId === characterId
-    );
+  // Check if tutorial is complete
+  isTutorialComplete() {
+    return this.unlockedAchievements.has(TUTORIAL_COMPLETE);
   }
 
-  // Check if player has unlocked all achievements FOR ALL LEVELS
-  hasUnlockedAll() {
-    return this.unlockedAchievements.size === this.achievements.size;
-  }
-
-  // Reset all achievements (for new game or debugging/testing)
-  resetAll() {
+  // Reset all achievements
+  reset() {
     this.achievements.forEach((achievement) => {
       achievement.isUnlocked = false;
       achievement.unlockedAt = null;
@@ -623,6 +493,23 @@ class AchievementManager {
     this.unlockedAchievements.clear();
     this.updateProgress();
     this.updateButtonProgress();
-    console.log("🏆 All achievements reset");
+    console.log("🏆 Tutorial achievements reset");
+  }
+
+  // Utility method
+  delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  destroy() {
+    if (this.achievementPanel && this.achievementPanel.parentNode) {
+      this.achievementPanel.parentNode.removeChild(this.achievementPanel);
+    }
+
+    if (this.achievementButton && this.achievementButton.parentNode) {
+      this.achievementButton.parentNode.removeChild(this.achievementButton);
+    }
+
+    console.log("🗑️ Achievement manager destroyed");
   }
 }

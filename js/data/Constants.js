@@ -29,10 +29,9 @@ const TUTORIAL_SEED = "tutorial_seed";
 const PIG_DIG = "pig_dig";
 
 // Achievement constants (Level 1)
-const READY_FOR_THE_DAY = "READY_FOR_THE_DAY"; //tell duck you've read the both books
 const TALKED_TO_DUCK = "TALKED_TO_DUCK"; //first chat with duck - doesn't use LLM
-const READ_MOMS_LETTER = "READ_MOMS_LETTER"; //letter from mom mentioning you should read your books
 const TUTORIAL_COMPLETE = "tutorial_complete";
+const READ_MOMS_LETTER = "READ_MOMS_LETTER";
 
 const TUTORIAL_PIG_KEYWORDS = [
   // Original 7 starter keywords

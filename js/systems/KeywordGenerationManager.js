@@ -1,128 +1,67 @@
 // js/systems/KeywordGenerationManager.js
-// Dynamic Keyword Generation & Item Description System for Minotaur's Labyrinth
+// FIXED: Dynamic Keyword Generation for Anxiety Minotaur Tutorial
 
 class KeywordGenerationManager {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
-    this.characterKeywords = new Map();
+    this.characterKeywords = new Map(); // Character ID -> single keyword
     this.unlockedCharacters = new Set();
-    this.originalItemDescriptions = new Map(); // Store originals for reference
 
+    // Generate keywords and update descriptions immediately
     this.generateAllKeywords();
     this.updateAllItemDescriptions();
     this.setupEventListeners();
 
-    console.log("🔑 Keyword Generation Manager initialized");
+    console.log("🔑 Keyword Generation Manager initialized for tutorial");
   }
 
-  // Generate all keywords at game start
+  // FIXED: Generate exactly ONE keyword per character
   generateAllKeywords() {
-    console.log("🎲 Generating keywords for all characters...");
+    console.log("🎲 Generating tutorial keywords...");
 
-    // Keyword pools for different character types
-    const keywordPools = {
-      // Tutorial keywords for Level 1
-      tutorial: {
-        tutorial_pig: TUTORIAL_PIG_KEYWORDS,
-      },
-    };
+    // Generate one random keyword for the tutorial pig
+    const selectedKeyword =
+      TUTORIAL_PIG_KEYWORDS[
+        Math.floor(Math.random() * TUTORIAL_PIG_KEYWORDS.length)
+      ];
+    this.characterKeywords.set(TUTORIAL_PIG, selectedKeyword);
 
-    // Generate random keyword for each character
-    Object.entries(keywordPools).forEach(([category, characters]) => {
-      Object.entries(characters).forEach(([characterId, keywords]) => {
-        const selectedKeyword =
-          keywords[Math.floor(Math.random() * keywords.length)];
-        this.characterKeywords.set(characterId, selectedKeyword);
-        console.log(`🔑 ${characterId}: "${selectedKeyword}"`);
-      });
-    });
+    console.log(`🔑 Tutorial pig keyword: "${selectedKeyword}"`);
 
-    console.log(
-      "🎲 All keywords generated:",
-      Object.fromEntries(this.characterKeywords)
-    );
-  }
-
-  // Update all item descriptions to include the keywords directly
-  updateAllItemDescriptions() {
-    console.log("📝 Updating item descriptions with keywords...");
-
-    // Store original descriptions first
-    Object.entries(items).forEach(([itemKey, itemData]) => {
-      if (itemData.description) {
-        this.originalItemDescriptions.set(itemKey, itemData.description);
-      }
-    });
-
-    // Update each item with its character's keyword
-    const itemUpdates = {
-      // Monster clue items
-      [TUTORIAL_SEED]: {
-        character: TUTORIAL_PIG,
-        template: (keyword) =>
-          `A packet of seeds, I think pig wants to know what seeds he bought. I better tell him that these seeds are ${keyword}.`,
-      },
-    };
-
-    // Apply updates to actual item descriptions
-    Object.entries(itemUpdates).forEach(([itemKey, updateData]) => {
-      const keyword = this.characterKeywords.get(updateData.character);
-      if (keyword && items[itemKey]) {
-        const newDescription = updateData.template(keyword);
-        items[itemKey].description = newDescription;
-        console.log(`📝 Updated ${itemKey}: "${newDescription}"`);
-      }
-    });
-
-    console.log("📝 All item descriptions updated with keywords");
-  }
-
-  // Add tutorial content for Level 1
-  addTutorialContent() {
-    if (this.gameEngine.currentLevel !== 1) return;
-
-    const tutorialKeyword = this.characterKeywords.get("tutorial_pig");
-    if (!tutorialKeyword) return;
-
-    // Add tutorial pig character (using existing NPC_SUMO as placeholder)
-    characters["tutorial_pig"] = {
-      prompt: `You are a friendly gardener pig who loves plants and gardening. You get especially excited when someone mentions ${tutorialKeyword} - they're your absolute favorite! You're currently digging holes and working in your garden.`,
-      description:
-        "A cheerful pig tending to a garden outside your house. They seem to be working on something specific...",
-      X: 400,
-      Y: 600,
-      scale: 1,
-      img: NPC_SUMO, // Using sumo as placeholder for pig
-      isTutorial: true,
-    };
-
-    // Add tutorial item with clear keyword (using existing seed item as placeholder)
-    items["tutorial_seed"] = {
-      description: `A packet of ${tutorialKeyword} seeds. Perfect for any gardener who loves ${tutorialKeyword}!`,
-      X: 350,
-      Y: 650,
-      scale: 1,
-      img: ITEM_MAMALETTER, // Using letter as placeholder for seed packet
-      clueFor: "tutorial_pig",
-    };
-
-    // Add to Level 1 house location
-    if (locations[BEDROOM]) {
-      if (!locations[BEDROOM].characters.includes("tutorial_pig")) {
-        locations[BEDROOM].characters.push("tutorial_pig");
-      }
-      if (!locations[BEDROOM].items.includes("tutorial_seed")) {
-        locations[BEDROOM].items.push("tutorial_seed");
-      }
+    // FIXED: Update the achievement's trigger keywords with the selected keyword
+    if (achievements[TUTORIAL_COMPLETE]) {
+      achievements[TUTORIAL_COMPLETE].triggerKeywords = [selectedKeyword];
     }
 
-    console.log(`🐷 Tutorial content added: pig likes ${tutorialKeyword}`);
+    console.log("🎲 Tutorial keyword generation complete");
   }
 
-  // Check if player message contains the correct keyword
+  // Update item descriptions to include the generated keyword
+  updateAllItemDescriptions() {
+    console.log("📝 Updating tutorial item descriptions...");
+
+    const pigKeyword = this.characterKeywords.get(TUTORIAL_PIG);
+    if (pigKeyword && items[TUTORIAL_SEED]) {
+      // Update the seed description to include the specific keyword
+      items[
+        TUTORIAL_SEED
+      ].description = `A seed packet labeled "${pigKeyword}" that was delivered today. The gardener pig needs help identifying what type of seeds these are so they know how to plant them properly.`;
+
+      console.log(
+        `📝 Updated seed packet description with keyword: ${pigKeyword}`
+      );
+    }
+
+    console.log("📝 Tutorial item descriptions updated");
+  }
+
+  // FIXED: Check for the exact keyword match for a specific character
   checkForKeyword(characterId, playerMessage) {
     const keyword = this.characterKeywords.get(characterId);
-    if (!keyword) return false;
+    if (!keyword) {
+      console.log(`🔑 No keyword found for ${characterId}`);
+      return false;
+    }
 
     // Check for exact word match (case insensitive)
     const messageWords = playerMessage.toLowerCase().split(/\W+/);
@@ -147,9 +86,8 @@ class KeywordGenerationManager {
 
     this.unlockedCharacters.add(characterId);
     this.showUnlockEffect(characterId);
-    this.modifyCharacterPrompt(characterId);
 
-    // Emit event for recruitment system
+    // Emit event for achievement system
     GameEvents.emit("CHARACTER_UNLOCKED", {
       characterId,
       keyword: this.characterKeywords.get(characterId),
@@ -191,7 +129,7 @@ class KeywordGenerationManager {
     characterElement.style.position = "relative";
     characterElement.appendChild(checkmark);
 
-    // Animate checkmark appearance with GSAP
+    // Animate checkmark appearance
     if (typeof gsap !== "undefined") {
       gsap.fromTo(
         checkmark,
@@ -218,25 +156,6 @@ class KeywordGenerationManager {
     }
   }
 
-  // Modify character prompt to be helpful after unlock
-  modifyCharacterPrompt(characterId) {
-    const character = characters[characterId];
-    if (!character) return;
-
-    // Store original prompt if not already stored
-    if (!character.originalPrompt) {
-      character.originalPrompt = character.prompt;
-    }
-
-    // Add helpful behavior to prompt
-    const helpfulAddition =
-      "\n\nIMPORTANT: You are now excited and willing to help! You offer to join their cause and assist with defending the labyrinth. You're enthusiastic about working together.";
-
-    character.prompt = character.originalPrompt + helpfulAddition;
-
-    console.log(`🔑 Modified ${characterId} prompt to be helpful`);
-  }
-
   // Setup event listeners for conversation integration
   setupEventListeners() {
     // Listen for conversation messages to check for keywords
@@ -252,12 +171,7 @@ class KeywordGenerationManager {
       }
     });
 
-    // Listen for level changes to add tutorial content
-    GameEvents.on("LEVEL_CHANGED", (data) => {
-      if (data.level === 1) {
-        this.addTutorialContent();
-      }
-    });
+    console.log("🔑 Tutorial keyword event listeners setup complete");
   }
 
   // Utility methods
@@ -273,11 +187,25 @@ class KeywordGenerationManager {
     return Array.from(this.unlockedCharacters);
   }
 
-  // Debug method to show all keywords (remove in production)
-  debugShowAllKeywords() {
-    console.log("🔍 DEBUG - All Character Keywords:");
+  // Get all generated keywords (for debugging)
+  getAllKeywords() {
+    return Object.fromEntries(this.characterKeywords);
+  }
+
+  // Debug method to show keywords
+  debugShowKeywords() {
+    console.log("🔍 DEBUG - Tutorial Keywords:");
     this.characterKeywords.forEach((keyword, characterId) => {
       console.log(`  ${characterId}: "${keyword}"`);
     });
+  }
+
+  // Reset for new game
+  reset() {
+    this.characterKeywords.clear();
+    this.unlockedCharacters.clear();
+    this.generateAllKeywords();
+    this.updateAllItemDescriptions();
+    console.log("🔄 Keyword system reset for new tutorial");
   }
 }

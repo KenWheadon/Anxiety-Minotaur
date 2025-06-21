@@ -1,31 +1,31 @@
+// js/ui/VictoryScreen.js - Tutorial Victory Screen for Anxiety Minotaur
+
 class VictoryScreen {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
     this.victoryElement = null;
     this.isShowing = false;
-    this.isUnlocked = false; // Track if victory has been achieved
-    this.victoryButton = null; // Button to reopen victory screen
+    this.isUnlocked = false;
+    this.victoryButton = null;
 
     this.createVictoryUI();
-    this.createVictoryButton(); // Create the reopen button
+    this.createVictoryButton();
   }
 
-  // Create a button to reopen the victory screen
   createVictoryButton() {
     this.victoryButton = document.createElement("button");
     this.victoryButton.className = "victory-trigger";
     this.victoryButton.innerHTML = "🏆";
-    this.victoryButton.title = "View Victory Screen (F3)";
-    this.victoryButton.style.display = "none"; // Hidden until victory is achieved
+    this.victoryButton.title = "View Tutorial Completion (F3)";
+    this.victoryButton.style.display = "none";
 
     document.body.appendChild(this.victoryButton);
 
-    // Add click listener
     this.victoryButton.addEventListener("click", () => {
       this.show();
     });
 
-    // Add keyboard shortcut F3
+    // F3 keyboard shortcut
     document.addEventListener("keydown", (e) => {
       const isConversationActive =
         this.gameEngine.conversationManager.isConversationActive;
@@ -39,7 +39,6 @@ class VictoryScreen {
         this.isUnlocked &&
         !this.isShowing
       ) {
-        // Use F3 key for victory screen (safe function key)
         if (e.key === "F3") {
           e.preventDefault();
           this.show();
@@ -55,19 +54,19 @@ class VictoryScreen {
       <div class="victory-content">
         <div class="victory-header">
           <div class="victory-trophy-container">
-            <div class="victory-trophy-image"></div>
+            <div class="victory-trophy-image">🎉</div>
             <div class="victory-trophy-glow"></div>
           </div>
-          <h1>Mission Accomplished!</h1>
-          <h2>You've successfully completed Level 3 and brought down the Kingpin!</h2>
-          <div class="trophy-caption">🏆 Super Shiny Mega-Cop Trophy Earned! 🏆</div>
+          <h1>Tutorial Complete!</h1>
+          <h2>You've successfully helped your neighbor and learned the basics!</h2>
+          <div class="trophy-caption">🌟 Helpful Neighbor Achievement Earned! 🌟</div>
         </div>
         
         <div class="victory-stats">
           <div class="stat-card">
             <div class="stat-icon">🎯</div>
-            <div class="stat-value">3/3</div>
-            <div class="stat-label">Levels Complete</div>
+            <div class="stat-value">Complete</div>
+            <div class="stat-label">Tutorial Status</div>
           </div>
           
           <div class="stat-card">
@@ -83,153 +82,95 @@ class VictoryScreen {
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon">⏱️</div>
-            <div class="stat-value" id="play-time">0</div>
-            <div class="stat-label">Minutes Played</div>
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" id="achievements-earned">0</div>
+            <div class="stat-label">Achievements</div>
           </div>
         </div>
         
         <div class="victory-achievements">
-          <h3>Mission Objectives Complete</h3>
+          <h3>What You've Learned</h3>
           <div class="achievement-showcase">
             <div class="showcase-achievement">
-              <span class="achievement-emoji">🚓</span>
-              <span class="achievement-name">Assignment Received</span>
+              <span class="achievement-emoji">🦆</span>
+              <span class="achievement-name">Duck companions help restore social energy</span>
             </div>
             <div class="showcase-achievement">
-              <span class="achievement-emoji">🎭</span>
-              <span class="achievement-name">Gang Infiltrated</span>
+              <span class="achievement-emoji">🔍</span>
+              <span class="achievement-name">Exploring and examining items reveals clues</span>
             </div>
             <div class="showcase-achievement">
-              <span class="achievement-emoji">⚖️</span>
-              <span class="achievement-name">Kingpin Exposed</span>
+              <span class="achievement-emoji">💬</span>
+              <span class="achievement-name">Conversations can solve problems and help others</span>
             </div>
           </div>
         </div>
         
         <div class="victory-message">
-          <p>🌟 You've successfully exposed the Kingpin's criminal operations!</p>
-          <p>💡 The frog gang has been dismantled and justice has been served!</p>
-          <p>🎮 Thank you for playing Anxiety Minotaur!</p>
+          <p>🌟 You've successfully helped your gardener neighbor identify their seeds!</p>
+          <p>💝 You've learned how to manage social energy and use your duck companion for support!</p>
+          <p>🎮 You're ready for bigger adventures in the full game!</p>
         </div>
         
         <div class="victory-actions">
-          <button class="victory-button restart-game">Start New Game</button>
+          <button class="victory-button continue-game">Continue to Full Game</button>
+          <button class="victory-button close-victory">Keep Exploring Tutorial</button>
         </div>
         
         <div class="victory-footer">
-          <p>🎊 Level 3 Complete - Mission Accomplished! 🎊</p>
+          <p>🎊 Tutorial Complete - You're Ready for Adventure! 🎊</p>
           <div class="celebration-emojis">
-            <span>🚓</span><span>🐸</span><span>⚖️</span><span>🏆</span>
-            <span>✨</span><span>🎉</span><span>🏆</span><span>⭐</span>
+            <span>🦆</span><span>🌱</span><span>💝</span><span>🏆</span>
+            <span>✨</span><span>🎉</span><span>🌟</span><span>⭐</span>
           </div>
         </div>
       </div>
     `;
 
-    // CSS styles are now handled by css/victory.css
     document.body.appendChild(this.victoryElement);
     this.hide();
     this.setupEventListeners();
   }
 
   setupEventListeners() {
-    // Restart game button
+    // Continue to full game button
     this.victoryElement
-      .querySelector(".restart-game")
+      .querySelector(".continue-game")
       .addEventListener("click", () => {
-        if (
-          confirm(
-            "Are you sure you want to start a new game? This will reset all progress."
-          )
-        ) {
-          this.gameEngine.reset();
-          this.hide();
-          // Hide victory button and reset unlock status on game reset
-          this.isUnlocked = false;
-          this.victoryButton.style.display = "none";
-        }
+        // For now, this could lead to a credits screen or placeholder
+        alert(
+          "Thanks for playing the tutorial! The full game is coming soon. 🎮"
+        );
+        // Could implement level manager transition to credits here
+      });
+
+    // Close victory screen button
+    this.victoryElement
+      .querySelector(".close-victory")
+      .addEventListener("click", () => {
+        this.hide();
       });
   }
 
-  // NEW: Load trophy image
-  async loadTrophyImage() {
-    try {
-      // Use the game's asset manager to load the trophy image
-      const trophyImage = await this.gameEngine.renderer.assetManager.loadImage(
-        "items/item_trophy",
-        "item"
-      );
-
-      const trophyImageElement = this.victoryElement.querySelector(
-        ".victory-trophy-image"
-      );
-      if (trophyImageElement && trophyImage) {
-        if (trophyImage.src.includes("data:")) {
-          // Canvas-generated placeholder
-          trophyImageElement.style.backgroundImage = `url(${trophyImage.src})`;
-        } else {
-          // Real image
-          trophyImageElement.style.backgroundImage = `url(${trophyImage.src})`;
-        }
-
-        console.log("🏆 Trophy image loaded successfully");
-      }
-    } catch (error) {
-      console.warn(
-        "🏆 Failed to load trophy image, using emoji fallback:",
-        error
-      );
-
-      // Fallback to emoji if image fails
-      const trophyImageElement = this.victoryElement.querySelector(
-        ".victory-trophy-image"
-      );
-      if (trophyImageElement) {
-        trophyImageElement.innerHTML = "🏆";
-        trophyImageElement.style.fontSize = "80px";
-        trophyImageElement.style.display = "flex";
-        trophyImageElement.style.alignItems = "center";
-        trophyImageElement.style.justifyContent = "center";
-      }
-    }
-  }
-
-  // NEW: Modified to support cutscene integration
   show(withCutscene = false) {
     if (this.isShowing) return;
 
-    console.log(
-      `🎉 Victory screen show called (withCutscene: ${withCutscene})`
-    );
+    console.log("🎉 Tutorial victory screen showing");
 
-    // If cutscene is requested and available AND this is the first time showing victory
-    if (
-      withCutscene &&
-      !this.isUnlocked &&
-      this.gameEngine.cutsceneManager &&
-      this.gameEngine.cutsceneManager.hasCutscene("level3_victory")
-    ) {
-      console.log("🎬 Playing victory cutscene before showing screen");
-
-      this.gameEngine.cutsceneManager.playCutscene("level3_victory", () => {
-        // Show victory screen after cutscene completes
-        this.showVictoryScreen();
-      });
-    } else {
-      // Show victory screen immediately (for reopening or no cutscene)
-      this.showVictoryScreen();
+    // If this is the first time showing (tutorial just completed)
+    if (!this.isUnlocked) {
+      this.isUnlocked = true;
+      this.victoryButton.style.display = "block";
+      this.playVictorySequence();
     }
+
+    this.showVictoryScreen();
   }
 
-  // NEW: Separated the actual screen display logic
   async showVictoryScreen() {
     if (this.isShowing) return;
 
     this.isShowing = true;
-
-    // Load trophy image before showing
-    await this.loadTrophyImage();
 
     // Update stats
     this.updateStats();
@@ -237,49 +178,42 @@ class VictoryScreen {
     // Show the screen
     this.victoryElement.classList.add("visible");
 
-    // Prevent body scrollbars by setting overflow hidden on both html and body
+    // Prevent body scrolling
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
-    // Only play victory sequence on first show (when unlocked)
-    if (!this.isUnlocked) {
-      this.playVictorySequence();
-      this.isUnlocked = true; // Mark as unlocked
-      this.victoryButton.style.display = "block"; // Show reopen button
+    // Play entrance animation
+    const content = this.victoryElement.querySelector(".victory-content");
+    gsap.fromTo(
+      content,
+      { scale: 0.8, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+    );
 
-      // Play victory sound
-      if (this.gameEngine.renderer?.assetManager) {
-        this.gameEngine.renderer.assetManager.playSound(
-          "effects/achievement.mp3",
-          0.8
-        );
-      }
-    } else {
-      // Just show without animations for reopened victory screen
-      const content = this.victoryElement.querySelector(".victory-content");
-      gsap.fromTo(
-        content,
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
+    // Play victory sound
+    if (this.gameEngine.renderer?.assetManager) {
+      this.gameEngine.renderer.assetManager.playSound(
+        "effects/achievement.mp3",
+        0.8
       );
     }
 
-    console.log("🎉 Victory screen shown!");
+    console.log("🎉 Tutorial victory screen shown!");
   }
 
   hide() {
     this.isShowing = false;
     this.victoryElement.classList.remove("visible");
 
-    // Restore body scrolling on both html and body
+    // Restore body scrolling
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
   }
 
   updateStats() {
     // Get game statistics
-    const gameStats = this.gameEngine.gameState.getStats();
     const explorationStats = this.gameEngine.explorationDrawer.getStats();
+    const achievementStats = this.gameEngine.achievementManager.getStats();
 
     // Update character count
     const charactersMet = this.victoryElement.querySelector("#characters-met");
@@ -293,10 +227,12 @@ class VictoryScreen {
       itemsFound.textContent = explorationStats.items.discovered;
     }
 
-    // Update play time
-    const playTime = this.victoryElement.querySelector("#play-time");
-    if (playTime) {
-      playTime.textContent = gameStats.playTime;
+    // Update achievements count
+    const achievementsEarned = this.victoryElement.querySelector(
+      "#achievements-earned"
+    );
+    if (achievementsEarned) {
+      achievementsEarned.textContent = achievementStats.unlocked;
     }
   }
 
@@ -407,15 +343,14 @@ class VictoryScreen {
       );
     }
 
-    // Enhanced confetti effect with trophy theme
-    this.createTrophyConfetti();
+    // Confetti effect
+    this.createTutorialConfetti();
   }
 
-  createTrophyConfetti() {
+  createTutorialConfetti() {
     const colors = ["#FFD700", "#4CAF50", "#2196F3", "#FF9800", "#E91E63"];
-    const emojis = ["🐸", "🚓", "⚖️", "🏆", "⭐", "🎉", "✨", "👑", "🥇"];
+    const emojis = ["🦆", "🌱", "💝", "🏆", "⭐", "🎉", "✨", "🌟"];
 
-    // Better confetti container positioning and overflow management
     const confettiContainer = document.createElement("div");
     confettiContainer.className = "victory-confetti-container";
     confettiContainer.style.cssText = `
@@ -431,20 +366,19 @@ class VictoryScreen {
 
     this.victoryElement.appendChild(confettiContainer);
 
-    for (let i = 0; i < 35; i++) {
-      // More confetti for victory!
+    for (let i = 0; i < 25; i++) {
       setTimeout(() => {
         const confetti = document.createElement("div");
-        const useEmoji = Math.random() > 0.6;
+        const useEmoji = Math.random() > 0.5;
 
         if (useEmoji) {
           confetti.textContent =
             emojis[Math.floor(Math.random() * emojis.length)];
-          confetti.style.fontSize = "24px";
+          confetti.style.fontSize = "20px";
         } else {
           confetti.style.cssText = `
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background-color: ${
               colors[Math.floor(Math.random() * colors.length)]
             };
@@ -462,7 +396,6 @@ class VictoryScreen {
 
         confettiContainer.appendChild(confetti);
 
-        // Better confetti animation with proper cleanup
         gsap.to(confetti, {
           y: window.innerHeight + 50,
           x: `+=${Math.random() * 200 - 100}`,
@@ -475,39 +408,35 @@ class VictoryScreen {
             }
           },
         });
-      }, i * 80); // Faster confetti spawn
+      }, i * 100);
     }
 
-    // Clean up confetti container after all animations with safety check
+    // Clean up confetti container
     setTimeout(() => {
       if (confettiContainer && confettiContainer.parentNode) {
         confettiContainer.parentNode.removeChild(confettiContainer);
       }
-    }, 12000);
+    }, 10000);
   }
 
-  // Check if victory conditions are met - for Level 3 completion
+  // Check if tutorial victory should trigger
   static shouldTriggerVictory(achievementManager) {
-    // Check if we're on Level 3 and have the completion achievement
-    return (
-      achievementManager.gameEngine.levelManager?.currentLevel === 3 &&
-      achievementManager.unlockedAchievements.has(SPILLED_HIS_GUTS)
-    );
+    return achievementManager.isTutorialComplete();
   }
 
-  // Check if victory has been unlocked (for external use)
+  // Check if victory has been unlocked
   isVictoryUnlocked() {
     return this.isUnlocked;
   }
 
-  // Force unlock victory (for debugging or manual triggers)
+  // Force unlock victory (for debugging)
   forceUnlock() {
     this.isUnlocked = true;
     this.victoryButton.style.display = "block";
   }
 
   destroy() {
-    // Restore body overflow when destroying
+    // Restore body overflow
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
 
@@ -515,11 +444,10 @@ class VictoryScreen {
       this.victoryElement.parentNode.removeChild(this.victoryElement);
     }
 
-    // Clean up victory button
     if (this.victoryButton && this.victoryButton.parentNode) {
       this.victoryButton.parentNode.removeChild(this.victoryButton);
     }
 
-    console.log("🗑️ Victory screen destroyed");
+    console.log("🗑️ Tutorial victory screen destroyed");
   }
 }

@@ -1,4 +1,4 @@
-// js/ui/StartScreen.js - Main menu/start screen for Anxiety Minotaur
+// js/ui/StartScreen.js - Tutorial start screen for Anxiety Minotaur
 
 class StartScreen {
   constructor(gameEngine) {
@@ -7,12 +7,11 @@ class StartScreen {
     this.playButton = null;
     this.isShowing = false;
     this.backgroundImage = null;
-    this.playButtonImage = null;
 
     this.createStartScreenUI();
     this.setupEventListeners();
 
-    console.log("🎮 Start Screen initialized (Anxiety Minotaur)");
+    console.log("🎮 Start Screen initialized (Anxiety Minotaur Tutorial)");
   }
 
   createStartScreenUI() {
@@ -25,49 +24,48 @@ class StartScreen {
         <div class="start-screen-overlay">
           <div class="game-title">
             <h1>Anxiety Minotaur</h1>
-            <h2>A Social Puzzle Adventure</h2>
           </div>
           
           <div class="start-screen-buttons">
             <button class="start-button play-game" id="play-button">
-              <span class="button-text">Start Adventure</span>
+              <span class="button-text">Start</span>
             </button>
             
             <div class="start-screen-info">
-              <h3>🎯 Your Mission</h3>
-              <p>You're a socially anxious minotaur preparing your labyrinth for an incoming adventurer!</p>
+              <h3>🎯 Objective</h3>
+              <p>Your gardener neighbor needs help identifying some seeds that were delivered today. Can you help them figure out what type of plants they are?</p>
               
-              <h3>🎮 How to Play</h3>
-              <p><strong>Level 1:</strong> Explore your home, talk to duck, get ready 🏠</p>
-              <p><strong>Level 2:</strong> Recruit 2 monsters + 1 trap maker, learn adventurer's stats 🧩</p>
-              <p><strong>Level 3:</strong> Watch your strategy play out! 🎭</p>
+              <h3>🎮 What You'll Learn</h3>
+              <p><strong>Social Energy:</strong> Talking to others uses energy, but your duck companion always helps you recharge! 🦆</p>
+              <p><strong>Exploration:</strong> Examine items and explore different rooms to find clues 🔍</p>
+              <p><strong>Problem Solving:</strong> Use what you discover to help your neighbor with their gardening problem 🌱</p>
               
-              <h3>💝 Social Energy System</h3>
-              <p>• Conversations cost energy (Level 2 only)</p>
-              <p>• Talk to 🦆 duck to recharge anytime!</p>
-              <p>• Plan your conversations wisely</p>
               
-              <h3>🔍 Finding Clues</h3>
-              <p>• Examine items to learn what NPCs want</p>
-              <p>• Match items to personalities for recruitment</p>
-              <p>• Visit information dealers for adventurer intel</p>
+              <h3>💝 Playing Tips</h3>
+              <p>• Click on characters and items to interact with them</p>
+              <p>• Your duck companion never judges and always helps restore your energy</p>
+              <p>• Take your time - there's no rush to complete the tutorial</p>
+              <p>• Read item descriptions carefully for helpful clues</p>
               
               <div class="controls-hint">
-                <p>👆 Click characters and items to interact</p>
-                <p>🎹 Press F1 for Discovery Journal, F2 for Achievements</p>
+                <h3>🎹 Controls</h3>
+                <p><strong>Mouse:</strong> Click to interact with characters and items</p>
+                <p><strong>1, 2, 3:</strong> Quick navigation between rooms</p>
+                <p><strong>F1:</strong> Discovery Journal (track your progress)</p>
+                <p><strong>F2:</strong> Achievements (see your accomplishments)</p>
+                <p><strong>ESC:</strong> Audio settings</p>
               </div>
             </div>
           </div>
           
           <div class="start-screen-footer">
-            <p>Made with 🐂 and 🦆 for puzzle lovers</p>
-            <div class="version-info">Anxiety Minotaur v1.0</div>
+            <p>A demo for a compassionate social puzzle about helping others and managing anxiety 💝</p>
           </div>
         </div>
       </div>
     `;
 
-    // Add CSS styles
+    // Enhanced CSS styles for tutorial
     const style = document.createElement("style");
     style.textContent = `
       .start-screen {
@@ -114,10 +112,10 @@ class StartScreen {
         z-index: 2;
         text-align: center;
         color: white;
-        max-width: 700px;
-        max-height: 90vh;
-        padding: 40px;
-        background: rgba(0, 0, 0, 0.8);
+        max-width: 800px;
+        max-height: 95vh;
+        padding: 30px;
+        background: rgba(0, 0, 0, 0.85);
         border-radius: 20px;
         backdrop-filter: blur(10px);
         border: 2px solid rgba(139, 69, 19, 0.4);
@@ -126,35 +124,24 @@ class StartScreen {
       }
 
       .game-title h1 {
-        font-size: 3.5rem;
-        margin: 0 0 10px 0;
+        font-size: 3.2rem;
         color: #D2691E;
         text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
         font-weight: bold;
         letter-spacing: 2px;
       }
 
-      .game-title h2 {
-        font-size: 1.8rem;
-        margin: 0 0 30px 0;
-        color: #F4A460;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        font-weight: normal;
-        letter-spacing: 1px;
-        font-style: italic;
-      }
-
       .start-screen-buttons {
-        margin: 30px 0;
+        margin: 10px 0;
       }
 
       .start-button {
-        background: linear-gradient(45deg, #D2691E, #F4A460);
+        background: linear-gradient(45deg, #228B22, #32CD32);
         border: none;
         padding: 0;
         border-radius: 15px;
         cursor: pointer;
-        font-size: 24px;
+        font-size: 22px;
         font-weight: bold;
         color: white;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -162,18 +149,18 @@ class StartScreen {
         margin: 15px;
         overflow: hidden;
         position: relative;
-        min-width: 220px;
-        min-height: 80px;
+        min-width: 200px;
+        min-height: 70px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 6px 20px rgba(210, 105, 30, 0.4);
+        box-shadow: 0 6px 20px rgba(34, 139, 34, 0.4);
       }
 
       .start-button:hover {
         transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 8px 25px rgba(210, 105, 30, 0.6);
-        background: linear-gradient(45deg, #CD853F, #DEB887);
+        box-shadow: 0 8px 25px rgba(34, 139, 34, 0.6);
+        background: linear-gradient(45deg, #32CD32, #90EE90);
       }
 
       .start-button:active {
@@ -201,20 +188,20 @@ class StartScreen {
       }
 
       .start-screen-info {
-        margin: 30px 0;
+  margin: 10px 0;
         font-size: 14px;
         line-height: 1.6;
         color: #E8F5E8;
         text-align: left;
-        max-width: 500px;
+        max-width: 700px;
         margin-left: auto;
         margin-right: auto;
       }
 
       .start-screen-info h3 {
-        color: #D2691E;
-        margin: 20px 0 10px 0;
-        font-size: 18px;
+        color: #32CD32;
+        margin: 5px 0 8px 0;
+        font-size: 16px;
         font-weight: bold;
         text-align: center;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
@@ -222,101 +209,127 @@ class StartScreen {
 
       .start-screen-info p {
         margin: 8px 0;
+        text-align: center;
+      }
+
+      .tutorial-benefits {
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(50, 205, 50, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(50, 205, 50, 0.3);
+      }
+
+      .tutorial-benefits h3 {
+        color: #90EE90;
+        margin-bottom: 10px;
+      }
+
+      .tutorial-benefits p {
+        font-size: 13px;
+        line-height: 1.5;
+        font-style: italic;
       }
 
       .controls-hint {
-        margin-top: 20px;
-        padding: 15px;
+        padding: 7px;
         background: rgba(210, 105, 30, 0.2);
         border-radius: 8px;
         border: 1px solid rgba(210, 105, 30, 0.4);
       }
 
+      .controls-hint h3 {
+        color: #DEB887;
+        margin-bottom: 10px;
+      }
+
       .controls-hint p {
         margin: 5px 0;
-        font-size: 13px;
+        font-size: 12px;
         color: #DEB887;
       }
 
       .start-screen-footer {
-        margin-top: 30px;
+        margin-top: 25px;
         font-size: 14px;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.8);
       }
 
       .version-info {
-        margin-top: 10px;
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.5);
+        margin-top: 8px;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.6);
+        font-style: italic;
       }
 
       /* Mobile responsive */
       @media (max-width: 768px) {
         .start-screen-overlay {
-          max-width: 90%;
-          padding: 30px 20px;
-          max-height: 95vh;
+          max-width: 95%;
+          padding: 25px 15px;
+          max-height: 98vh;
         }
 
         .game-title h1 {
-          font-size: 2.8rem;
+          font-size: 2.5rem;
         }
 
-        .game-title h2 {
-          font-size: 1.5rem;
-        }
 
         .start-button {
-          font-size: 20px;
-          min-width: 180px;
-          min-height: 70px;
+          font-size: 18px;
+          min-width: 160px;
+          min-height: 60px;
         }
 
         .start-screen-info {
-          font-size: 13px;
+          font-size: 12px;
         }
 
         .start-screen-info h3 {
-          font-size: 16px;
-          margin: 15px 0 8px 0;
+          font-size: 14px;
+          margin: 5px 0 6px 0;
+        }
+
+        .tutorial-benefits {
+          padding: 12px;
         }
 
         .controls-hint {
-          font-size: 12px;
+          padding: 12px;
         }
       }
 
       @media (max-width: 480px) {
         .start-screen-overlay {
-          padding: 20px 15px;
+          padding: 20px 12px;
         }
 
         .game-title h1 {
-          font-size: 2.2rem;
+          font-size: 2rem;
         }
 
         .game-title h2 {
-          font-size: 1.2rem;
+          font-size: 1.1rem;
         }
 
         .start-screen-info {
-          font-size: 12px;
+          font-size: 11px;
         }
 
         .start-screen-info h3 {
-          font-size: 15px;
+          font-size: 13px;
         }
       }
 
-      /* Animation for screen entrance */
+      /* Enhanced animations */
       .start-screen-overlay {
-        animation: slideIn 1s ease-out;
+        animation: tutorialSlideIn 1.2s ease-out;
       }
 
-      @keyframes slideIn {
+      @keyframes tutorialSlideIn {
         from {
           opacity: 0;
-          transform: translateY(50px) scale(0.9);
+          transform: translateY(30px) scale(0.95);
         }
         to {
           opacity: 1;
@@ -324,21 +337,21 @@ class StartScreen {
         }
       }
 
-      /* Floating animation for buttons */
+      /* Gentle floating animation for tutorial button */
       .start-button {
-        animation: float 3s ease-in-out infinite;
+        animation: tutorialFloat 4s ease-in-out infinite;
       }
 
-      @keyframes float {
+      @keyframes tutorialFloat {
         0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-5px); }
+        50% { transform: translateY(-3px); }
       }
 
       .start-button:hover {
         animation: none;
       }
 
-      /* Scrollbar styling for mobile */
+      /* Enhanced scrollbar for mobile */
       .start-screen-overlay::-webkit-scrollbar {
         width: 6px;
       }
@@ -349,12 +362,12 @@ class StartScreen {
       }
 
       .start-screen-overlay::-webkit-scrollbar-thumb {
-        background: rgba(210, 105, 30, 0.5);
+        background: rgba(50, 205, 50, 0.5);
         border-radius: 3px;
       }
 
       .start-screen-overlay::-webkit-scrollbar-thumb:hover {
-        background: rgba(210, 105, 30, 0.7);
+        background: rgba(50, 205, 50, 0.7);
       }
     `;
 
@@ -394,7 +407,7 @@ class StartScreen {
   async show() {
     if (this.isShowing) return;
 
-    console.log("🎮 Showing start screen (Anxiety Minotaur)");
+    console.log("🎮 Showing tutorial start screen");
     this.isShowing = true;
 
     // Load background image
@@ -412,7 +425,7 @@ class StartScreen {
 
     // Play background music if available
     if (this.gameEngine.audioManager) {
-      console.log("🎵 Start screen audio ready");
+      console.log("🎵 Tutorial start screen audio ready");
     }
   }
 
@@ -434,7 +447,9 @@ class StartScreen {
       await new Promise((resolve, reject) => {
         backgroundImage.onload = resolve;
         backgroundImage.onerror = () => {
-          console.warn("🎮 Start screen background not found, using fallback");
+          console.warn(
+            "🎮 Tutorial start screen background not found, using fallback"
+          );
           resolve(); // Continue even if image fails
         };
       });
@@ -446,14 +461,14 @@ class StartScreen {
       if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
         backgroundElement.style.backgroundImage = `url(${backgroundImage.src})`;
       } else {
-        // Fallback gradient background - minotaur themed
+        // Fallback gradient background - tutorial themed
         backgroundElement.style.background =
-          "linear-gradient(135deg, #8B4513 0%, #D2691E 25%, #F4A460 50%, #DEB887 75%, #8B4513 100%)";
+          "linear-gradient(135deg, #228B22 0%, #32CD32 25%, #90EE90 50%, #98FB98 75%, #228B22 100%)";
       }
 
-      console.log("🎮 Start screen assets loaded");
+      console.log("🎮 Tutorial start screen assets loaded");
     } catch (error) {
-      console.warn("🎮 Error loading start screen assets:", error);
+      console.warn("🎮 Error loading tutorial start screen assets:", error);
     }
   }
 
@@ -475,7 +490,7 @@ class StartScreen {
     // Animate content in
     gsap.fromTo(
       content,
-      { scale: 0.8, opacity: 0 },
+      { scale: 0.9, opacity: 0 },
       { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }
     );
 
@@ -495,13 +510,13 @@ class StartScreen {
         "-=0.3"
       );
 
-    // Add sparkle effect
-    this.createSparkleEffect();
+    // Add gentle sparkle effect for tutorial
+    this.createTutorialSparkles();
   }
 
-  createSparkleEffect() {
+  createTutorialSparkles() {
     const sparkleContainer = document.createElement("div");
-    sparkleContainer.className = "sparkle-container";
+    sparkleContainer.className = "tutorial-sparkle-container";
     sparkleContainer.style.cssText = `
       position: absolute;
       top: 0;
@@ -517,22 +532,22 @@ class StartScreen {
       .querySelector(".start-screen-content")
       .appendChild(sparkleContainer);
 
-    // Create minotaur-themed sparkles
-    for (let i = 0; i < 20; i++) {
+    // Create gentle tutorial-themed sparkles
+    for (let i = 0; i < 15; i++) {
       setTimeout(() => {
         const sparkle = document.createElement("div");
-        const sparkleOptions = ["✨", "🌟", "⭐", "💫", "🔮", "🏛️", "🗿"];
+        const sparkleOptions = ["🌱", "🦆", "💝", "⭐", "✨", "🏠", "🌟"];
         sparkle.textContent =
           sparkleOptions[Math.floor(Math.random() * sparkleOptions.length)];
         sparkle.style.cssText = `
           position: absolute;
-          font-size: ${Math.random() * 20 + 15}px;
+          font-size: ${Math.random() * 16 + 12}px;
           left: ${Math.random() * 100}%;
           top: ${Math.random() * 100}%;
           pointer-events: none;
           user-select: none;
           color: ${
-            ["#D2691E", "#F4A460", "#DEB887", "#CD853F"][
+            ["#32CD32", "#90EE90", "#98FB98", "#DEB887"][
               Math.floor(Math.random() * 4)
             ]
           };
@@ -540,27 +555,27 @@ class StartScreen {
 
         sparkleContainer.appendChild(sparkle);
 
-        // Animate sparkle
+        // Gentle animate sparkle
         gsap.fromTo(
           sparkle,
           { opacity: 0, scale: 0, rotation: 0 },
           {
             opacity: 1,
-            scale: 1.5,
-            rotation: 360,
-            duration: 2,
+            scale: 1.2,
+            rotation: 180,
+            duration: 3,
             ease: "power2.out",
             onComplete: () => {
               gsap.to(sparkle, {
                 opacity: 0,
                 scale: 0,
-                duration: 1,
+                duration: 1.5,
                 onComplete: () => sparkle.remove(),
               });
             },
           }
         );
-      }, i * 150);
+      }, i * 200);
     }
 
     // Clean up sparkle container after animations
@@ -568,13 +583,13 @@ class StartScreen {
       if (sparkleContainer.parentNode) {
         sparkleContainer.parentNode.removeChild(sparkleContainer);
       }
-    }, 8000);
+    }, 10000);
   }
 
   async startGame() {
     if (!this.isShowing) return;
 
-    console.log("🎮 Starting Anxiety Minotaur from start screen");
+    console.log("🎮 Starting Anxiety Minotaur Tutorial from start screen");
 
     // Play click sound
     if (this.gameEngine.audioManager) {
@@ -597,8 +612,8 @@ class StartScreen {
     await new Promise((resolve) => {
       gsap.to(content, {
         opacity: 0,
-        scale: 0.8,
-        y: -50,
+        scale: 0.9,
+        y: -30,
         duration: 0.6,
         ease: "power2.in",
         onComplete: () => {
@@ -608,7 +623,7 @@ class StartScreen {
       });
     });
 
-    // Start the actual game
+    // Start the tutorial
     await this.gameEngine.startGameplay();
   }
 
@@ -623,7 +638,6 @@ class StartScreen {
       isShowing: this.isShowing,
       assetsLoaded: {
         background: !!this.backgroundImage,
-        playButton: !!this.playButtonImage,
       },
     };
   }
@@ -637,6 +651,6 @@ class StartScreen {
       this.startScreenElement.parentNode.removeChild(this.startScreenElement);
     }
 
-    console.log("🗑️ Start screen destroyed (Anxiety Minotaur)");
+    console.log("🗑️ Tutorial start screen destroyed");
   }
 }

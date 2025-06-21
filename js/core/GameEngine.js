@@ -1,4 +1,4 @@
-// js/core/GameEngine.js - Updated with EnergyUI and KeywordGenerationManager
+// js/core/GameEngine.js - Tutorial focused game engine for Anxiety Minotaur
 
 class GameEngine {
   constructor() {
@@ -25,21 +25,16 @@ class GameEngine {
     this.audioManager = this.renderer.assetManager.getAudioManager();
     this.audioSettingsUI = new AudioSettingsUI(this.audioManager);
 
-    // FIXED: Initialize EnergyUI
+    // Initialize EnergyUI
     this.energyUI = new EnergyUI(this);
 
     this.isReady = false;
     this.currentLevel = CONFIG.DEFAULT_LEVEL;
     this.gameStarted = false;
 
-    // Set up the callback for when Level 3 is completed (final victory)
-    this.achievementManager.setAllAchievementsUnlockedCallback(() => {
-      this.handleVictory();
-    });
-
-    // Set up the callback for game over condition
-    this.achievementManager.setGameOverCallback((achievementId) => {
-      this.handleGameOver(achievementId);
+    // FIXED: Set up tutorial completion callback
+    this.achievementManager.setTutorialCompleteCallback(() => {
+      this.handleTutorialVictory();
     });
 
     // Set up audio event listeners
@@ -87,30 +82,16 @@ class GameEngine {
         energy: () => this.gameState.socialEnergy,
         resetGame: () => this.reset(),
         loadLocation: (locationKey) => this.loadLocation(locationKey),
-        skipToLevel: (level) => this.skipToLevel(level),
+        keywordManager: this.keywordGenerationManager,
+        showKeywords: () => this.keywordGenerationManager.debugShowKeywords(),
       };
       console.log("🐛 Debug mode enabled. Access via window.gameDebug");
     }
   }
 
-  // Skip to a specific level (development helper)
-  async skipToLevel(level) {
-    if (!CONFIG.DEBUG) return;
-
-    console.log(`🔧 DEV: Skipping to level ${level}`);
-    this.currentLevel = level;
-    this.gameState.currentLevel = level;
-    this.gameState.initializeForLevel(level);
-
-    await this.levelManager.loadLevel(level);
-    this.gameState.save();
-
-    console.log(`✅ DEV: Jumped to level ${level}`);
-  }
-
   // Main game initialization
   async start() {
-    console.log("🎮 Starting game engine...");
+    console.log("🎮 Starting tutorial game engine...");
     this.setupDevelopmentEnvironment();
 
     // Set up asset manager progress callback
@@ -120,15 +101,15 @@ class GameEngine {
 
     try {
       // Preload all assets (now includes audio)
-      console.log("📦 Preloading assets...");
+      console.log("📦 Preloading tutorial assets...");
       await this.renderer.assetManager.preloadAllAssets();
 
-      // ALWAYS show start screen first to ensure audio interaction
+      // Show start screen first to ensure audio interaction
       console.log("🎮 Showing start screen (required for audio)");
       this.loadingScreen.hide();
       await this.startScreen.show();
     } catch (error) {
-      console.error("❌ Failed to start game:", error);
+      console.error("❌ Failed to start tutorial:", error);
       this.handleStartupError(error);
     }
   }
@@ -136,11 +117,11 @@ class GameEngine {
   // Separated gameplay initialization from start()
   async startGameplay() {
     if (this.gameStarted) {
-      console.log("⚠️ Gameplay already started");
+      console.log("⚠️ Tutorial already started");
       return;
     }
 
-    console.log("🎮 Starting gameplay...");
+    console.log("🎮 Starting tutorial gameplay...");
     this.gameStarted = true;
 
     try {
@@ -153,81 +134,43 @@ class GameEngine {
       const gameLoaded = this.gameState.load();
 
       if (gameLoaded) {
-        // Load saved level and location
-        if (this.gameState.currentLevel) {
-          console.log(`Loading saved level: ${this.gameState.currentLevel}`);
-          this.currentLevel = this.gameState.currentLevel;
-
-          try {
-            await this.levelManager.loadLevel(this.gameState.currentLevel);
-          } catch (error) {
-            console.warn("Level loading failed, using fallback approach");
-          }
-
-          this.currentLocation = this.gameState.currentLocation;
-          console.log(`Loading saved location: ${this.currentLocation}`);
-        } else {
-          console.log(
-            `Legacy save detected, starting at Level ${CONFIG.DEFAULT_LEVEL}`
-          );
-          this.currentLocation =
-            this.gameState.currentLocation || CONFIG.DEFAULT_LOCATION;
-          this.currentLevel = CONFIG.DEFAULT_LEVEL;
-
-          try {
-            await this.levelManager.loadLevel(CONFIG.DEFAULT_LEVEL);
-          } catch (error) {
-            console.warn(
-              `Level ${CONFIG.DEFAULT_LEVEL} loading failed, using direct location approach`
-            );
-          }
-        }
+        // Load saved tutorial state
+        console.log(`Loading saved tutorial progress`);
+        this.currentLocation =
+          this.gameState.currentLocation || CONFIG.DEFAULT_LOCATION;
 
         // Sync achievements with the achievement manager
         this.achievementManager.syncFromGameState(
           this.gameState.unlockedAchievements
         );
       } else {
-        // NEW GAME: Start with configured default level
-        console.log(
-          `Starting new game at Level ${CONFIG.DEFAULT_LEVEL} (${CONFIG.DEFAULT_LOCATION})`
-        );
+        // NEW TUTORIAL: Start fresh
+        console.log(`Starting new tutorial at ${CONFIG.DEFAULT_LOCATION}`);
         this.currentLocation = CONFIG.DEFAULT_LOCATION;
-        this.currentLevel = CONFIG.DEFAULT_LEVEL;
-
-        try {
-          await this.levelManager.loadLevel(CONFIG.DEFAULT_LEVEL);
-        } catch (error) {
-          console.warn("Level manager failed, using direct approach");
-        }
-
-        this.gameState.currentLevel = CONFIG.DEFAULT_LEVEL;
         this.gameState.currentLocation = CONFIG.DEFAULT_LOCATION;
       }
 
-      // Initialize game state for current level
-      this.gameState.initializeForLevel(this.currentLevel);
+      // Initialize game state for tutorial
+      this.gameState.initializeForLevel(1);
 
       // Set up event listeners for cleanup
       this.setupEventListeners();
 
       // Mark as ready BEFORE loading location to avoid infinite loop
       this.isReady = true;
-      console.log("✅ Game initialization complete!");
+      console.log("✅ Tutorial initialization complete!");
 
       // Load the current location
       await this.loadLocation(this.currentLocation);
 
-      // Start background music for current level
-      console.log(
-        `🎵 Starting background music for level ${this.currentLevel}`
-      );
-      this.playBackgroundMusic(this.currentLevel);
+      // Start background music for tutorial
+      console.log("🎵 Starting background music for tutorial");
+      this.playBackgroundMusic(1);
 
       // Save initial state
       this.gameState.save();
     } catch (error) {
-      console.error("❌ Failed to start gameplay:", error);
+      console.error("❌ Failed to start tutorial gameplay:", error);
       this.handleStartupError(error);
     }
   }
@@ -250,8 +193,8 @@ class GameEngine {
         max-width: 500px;
         z-index: 10000;
       ">
-        <h2>🚨 Game Loading Error</h2>
-        <p>Sorry, there was a problem starting the game.</p>
+        <h2>🚨 Tutorial Loading Error</h2>
+        <p>Sorry, there was a problem starting the tutorial.</p>
         <p><strong>Error:</strong> ${error.message}</p>
         <button onclick="location.reload()" style="
           background: #4CAF50; 
@@ -271,10 +214,10 @@ class GameEngine {
     document.addEventListener("keydown", (e) => {
       if (!this.isReady) return;
 
-      // Location navigation shortcuts (1-9)
+      // Location navigation shortcuts (1-3 for tutorial)
       if (
         e.key >= "1" &&
-        e.key <= "9" &&
+        e.key <= "3" &&
         !this.conversationManager.isActive()
       ) {
         const locationIndex = parseInt(e.key) - 1;
@@ -285,7 +228,7 @@ class GameEngine {
       if (e.key === "a" || e.key === "A") {
         if (!this.conversationManager.isActive()) {
           e.preventDefault();
-          this.achievementManager.toggleAchievementPanel();
+          this.achievementManager.showAchievementPanel();
         }
       }
 
@@ -307,11 +250,11 @@ class GameEngine {
 
   async loadLocation(locationKey) {
     if (!this.isReady) {
-      console.warn("🚫 Game not ready, cannot load location");
+      console.warn("🚫 Tutorial not ready, cannot load location");
       return;
     }
 
-    console.log(`🗺️ Loading location directly: ${locationKey}`);
+    console.log(`🗺️ Loading tutorial location: ${locationKey}`);
 
     // Play location change sound
     this.playSoundEffect("locationChange", 0.35);
@@ -323,16 +266,16 @@ class GameEngine {
       // Get location data
       const locationData = locations[locationKey];
       if (!locationData) {
-        throw new Error(`Location ${locationKey} not found`);
+        throw new Error(`Tutorial location ${locationKey} not found`);
       }
 
-      console.log(`📍 Location data:`, locationData);
+      console.log(`📍 Tutorial location data:`, locationData);
 
       // Update current location
       this.currentLocation = locationKey;
       this.gameState.currentLocation = locationKey;
 
-      // FIXED: Only pass locationData to renderLocation (remove locationKey parameter)
+      // Render the location
       await this.renderer.renderLocation(locationData);
 
       // Update navigation
@@ -341,7 +284,7 @@ class GameEngine {
       // Save game state
       this.gameState.save();
 
-      console.log(`✅ Location loaded successfully: ${locationKey}`);
+      console.log(`✅ Tutorial location loaded successfully: ${locationKey}`);
 
       // Emit location changed event
       GameEvents.emit(GAME_EVENTS.LOCATION_CHANGED, {
@@ -349,7 +292,10 @@ class GameEngine {
         locationData: locationData,
       });
     } catch (error) {
-      console.error(`❌ Failed to load location ${locationKey}:`, error);
+      console.error(
+        `❌ Failed to load tutorial location ${locationKey}:`,
+        error
+      );
     }
   }
 
@@ -365,9 +311,9 @@ class GameEngine {
     });
   }
 
-  // Victory condition handling
-  handleVictory() {
-    console.log("🎉 VICTORY! All achievements unlocked!");
+  // Tutorial completion handling
+  handleTutorialVictory() {
+    console.log("🎉 TUTORIAL COMPLETE! Victory achieved!");
 
     // Disable interactions to prevent further input
     this.interactionHandler.setInteractionsEnabled(false);
@@ -377,29 +323,13 @@ class GameEngine {
       this.conversationManager.endConversation();
     }
 
-    // Show victory screen with optional cutscene
-    this.victoryScreen.show(true); // true = try to play cutscene first
+    // Show victory screen
+    this.victoryScreen.show(true); // true = try to play cutscene first if available
   }
 
-  // Game over condition handling
-  handleGameOver(achievementId) {
-    console.log(`💀 GAME OVER! Achievement triggered: ${achievementId}`);
-
-    // Disable interactions to prevent further input
-    this.interactionHandler.setInteractionsEnabled(false);
-
-    // Close any open conversations
-    if (this.conversationManager.isActive()) {
-      this.conversationManager.endConversation();
-    }
-
-    // Show game over screen
-    this.gameOverScreen.show(achievementId);
-  }
-
-  // Reset game state (keep discoveries and audio settings)
+  // Reset tutorial state (keep discoveries and audio settings)
   reset() {
-    console.log("🔄 Resetting game state...");
+    console.log("🔄 Resetting tutorial state...");
 
     // Reset core game state but preserve discoveries and audio settings
     this.gameState.reset();
@@ -412,19 +342,16 @@ class GameEngine {
 
     // Reset managers
     if (this.conversationManager) {
-      this.conversationManager.reset();
+      this.conversationManager.endConversation();
     }
 
     if (this.achievementManager) {
       this.achievementManager.reset();
     }
 
-    if (this.levelManager) {
-      this.levelManager.reset();
-    }
-
     if (this.interactionHandler) {
-      this.interactionHandler.reset();
+      this.interactionHandler.setInteractionsEnabled(true);
+      this.interactionHandler.closeAllTooltips();
     }
 
     if (this.locationNavigator) {
@@ -444,14 +371,6 @@ class GameEngine {
       this.victoryScreen.hide();
     }
 
-    if (this.gameOverScreen) {
-      this.gameOverScreen.hide();
-    }
-
-    if (this.cutsceneManager) {
-      this.cutsceneManager.reset();
-    }
-
     // NOTE: We DON'T reset explorationDrawer.discoveries to preserve discovery progress
     // NOTE: We DON'T reset audio settings to preserve user preferences
 
@@ -459,11 +378,11 @@ class GameEngine {
     this.startScreen.show();
 
     console.log(
-      `🔄 Game reset complete - showing start screen (discoveries preserved)`
+      "🔄 Tutorial reset complete - showing start screen (discoveries preserved)"
     );
   }
 
-  // Full reset including discoveries (for complete game reset)
+  // Full reset including discoveries (for complete tutorial reset)
   fullReset() {
     // Do normal reset first
     this.reset();
@@ -485,7 +404,7 @@ class GameEngine {
     }
 
     console.log(
-      "🔄 Full game reset complete - all progress and settings cleared"
+      "🔄 Full tutorial reset complete - all progress and settings cleared"
     );
   }
 
@@ -551,10 +470,6 @@ class GameEngine {
       this.victoryScreen.destroy();
     }
 
-    if (this.gameOverScreen) {
-      this.gameOverScreen.destroy();
-    }
-
     if (this.cutsceneManager) {
       this.cutsceneManager.destroy();
     }
@@ -567,17 +482,14 @@ class GameEngine {
       this.loadingScreen.destroy();
     }
 
-    // FIXED: Destroy EnergyUI
     if (this.energyUI) {
       this.energyUI.destroy();
     }
 
-    // FIXED: Destroy KeywordGenerationManager
     if (this.keywordGenerationManager) {
-      // KeywordGenerationManager doesn't have a destroy method, but clean up if needed
       this.keywordGenerationManager = null;
     }
 
-    console.log("🗑️ Game engine destroyed");
+    console.log("🗑️ Tutorial game engine destroyed");
   }
 }

@@ -1,26 +1,30 @@
-// js/data/Levels.js - Anxiety Minotaur level definitions
+// js/data/Levels.js - Tutorial level for Anxiety Minotaur
 
 const LEVELS = {
   1: {
-    name: "Home Sweet Home",
+    name: "Tutorial: Helping Your Neighbor",
     description:
-      "Prepare yourself mentally for the challenge ahead. When you're ready, tell duck it's time to start the day.",
+      "Your gardener neighbor needs help identifying some seeds. Explore your home, talk to your duck for comfort, and help solve the mystery!",
     startLocation: BEDROOM,
-    completionAchievement: READY_FOR_THE_DAY,
+    completionAchievement: TUTORIAL_COMPLETE,
     completionMessage:
-      "Time to head to the labyrinth and find the right allies!",
+      "Wonderful! You've successfully helped your neighbor and completed the tutorial!",
     locations: [BEDROOM, LIVINGROOM, GARDEN],
-    characters: [NPC_DUCK],
+    characters: [NPC_DUCK, NPC_DUCK2, TUTORIAL_PIG],
     items: [
       ITEM_DUCK,
       ITEM_MAMALETTER,
-      ITEM_MAGGLASS,
       ITEM_HELP,
+      ITEM_MAGGLASS,
+      ITEM_STARSBOOK,
+      ITEM_PAINT,
+      TUTORIAL_SEED,
+      PIG_DIG,
       YOU_IDLE,
       YOU_DUCK,
-      PIG_DIG,
-      TUTORIAL_PIG,
+      YOU_SCARED,
+      YOU_UNSURE,
     ],
-    achievements: [READY_FOR_THE_DAY, TALKED_TO_DUCK, READ_MOMS_LETTER],
+    achievements: [TALKED_TO_DUCK, READ_MOMS_LETTER, TUTORIAL_COMPLETE],
   },
 };

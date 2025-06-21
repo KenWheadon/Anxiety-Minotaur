@@ -1,4 +1,4 @@
-// js/systems/LevelManager.js - Updated to remove "Stay in Current Level" option
+// js/systems/LevelManager.js - Simplified for tutorial
 
 class LevelManager {
   constructor(gameEngine) {
@@ -6,21 +6,20 @@ class LevelManager {
     this.currentLevel = 1;
     this.levels = new Map();
     this.levelCompletionScreen = null;
-    this.finalVictoryScreen = null;
 
     this.loadLevelDefinitions();
     this.createLevelCompletionUI();
 
-    console.log("🎯 Level Manager initialized");
+    console.log("🎯 Level Manager initialized for tutorial");
   }
 
   loadLevelDefinitions() {
-    // Load level definitions from the levels data
+    // Load tutorial level definition
     Object.entries(LEVELS).forEach(([levelNum, levelData]) => {
       this.levels.set(parseInt(levelNum), levelData);
     });
 
-    console.log(`🎯 Loaded ${this.levels.size} level definitions`);
+    console.log(`🎯 Loaded ${this.levels.size} level definition(s)`);
   }
 
   createLevelCompletionUI() {
@@ -30,30 +29,31 @@ class LevelManager {
       <div class="level-completion-content">
         <div class="level-completion-header">
           <div class="completion-icon">⭐</div>
-          <h1>Level Complete!</h1>
-          <h2 class="level-completion-subtitle">Great job completing this challenge!</h2>
+          <h1>Tutorial Complete!</h1>
+          <h2 class="level-completion-subtitle">Great job helping your neighbor!</h2>
         </div>
         
         <div class="level-completion-achievement">
           <div class="achievement-showcase">
             <div class="showcase-achievement">
               <span class="achievement-emoji">🎯</span>
-              <span class="achievement-name">Achievement Unlocked</span>
+              <span class="achievement-name">Tutorial Achievement Unlocked</span>
             </div>
           </div>
         </div>
         
         <div class="level-completion-message">
-          <p class="completion-text">🌟 You've successfully completed the objectives for this level!</p>
-          <p class="next-level-hint">Ready for the next challenge?</p>
+          <p class="completion-text">🌟 You've successfully completed the tutorial objectives!</p>
+          <p class="next-level-hint">Ready to continue your adventure?</p>
         </div>
         
         <div class="level-completion-actions">
-          <button class="level-completion-button continue-to-next">Continue to Next Level</button>
+          <button class="level-completion-button continue-to-next">Continue to Full Game</button>
+          <button class="level-completion-button stay-in-tutorial">Keep Exploring Tutorial</button>
         </div>
         
         <div class="level-completion-footer">
-          <p>🎊 Level Completed! 🎊</p>
+          <p>🎊 Tutorial Completed! 🎊</p>
         </div>
       </div>
     `;
@@ -64,34 +64,47 @@ class LevelManager {
   }
 
   setupLevelCompletionListeners() {
-    // Continue to next level button - ONLY option now
+    // Continue to full game button
     this.levelCompletionScreen
       .querySelector(".continue-to-next")
       .addEventListener("click", () => {
-        this.proceedToNextLevel();
+        // For now, this shows a message about the full game
+        alert(
+          "Thanks for completing the tutorial! The full game is coming soon. 🎮"
+        );
+        this.hideLevelCompletion();
       });
 
-    // Add keyboard shortcut for convenience
+    // Stay in tutorial button
+    this.levelCompletionScreen
+      .querySelector(".stay-in-tutorial")
+      .addEventListener("click", () => {
+        this.hideLevelCompletion();
+      });
+
+    // Add keyboard shortcuts
     document.addEventListener("keydown", (e) => {
       if (this.levelCompletionScreen.classList.contains("visible")) {
-        if (e.key === "Enter" || e.key === " ") {
+        if (e.key === "Enter") {
           e.preventDefault();
-          this.proceedToNextLevel();
+          // Default to continue
+          this.levelCompletionScreen.querySelector(".continue-to-next").click();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          this.hideLevelCompletion();
         }
       }
     });
   }
 
-  // Check if current level is completed based on achievement
+  // Check if tutorial is completed based on achievement
   checkLevelCompletion(achievementId) {
     const currentLevelData = this.levels.get(this.currentLevel);
     if (!currentLevelData) return false;
 
-    // Check if this achievement completes the current level
+    // Check if this achievement completes the tutorial
     if (currentLevelData.completionAchievement === achievementId) {
-      console.log(
-        `🎯 Level ${this.currentLevel} completed with achievement: ${achievementId}`
-      );
+      console.log(`🎯 Tutorial completed with achievement: ${achievementId}`);
       this.showLevelCompletion(achievementId);
       return true;
     }
@@ -110,7 +123,7 @@ class LevelManager {
       }
     }
 
-    // Update level-specific messaging
+    // Update messaging
     const subtitle = this.levelCompletionScreen.querySelector(
       ".level-completion-subtitle"
     );
@@ -118,7 +131,7 @@ class LevelManager {
     if (subtitle && currentLevelData) {
       subtitle.textContent =
         currentLevelData.completionMessage ||
-        "Great job completing this challenge!";
+        "Great job helping your neighbor!";
     }
 
     // Show the completion screen
@@ -129,7 +142,7 @@ class LevelManager {
     // Play completion animation
     this.playLevelCompletionSequence();
 
-    console.log(`🎉 Level ${this.currentLevel} completion screen shown`);
+    console.log(`🎉 Tutorial completion screen shown`);
   }
 
   hideLevelCompletion() {
@@ -206,22 +219,6 @@ class LevelManager {
     }
   }
 
-  async proceedToNextLevel() {
-    this.hideLevelCompletion();
-
-    const nextLevel = this.currentLevel + 1;
-
-    // Check if next level exists
-    if (this.levels.has(nextLevel)) {
-      console.log(`🎯 Proceeding to level ${nextLevel}`);
-      await this.loadLevel(nextLevel);
-    } else {
-      // No more levels - show final victory
-      console.log("🏆 No more levels - showing final victory");
-      this.showFinalVictory();
-    }
-  }
-
   async loadLevel(levelNumber) {
     const levelData = this.levels.get(levelNumber);
     if (!levelData) {
@@ -234,15 +231,12 @@ class LevelManager {
     // Update current level
     this.currentLevel = levelNumber;
 
-    // Reset game state for new level
-    this.resetLevelState();
-
-    // Load the starting location for this level
-    await this.gameEngine.loadLocation(levelData.startLocation);
-
     // Update game state
     this.gameEngine.gameState.currentLevel = levelNumber;
     this.gameEngine.gameState.save();
+
+    // Load the starting location for this level
+    await this.gameEngine.loadLocation(levelData.startLocation);
 
     // Emit level changed event
     GameEvents.emit(GAME_EVENTS.LEVEL_CHANGED, {
@@ -253,52 +247,20 @@ class LevelManager {
     return true;
   }
 
-  resetLevelState() {
-    // Reset achievements for new level
-    if (this.gameEngine.achievementManager) {
-      this.gameEngine.achievementManager.resetAll();
-    }
-
-    // Reset exploration progress - BUT NOT DISCOVERIES (handled in ExplorationDrawer)
-    if (this.gameEngine.explorationDrawer) {
-      // Only reset the current level tracking, not saved discoveries
-      this.gameEngine.explorationDrawer.discoveredCharacters.clear();
-      this.gameEngine.explorationDrawer.discoveredItems.clear();
-    }
-
-    // Clear conversation histories for fresh start
-    this.gameEngine.gameState.conversationHistories.clear();
-
-    console.log("🔄 Level state reset for new level");
-  }
-
-  showFinalVictory() {
-    // Use the existing victory screen for final game completion
-    if (this.gameEngine.victoryScreen) {
-      this.gameEngine.victoryScreen.show();
-    }
-  }
-
   // Get current level data with proper references
   getCurrentLevelData() {
     const levelData = this.levels.get(this.currentLevel);
     if (!levelData) return null;
 
-    // FIXED: Build level data by referencing global objects
     return {
       ...levelData,
-      // Get actual location data for this level
       locationData: this.getLocationDataForLevel(levelData),
-      // Get actual character data for this level
       characterData: this.getCharacterDataForLevel(levelData),
-      // Get actual item data for this level
       itemData: this.getItemDataForLevel(levelData),
-      // Get actual achievement data for this level
       achievementData: this.getAchievementDataForLevel(levelData),
     };
   }
 
-  // FIXED: Get location data by reference
   getLocationDataForLevel(levelData) {
     const locationData = {};
     levelData.locations.forEach((locationKey) => {
@@ -309,7 +271,6 @@ class LevelManager {
     return locationData;
   }
 
-  // FIXED: Get character data by reference
   getCharacterDataForLevel(levelData) {
     const characterData = {};
     levelData.characters.forEach((characterKey) => {
@@ -320,7 +281,6 @@ class LevelManager {
     return characterData;
   }
 
-  // FIXED: Get item data by reference
   getItemDataForLevel(levelData) {
     const itemData = {};
     levelData.items.forEach((itemKey) => {
@@ -331,7 +291,6 @@ class LevelManager {
     return itemData;
   }
 
-  // FIXED: Get achievement data by reference
   getAchievementDataForLevel(levelData) {
     const achievementData = {};
     levelData.achievements.forEach((achievementKey) => {
@@ -342,31 +301,16 @@ class LevelManager {
     return achievementData;
   }
 
-  // Get available levels count
+  // Get total levels count
   getTotalLevels() {
     return this.levels.size;
   }
 
-  // Check if level is unlocked (for future expansion)
-  isLevelUnlocked(levelNumber) {
-    // For now, linear progression - only next level is unlocked
-    return levelNumber <= this.currentLevel;
-  }
-
-  // Save level progress
-  saveProgress() {
-    return {
-      currentLevel: this.currentLevel,
-      // Could expand to include level-specific progress data
-    };
-  }
-
-  // Load level progress
-  loadProgress(progressData) {
-    if (progressData && progressData.currentLevel) {
-      this.currentLevel = progressData.currentLevel;
-      console.log(`🎯 Loaded level progress: Level ${this.currentLevel}`);
-    }
+  // Reset for tutorial reset
+  reset() {
+    this.currentLevel = 1;
+    this.hideLevelCompletion();
+    console.log("🔄 Level manager reset to tutorial");
   }
 
   destroy() {
