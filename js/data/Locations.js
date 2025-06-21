@@ -40,7 +40,7 @@ const locations = {
   [LEVEL2_CAVE]: {
     description:
       "The cave's enterence is guarded by two beautifully crafted gargoyles, I can see the Siren's craft mark.",
-    characters: [INFO_PHIL, MON_SIREN],
+    characters: [INFO_LIB, MON_SIREN],
     items: [ITEM_SPIDER],
     locations: [LEVEL2_FOREST, LEVEL2_CRYSTALCAVE],
     background: LEVEL2_CAVE,
@@ -76,7 +76,7 @@ const locations = {
   [LEVEL2_HALL]: {
     description:
       "A bustling marketplace where deals are made and information is traded freely.",
-    characters: [ITEM_KING, NPC_SUMO],
+    characters: [NPC_SUMO],
     items: [ITEM_PIP],
     locations: [LEVEL2_OUTSIDELAB, LEVEL2_POTIONSHOP, LEVEL2_HALLINSIDE],
     background: LEVEL2_HALL,
@@ -85,7 +85,7 @@ const locations = {
   [LEVEL2_HALLINSIDE]: {
     description:
       "A glittering chamber filled with gold and jewels. Perfect for testing an adventurer's greed.",
-    characters: [DRAGON_HATCHLING, THE_MERCHANT_KING],
+    characters: [INFO_KING],
     items: [ITEM_DRAGON],
     locations: [LEVEL2_HALL, LEVEL2_GOLDROOM, LEVEL2_LIBRARY],
     background: LEVEL2_HALLINSIDE,
@@ -93,29 +93,29 @@ const locations = {
 
   [LEVEL2_LIBRARY]: {
     description:
-      "A chamber filled with riddles and brain teasers. Intellectual challenges await within.",
-    characters: [PUZZLE_MASTER_PIP],
-    items: [CHESS_PIECE],
-    locations: [TRAP_WORKSHOP, MARKET_SQUARE, SHADOW_ALCOVE],
+      "A library filled with riddles and brain teasers. Intellectual challenges await within.",
+    characters: [],
+    items: [YOU_UNSURE],
+    locations: [LEVEL2_HALL],
     background: LEVEL2_LIBRARY,
   },
 
   [LEVEL2_GOLDROOM]: {
     description:
-      "A mysterious alcove shrouded in shadows. Whispered secrets echo in the darkness.",
-    characters: [DUCK_COMPANION],
+      "A room filled with golds and riches, gems and magical items. You could spend hours just looking at all the different wonderful items.",
+    characters: [NPC_KINGKING],
     items: [],
-    locations: [MONSTER_BARRACKS, MEDITATION_GROVE, PUZZLE_CHAMBER],
+    locations: [LEVEL2_HALL],
     background: LEVEL2_GOLDROOM,
   },
 
   // Level 3 location - Results
-  [RESULT_CHAMBER]: {
+  [LEVEL3_BG]: {
     description:
       "The final chamber where your preparations meet the incoming adventurer. The moment of truth!",
     characters: [],
     items: [],
     locations: [],
-    background: RESULT_CHAMBER,
+    background: LEVEL3_BG,
   },
 };

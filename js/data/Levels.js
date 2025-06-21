@@ -5,18 +5,19 @@ const LEVELS = {
     name: "Home Sweet Home",
     description:
       "Prepare yourself mentally for the challenge ahead. When you're ready, tell duck it's time to start the day.",
-    startLocation: MINOTAUR_BEDROOM,
+    startLocation: LEVEL1_HOUSE,
     completionAchievement: READY_FOR_THE_DAY,
     completionMessage:
       "Time to head to the labyrinth and find the right allies!",
-    locations: [MINOTAUR_BEDROOM, MINOTAUR_KITCHEN, MINOTAUR_GARDEN],
+    locations: [LEVEL1_HOUSE, LEVEL1_LIVINGROOM],
     characters: [DUCK_COMPANION],
     items: [
-      ANXIETY_WORKBOOK,
-      LETTER_FROM_MOM,
-      BABY_DUCK_PHOTOS,
-      DUCK_TREAT_RECIPE,
-      LABYRINTH_BLUEPRINT,
+      ITEM_DUCK,
+      ITEM_MAMALETTER,
+      ITEM_MAGGLASS,
+      ITEM_HELP,
+      YOU_IDLE,
+      YOU_DUCK,
     ],
     achievements: [READY_FOR_THE_DAY, TALKED_TO_DUCK, READ_MOMS_LETTER],
   },
@@ -24,59 +25,72 @@ const LEVELS = {
   2: {
     name: "Labyrinth Preparation",
     description:
-      "Explore the labyrinth, recruit 2 monsters and 1 trap maker, and gather intelligence on the incoming adventurer. Manage your social energy wisely!",
-    startLocation: LABYRINTH_ENTRANCE,
+      "Explore the around the labyrinth, recruit 2 monsters and 1 trap maker, and gather intelligence on the incoming adventurer. Manage your social energy wisely!",
+    startLocation: LEVEL2_OUTSIDELAB,
     completionAchievement: RECRUITMENT_COMPLETE,
     completionMessage:
       "All preparations complete! Time to face the adventurer!",
     locations: [
-      LABYRINTH_ENTRANCE,
-      ANCIENT_LIBRARY,
-      TREASURE_CHAMBER,
-      MONSTER_BARRACKS,
-      TRAP_WORKSHOP,
-      CRYSTAL_CAVE,
-      MEDITATION_GROVE,
-      MARKET_SQUARE,
-      PUZZLE_CHAMBER,
-      SHADOW_ALCOVE,
+      LEVEL2_OUTSIDELAB,
+      LEVEL2_FOREST,
+      LEVEL2_CAVE,
+      LEVEL2_CRYSTALCAVE,
+      LEVEL2_POTIONSHOP,
+      LEVEL2_POTIONINSIDE,
+      LEVEL2_HALL,
+      LEVEL2_HALLINSIDE,
+      LEVEL2_GOLDROOM,
+      LEVEL2_LIBRARY,
     ],
     characters: [
       DUCK_COMPANION, // Energy restoration
+      //NPCS
+      NPC_DEMON,
+      NPC_KINGKING,
+      NPC_SPHINX,
+      NPC_SUMO,
+
+      //You Frames
+      YOU_IDLE,
+      YOU_SCARED,
+      YOU_UNSURE,
+
       // Monsters (recruit 2 of 6)
-      SKELETON_WARRIOR,
-      DRAGON_HATCHLING,
-      SPHINX,
-      GIANT_SPIDER,
-      SIREN,
-      TROLL,
-      // Trap Makers (recruit 1 of 4)
-      COGWHEEL_KATE,
-      PUZZLE_MASTER_PIP,
-      ILLUSION_IRIS,
-      PIT_BOSS_PETE,
+      MON_SKELETON,
+      MON_DRAGON,
+      MON_SPHINX,
+      MON_SPIDER,
+      MON_SIREN,
+      MON_TROLL,
+
+      // Trap Makers (recruit 1 of 3)
+      TRAP_KATE,
+      TRAP_PIP,
+      TRAP_IRIS,
+
       // Information Dealers (visit all 3)
-      THE_LIBRARIAN,
-      THE_MERCHANT_KING,
-      THE_PHILOSOPHER,
+      INFO_LIB,
+      INFO_KING,
+      INFO_PHIL,
     ],
     items: [
       // Monster clues
-      WAR_MEDAL,
-      POLISHED_SCALE,
-      ANCIENT_SCROLL,
-      SILK_THREAD,
-      GOLDEN_HARP_STRING,
-      TRADE_CONTRACT,
+      ITEM_SKELETON,
+      ITEM_DRAGON,
+      ITEM_SPHINX,
+      ITEM_SPIDER,
+      ITEM_SIREN,
+      ITEM_TROLL,
+
       // Trap maker clues
-      CLOCKWORK_GEAR,
-      CHESS_PIECE,
-      KALEIDOSCOPE,
-      HAMMER_HEAD,
+      ITEM_KATE,
+      ITEM_PIP,
+      ITEM_IRIS,
+
       // Information dealer clues
-      LIBRARY_CARD,
-      MERCHANT_LEDGER,
-      THINKING_STONE,
+      ITEM_LIB,
+      ITEM_KING,
+      ITEM_PHIL,
     ],
     achievements: [
       RECRUITED_FIRST_MONSTER,
@@ -93,7 +107,7 @@ const LEVELS = {
     name: "The Confrontation",
     description:
       "Watch as your carefully chosen allies face the incoming adventurer. Will your strategy succeed?",
-    startLocation: RESULT_CHAMBER,
+    startLocation: LEVEL3_BG,
     completionAchievement: null, // No interactive completion - just cutscenes
     completionMessage: "The challenge is complete!",
     locations: [RESULT_CHAMBER],
