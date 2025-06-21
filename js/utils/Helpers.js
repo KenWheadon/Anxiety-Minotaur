@@ -1,4 +1,4 @@
-// Utility helper functions for Frog Police: Gang Bust
+// Utility helper functions for Anxiety Minotaur
 
 class Utils {
   // Generate unique ID

@@ -79,7 +79,7 @@ class GameEngine {
   }
 
   async start() {
-    console.log("Starting Frog Police: Gang Bust...");
+    console.log("Starting Anxiety Minotaur...");
 
     // UPDATED: Show loading screen first, then start screen
     this.loadingScreen.show();

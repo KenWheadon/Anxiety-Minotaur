@@ -17,7 +17,7 @@ class LoadingScreen {
       <div class="loading-content">
         <div class="loading-logo">
           <div class="tomato-icon">🚓🐸</div>
-          <h1>Frog Police: Gang Bust</h1>
+          <h1>Anxiety Minotaur</h1>
         </div>
         
         <div class="loading-progress">
@@ -163,8 +163,7 @@ class LoadingScreen {
       ease: "power2.inOut",
       onComplete: () => {
         // Ready message
-        this.statusText.textContent =
-          "🌟 Ready to explore Frog Police: Gang Bust!";
+        this.statusText.textContent = "🌟 Ready to explore Anxiety Minotaur!";
         this.statusText.style.color = "#8bc34a";
         this.statusText.style.fontWeight = "bold";
 

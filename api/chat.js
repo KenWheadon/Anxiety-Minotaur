@@ -47,10 +47,7 @@ export default async function handler(req, res) {
     console.log("🤖 Proxying request to OpenRouter API");
     console.log("🔑 API Key present:", !!process.env.OPENROUTER_API_KEY);
     console.log("🌐 Request origin:", origin);
-    console.log(
-      "📝 Site Title:",
-      process.env.SITE_TITLE || "Frog Police: Gang Bust"
-    );
+    console.log("📝 Site Title:", process.env.SITE_TITLE || "Anxiety Minotaur");
 
     // Validate that we have the required environment variables
     if (!process.env.OPENROUTER_API_KEY) {
@@ -94,7 +91,7 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer": refererUrl,
-          "X-Title": process.env.SITE_TITLE || "Frog Police: Gang Bust",
+          "X-Title": process.env.SITE_TITLE || "Anxiety Minotaur",
         },
         body: JSON.stringify(req.body),
       }

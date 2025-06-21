@@ -110,7 +110,7 @@ class VictoryScreen {
         <div class="victory-message">
           <p>🌟 You've successfully exposed the Kingpin's criminal operations!</p>
           <p>💡 The frog gang has been dismantled and justice has been served!</p>
-          <p>🎮 Thank you for playing Frog Police: Gang Bust!</p>
+          <p>🎮 Thank you for playing Anxiety Minotaur!</p>
         </div>
         
         <div class="victory-actions">
