@@ -15,23 +15,13 @@ class GameState {
     // Initialize social energy for all levels
     this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
 
-    // Recruitment tracking
-    this.recruitedMonsters = new Set();
-    this.hiredTrapMaker = null;
-    this.learnedStats = new Set();
-
     // Game progress tracking
     this.gameProgress = {
       startTime: Date.now(),
       conversationsHad: 0,
       energyRestored: 0,
-      monstersRecruited: 0,
-      trapMakersHired: 0,
       statsLearned: 0,
     };
-
-    // Hidden adventurer stats (generated once per game)
-    this.hiddenAdventurerStats = null;
 
     console.log("🎮 GameState initialized for Anxiety Minotaur");
   }
@@ -46,26 +36,9 @@ class GameState {
     if (this.socialEnergy === undefined || this.socialEnergy === null) {
       this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
     }
-
-    // Generate hidden adventurer stats (once per game)
-    if (!this.hiddenAdventurerStats) {
-      this.generateHiddenAdventurerStats();
-    }
-
     console.log(
       `💝 Social energy: ${this.socialEnergy}/${this.maxSocialEnergy}`
     );
-  }
-
-  // Generate hidden adventurer stats once per game
-  generateHiddenAdventurerStats() {
-    this.hiddenAdventurerStats = {
-      fear: Math.random() > 0.5 ? FEAR_HIGH : FEAR_LOW,
-      greed: Math.random() > 0.5 ? GREED_HIGH : GREED_LOW,
-      pride: Math.random() > 0.5 ? PRIDE_HIGH : PRIDE_LOW,
-    };
-
-    console.log("🎯 Generated adventurer stats:", this.hiddenAdventurerStats);
   }
 
   // Always allow social energy tracking
@@ -111,125 +84,6 @@ class GameState {
     }
 
     return false; // Not enough energy
-  }
-
-  // Recruit a monster
-  recruitMonster(monsterId) {
-    if (this.recruitedMonsters.size >= 2) {
-      return { success: false, reason: "Already recruited 2 monsters" };
-    }
-
-    if (this.recruitedMonsters.has(monsterId)) {
-      return { success: false, reason: "Monster already recruited" };
-    }
-
-    this.recruitedMonsters.add(monsterId);
-    this.gameProgress.monstersRecruited++;
-
-    console.log(
-      `⚔️ Recruited monster: ${monsterId} (${this.recruitedMonsters.size}/2)`
-    );
-
-    // Check for achievement
-    if (this.recruitedMonsters.size === 1) {
-      this.unlockAchievement(RECRUITED_FIRST_MONSTER);
-    } else if (this.recruitedMonsters.size === 2) {
-      this.unlockAchievement(RECRUITED_SECOND_MONSTER);
-    }
-
-    this.checkRecruitmentComplete();
-    return { success: true };
-  }
-
-  // Hire a trap maker
-  hireTrapMaker(trapMakerId) {
-    if (this.hiredTrapMaker !== null) {
-      return { success: false, reason: "Already hired a trap maker" };
-    }
-
-    this.hiredTrapMaker = trapMakerId;
-    this.gameProgress.trapMakersHired++;
-
-    console.log(`🔧 Hired trap maker: ${trapMakerId}`);
-
-    this.unlockAchievement(HIRED_TRAP_MAKER);
-    this.checkRecruitmentComplete();
-    return { success: true };
-  }
-
-  // Learn an adventurer stat
-  learnStat(statType) {
-    if (this.learnedStats.has(statType)) {
-      return { success: false, reason: "Stat already learned" };
-    }
-
-    this.learnedStats.add(statType);
-    this.gameProgress.statsLearned++;
-
-    console.log(`🧠 Learned stat: ${statType}`);
-
-    // Unlock appropriate achievement
-    const achievements = {
-      fear: LEARNED_FEAR_LEVEL,
-      greed: LEARNED_GREED_LEVEL,
-      pride: LEARNED_PRIDE_LEVEL,
-    };
-
-    if (achievements[statType]) {
-      this.unlockAchievement(achievements[statType]);
-    }
-
-    this.checkRecruitmentComplete();
-    return { success: true, stat: this.hiddenAdventurerStats[statType] };
-  }
-
-  // Check if recruitment is complete
-  checkRecruitmentComplete() {
-    if (
-      this.recruitedMonsters.size >= 2 &&
-      this.hiredTrapMaker !== null &&
-      this.learnedStats.size >= 3
-    ) {
-      this.unlockAchievement(RECRUITMENT_COMPLETE);
-      console.log("🎯 Recruitment phase complete!");
-    }
-  }
-
-  // Get recruitment progress
-  getRecruitmentProgress() {
-    const monstersProgress = `${this.recruitedMonsters.size}/2`;
-    const trapMakerProgress = this.hiredTrapMaker ? "1/1" : "0/1";
-    const statsProgress = `${this.learnedStats.size}/3`;
-
-    console.log("📋 Recruitment progress:", {
-      monsters: monstersProgress,
-      trapMaker: trapMakerProgress,
-      stats: statsProgress,
-    });
-
-    return {
-      monsters: {
-        current: this.recruitedMonsters.size,
-        required: 2,
-        complete: this.recruitedMonsters.size >= 2,
-      },
-      trapMaker: {
-        current: this.hiredTrapMaker ? 1 : 0,
-        required: 1,
-        complete: this.hiredTrapMaker !== null,
-      },
-      intelligence: {
-        current: this.learnedStats.size,
-        required: 3,
-        complete: this.learnedStats.size >= 3,
-      },
-      overall: {
-        complete:
-          this.recruitedMonsters.size >= 2 &&
-          this.hiredTrapMaker !== null &&
-          this.learnedStats.size >= 3,
-      },
-    };
   }
 
   // Add conversation to history
@@ -312,10 +166,6 @@ class GameState {
           ])
         ),
         itemsExamined: Array.from(this.itemsExamined),
-        recruitedMonsters: Array.from(this.recruitedMonsters),
-        hiredTrapMaker: this.hiredTrapMaker,
-        learnedStats: Array.from(this.learnedStats),
-        hiddenAdventurerStats: this.hiddenAdventurerStats,
         gameProgress: this.gameProgress,
         saveTime: Date.now(),
       };
@@ -362,35 +212,16 @@ class GameState {
       // Load examined items
       this.itemsExamined = new Set(data.itemsExamined || []);
 
-      // Load recruitment data
-      this.recruitedMonsters = new Set(data.recruitedMonsters || []);
-      this.hiredTrapMaker = data.hiredTrapMaker || null;
-      this.learnedStats = new Set(data.learnedStats || []);
-
-      // Load hidden stats
-      this.hiddenAdventurerStats = data.hiddenAdventurerStats;
-
       // Load game progress
       this.gameProgress = {
         startTime: Date.now(),
         conversationsHad: 0,
         energyRestored: 0,
-        monstersRecruited: 0,
-        trapMakersHired: 0,
-        statsLearned: 0,
         ...data.gameProgress,
       };
 
-      // Generate hidden stats if missing
-      if (!this.hiddenAdventurerStats) {
-        this.generateHiddenAdventurerStats();
-      }
-
       this.isFirstTimeLoad = false;
       console.log(`📂 Game loaded (${this.constructor.name} v${this.version})`);
-
-      // Log recruitment status
-      this.getRecruitmentProgress();
 
       return true;
     } catch (error) {
@@ -408,16 +239,10 @@ class GameState {
     this.unlockedAchievements = new Set();
     this.conversationHistory = new Map();
     this.itemsExamined = new Set();
-    this.recruitedMonsters = new Set();
-    this.hiredTrapMaker = null;
-    this.learnedStats = new Set();
-    this.hiddenAdventurerStats = null;
     this.gameProgress = {
       startTime: Date.now(),
       conversationsHad: 0,
       energyRestored: 0,
-      monstersRecruited: 0,
-      trapMakersHired: 0,
       statsLearned: 0,
     };
 
