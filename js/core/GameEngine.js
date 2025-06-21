@@ -1,4 +1,4 @@
-// js/core/GameEngine.js - FIXED: Proper initialization flow and dependency injection
+// js/core/GameEngine.js - FIXED: Proper initialization flow and dependency injection + Victory Persistence
 
 class GameEngine {
   constructor() {
@@ -87,8 +87,41 @@ class GameEngine {
         loadLocation: (locationKey) => this.loadLocation(locationKey),
         keywordManager: this.keywordGenerationManager,
         showKeywords: () => this.keywordGenerationManager.debugShowKeywords(),
+
+        // ADDED: Victory screen debugging
+        checkVictoryState: () => {
+          console.log("🎉 Victory Screen Debug:");
+          console.log(
+            "  - Victory button unlocked:",
+            this.victoryScreen.isUnlocked
+          );
+          console.log(
+            "  - Victory button visible:",
+            this.victoryScreen.victoryButton.style.display
+          );
+          console.log(
+            "  - Tutorial completed flag:",
+            this.gameState.tutorialCompleted
+          );
+          console.log(
+            "  - Tutorial achievement:",
+            this.gameState.hasAchievement(TUTORIAL_COMPLETE)
+          );
+          console.log(
+            "  - All achievements:",
+            this.gameState.getUnlockedAchievements()
+          );
+        },
+
+        forceShowVictoryButton: () => {
+          this.victoryScreen.forceUnlock();
+          console.log("🎉 Victory button force unlocked");
+        },
       };
       console.log("🐛 Debug mode enabled. Access via window.gameDebug");
+      console.log(
+        "🐛 Use gameDebug.checkVictoryState() to debug victory button"
+      );
     }
   }
 
@@ -117,7 +150,7 @@ class GameEngine {
     }
   }
 
-  // FIXED: Proper initialization order with dependency injection
+  // UPDATED: Proper initialization order with dependency injection + Victory Persistence
   async startGameplay() {
     if (this.gameStarted) {
       console.log("⚠️ Tutorial already started");
@@ -166,6 +199,9 @@ class GameEngine {
         this.achievementManager.syncFromGameState(
           this.gameState.unlockedAchievements
         );
+
+        // ADDED: Sync victory screen state after loading
+        this.victoryScreen.syncWithGameState();
       }
 
       // Set up event listeners for cleanup

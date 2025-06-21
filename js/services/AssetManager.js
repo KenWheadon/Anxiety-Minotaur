@@ -166,14 +166,18 @@ class AssetManager {
     return assets;
   }
 
-  // Load image with fallback to colored placeholder - SIMPLE ROBUST VERSION
+  // Load image with smart folder ordering to minimize 404s
   async loadImage(filename) {
-    const folders = ["characters", "backgrounds", "items"];
+    // Convert filename to lowercase for consistent file lookups
+    const lowerFilename = filename.toLowerCase();
+
+    // Smart folder ordering based on filename patterns
+    const folders = this.getSmartFolderOrder(lowerFilename);
     let lastError = null;
 
     // Check each subfolder for the image
     for (const folder of folders) {
-      const fullPath = `images/${folder}/${filename}.png`;
+      const fullPath = `images/${folder}/${lowerFilename}.png`;
 
       // Check if already cached
       if (this.images.has(fullPath)) {
@@ -185,44 +189,114 @@ class AssetManager {
         return this.loadingPromises.get(fullPath);
       }
 
+      // Check if image exists silently
+      const exists = await this.checkImageExistsSilently(fullPath);
+      if (!exists) {
+        continue; // File doesn't exist, try next folder
+      }
+
       // Try to load from this path
       try {
-        console.log(`🔍 Trying to load ${filename} from ${folder} folder...`);
+        console.log(`🔍 Loading ${lowerFilename} from ${folder} folder...`);
 
-        const loadPromise = this._loadImageInternal(fullPath, folder, filename);
+        const loadPromise = this._loadImageInternal(
+          fullPath,
+          folder,
+          lowerFilename
+        );
         this.loadingPromises.set(fullPath, loadPromise);
 
         const result = await loadPromise;
         this.loadingPromises.delete(fullPath);
 
-        console.log(`✅ Successfully loaded ${filename} from ${folder} folder`);
+        console.log(
+          `✅ Successfully loaded ${lowerFilename} from ${folder} folder`
+        );
         return result;
       } catch (error) {
         this.loadingPromises.delete(fullPath);
         lastError = error;
-        console.log(
-          `❌ ${filename} not found in ${folder} folder, trying next...`
-        );
         // Continue to next folder
       }
     }
 
     // If we get here, the image wasn't found in any subfolder
-    console.warn(
-      `Image ${filename}.png not found in any subfolder. Last error:`,
-      lastError
+    console.warn(`Image ${lowerFilename}.png not found, using placeholder`);
+
+    // Create a placeholder
+    const placeholderType = folders[0]; // Use first folder as best guess
+    const placeholder = this.createPlaceholderImage(
+      placeholderType,
+      lowerFilename
     );
 
-    // Create a placeholder using the best guess for folder type
-    const placeholderType = this.guessImageType(filename);
-    const placeholder = this.createPlaceholderImage(placeholderType, filename);
-
     // Cache the placeholder using the most likely path
-    const fallbackPath = `images/${placeholderType}/${filename}.png`;
+    const fallbackPath = `images/${placeholderType}/${lowerFilename}.png`;
     this.images.set(fallbackPath, placeholder);
     this.failedAssets.add(fallbackPath);
 
     return placeholder;
+  }
+
+  // ADDED: Smart folder ordering based on filename patterns
+  getSmartFolderOrder(filename) {
+    const lowerFilename = filename.toLowerCase();
+
+    // Items folder first for item_ prefixed files
+    if (
+      lowerFilename.startsWith("item_") ||
+      lowerFilename.includes("seed") ||
+      lowerFilename.includes("letter") ||
+      lowerFilename.includes("book") ||
+      lowerFilename.includes("help") ||
+      lowerFilename.includes("mag") ||
+      lowerFilename.includes("dig")
+    ) {
+      return ["items", "characters", "backgrounds"];
+    }
+
+    // Characters folder first for character files
+    if (
+      lowerFilename.includes("npc_") ||
+      lowerFilename.includes("character_") ||
+      lowerFilename.includes("_duck") ||
+      lowerFilename.includes("pig") ||
+      lowerFilename.startsWith("you_")
+    ) {
+      return ["characters", "items", "backgrounds"];
+    }
+
+    // Backgrounds folder first for background files
+    if (
+      lowerFilename.includes("bg") ||
+      lowerFilename.includes("background") ||
+      lowerFilename.includes("level") ||
+      lowerFilename === "bedroom" ||
+      lowerFilename === "livingroom" ||
+      lowerFilename === "garden"
+    ) {
+      return ["backgrounds", "items", "characters"];
+    }
+
+    // Default order if no pattern matches
+    return ["items", "characters", "backgrounds"];
+  }
+
+  // Silent existence check using Image object
+  async checkImageExistsSilently(imagePath) {
+    return new Promise((resolve) => {
+      const img = new Image();
+
+      // Set up handlers before setting src
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+
+      // Start the check
+      img.src = imagePath;
+
+      // Timeout after 500ms to avoid hanging
+      setTimeout(() => resolve(false), 500);
+    });
   }
 
   async _loadImageInternal(fullPath, type, originalPath) {

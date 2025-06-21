@@ -11,16 +11,6 @@ const achievements = {
     isUnlocked: false,
   },
 
-  // Reading mom's letter for worldbuilding
-  [READ_MOMS_LETTER]: {
-    title: "A Mother's Love",
-    description: "Read the encouraging letter from your mother.",
-    hint: "Sometimes the best motivation comes from those who love us most.",
-    characterId: null, // Item-based achievement
-    triggerKeywords: [],
-    isUnlocked: false,
-  },
-
   // Main tutorial completion - helping the pig with correct keyword
   [TUTORIAL_COMPLETE]: {
     title: "Green Thumb Helper",

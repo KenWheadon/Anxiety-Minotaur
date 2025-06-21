@@ -1,4 +1,4 @@
-// js/ui/VictoryScreen.js - Tutorial Victory Screen for Anxiety Minotaur
+// js/ui/VictoryScreen.js - Tutorial Victory Screen for Anxiety Minotaur with Victory Persistence
 
 class VictoryScreen {
   constructor(gameEngine) {
@@ -10,6 +10,34 @@ class VictoryScreen {
 
     this.createVictoryUI();
     this.createVictoryButton();
+  }
+
+  // UPDATED: More robust sync method that checks both the flag AND the achievement
+  syncWithGameState() {
+    const gameState = this.gameEngine.gameState;
+
+    // Check both the tutorial completed flag AND if the tutorial achievement is unlocked
+    const hasCompletedFlag = gameState.isTutorialCompleted();
+    const hasTutorialAchievement = gameState.hasAchievement(TUTORIAL_COMPLETE);
+
+    const wasCompleted = hasCompletedFlag || hasTutorialAchievement;
+
+    if (wasCompleted && !this.isUnlocked) {
+      console.log("🎉 Restoring victory button from saved game state");
+      console.log(`  - Tutorial flag: ${hasCompletedFlag}`);
+      console.log(`  - Achievement unlocked: ${hasTutorialAchievement}`);
+
+      this.isUnlocked = true;
+      this.victoryButton.style.display = "block";
+
+      // If we detected completion via achievement but flag wasn't set, fix it
+      if (hasTutorialAchievement && !hasCompletedFlag) {
+        console.log(
+          "🔧 Syncing tutorial completion flag with achievement state"
+        );
+        gameState.markTutorialCompleted();
+      }
+    }
   }
 
   createVictoryButton() {
@@ -114,7 +142,7 @@ class VictoryScreen {
           </div>
           
           <div class="victory-actions">
-            <button class="victory-button continue-game">Continue to Full Game</button>
+            <button class="victory-button continue-game">Complete Game</button>
             <button class="victory-button close-victory">Keep Exploring Tutorial</button>
           </div>
         </div>
@@ -154,6 +182,7 @@ class VictoryScreen {
       });
   }
 
+  // UPDATED: show method - mark tutorial as completed in GameState
   show(withCutscene = false) {
     if (this.isShowing) return;
 
@@ -163,6 +192,10 @@ class VictoryScreen {
     if (!this.isUnlocked) {
       this.isUnlocked = true;
       this.victoryButton.style.display = "block";
+
+      // ADDED: Mark tutorial as completed in GameState
+      this.gameEngine.gameState.markTutorialCompleted();
+
       this.playVictorySequence();
     }
 

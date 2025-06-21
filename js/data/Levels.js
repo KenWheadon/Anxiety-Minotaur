@@ -24,6 +24,6 @@ const LEVELS = {
       YOU_SCARED,
       YOU_UNSURE,
     ],
-    achievements: [TALKED_TO_DUCK, READ_MOMS_LETTER, TUTORIAL_COMPLETE],
+    achievements: [TALKED_TO_DUCK, TUTORIAL_COMPLETE],
   },
 };

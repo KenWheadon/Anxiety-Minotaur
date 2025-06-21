@@ -1,4 +1,4 @@
-// js/core/GameState.js - Fixed social energy system for all levels
+// js/core/GameState.js - Fixed social energy system for all levels + Victory Persistence
 
 class GameState {
   constructor() {
@@ -11,6 +11,9 @@ class GameState {
     this.itemsExamined = new Set();
     this.isFirstTimeLoad = true;
     this.maxSocialEnergy = CONFIG.MAX_SOCIAL_ENERGY;
+
+    // ADDED: Track tutorial completion for victory screen persistence
+    this.tutorialCompleted = false;
 
     // Initialize social energy for all levels
     this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
@@ -44,6 +47,23 @@ class GameState {
   // Always allow social energy tracking
   shouldTrackSocialEnergy() {
     return true; // Available in all levels now
+  }
+
+  // ADDED: Mark tutorial as completed (called when victory first achieved)
+  markTutorialCompleted() {
+    if (!this.tutorialCompleted) {
+      this.tutorialCompleted = true;
+      console.log("🎉 Tutorial marked as completed in GameState");
+      this.save(); // Save immediately
+      return true;
+    }
+    return false;
+  }
+
+  // UPDATED: More robust tutorial completion check
+  isTutorialCompleted() {
+    // Check both the flag AND the achievement for backwards compatibility
+    return this.tutorialCompleted || this.hasAchievement(TUTORIAL_COMPLETE);
   }
 
   // Restore energy (duck conversations) - works in all levels
@@ -148,7 +168,7 @@ class GameState {
     return Array.from(this.unlockedAchievements);
   }
 
-  // Save game state
+  // UPDATED: Save game state - include tutorialCompleted
   save() {
     try {
       const saveData = {
@@ -158,6 +178,7 @@ class GameState {
         currentLevel: this.currentLevel,
         socialEnergy: this.socialEnergy,
         maxSocialEnergy: this.maxSocialEnergy,
+        tutorialCompleted: this.tutorialCompleted, // ADDED: Save tutorial completion
         unlockedAchievements: Array.from(this.unlockedAchievements),
         conversationHistory: Object.fromEntries(
           Array.from(this.conversationHistory.entries()).map(([key, value]) => [
@@ -179,7 +200,7 @@ class GameState {
     }
   }
 
-  // Load game state
+  // UPDATED: Load game state - include tutorialCompleted
   load() {
     try {
       const saveData = localStorage.getItem(CONFIG.SAVE_KEY);
@@ -198,8 +219,20 @@ class GameState {
       this.socialEnergy = data.socialEnergy || CONFIG.STARTING_SOCIAL_ENERGY;
       this.maxSocialEnergy = data.maxSocialEnergy || CONFIG.MAX_SOCIAL_ENERGY;
 
+      // Load tutorial completion status
+      this.tutorialCompleted = data.tutorialCompleted || false;
+
       // Load achievements
       this.unlockedAchievements = new Set(data.unlockedAchievements || []);
+
+      // ADDED: Backwards compatibility - if achievement exists but flag doesn't, sync them
+      if (this.hasAchievement(TUTORIAL_COMPLETE) && !this.tutorialCompleted) {
+        console.log(
+          "🔧 Legacy save detected - syncing tutorial completion flag"
+        );
+        this.tutorialCompleted = true;
+        // Will be saved automatically by the game engine
+      }
 
       // Load conversation history
       this.conversationHistory = new Map();
@@ -222,6 +255,12 @@ class GameState {
 
       this.isFirstTimeLoad = false;
       console.log(`📂 Game loaded (${this.constructor.name} v${this.version})`);
+      console.log(`🎉 Tutorial completed status: ${this.tutorialCompleted}`);
+      console.log(
+        `🏆 Tutorial achievement unlocked: ${this.hasAchievement(
+          TUTORIAL_COMPLETE
+        )}`
+      );
 
       return true;
     } catch (error) {
@@ -230,12 +269,13 @@ class GameState {
     }
   }
 
-  // Reset game state
+  // UPDATED: Reset game state - clear tutorialCompleted
   reset() {
     this.gameId = Date.now();
     this.currentLocation = null;
     this.currentLevel = 1;
     this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
+    this.tutorialCompleted = false; // ADDED: Reset tutorial completion
     this.unlockedAchievements = new Set();
     this.conversationHistory = new Map();
     this.itemsExamined = new Set();

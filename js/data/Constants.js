@@ -30,7 +30,6 @@ const PIG_DIG = "pig_dig";
 // Achievement constants (Level 1)
 const TALKED_TO_DUCK = "TALKED_TO_DUCK"; //first chat with duck - doesn't use LLM
 const TUTORIAL_COMPLETE = "tutorial_complete";
-const READ_MOMS_LETTER = "READ_MOMS_LETTER";
 
 const TUTORIAL_PIG_KEYWORDS = [
   // Original 7 starter keywords
