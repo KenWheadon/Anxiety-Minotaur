@@ -46,23 +46,24 @@ class StartScreen {
           </div>
           
           <div class="start-screen-info">
-            <h3>🏠 Tutorial: Helping Your Neighbor</h3>
             <p>Your gardener neighbor needs help identifying some seeds. Explore your home, talk to your duck for comfort, and help solve the mystery!</p>
             
-            <div class="tutorial-benefits">
-              <h3>🎯 What You'll Learn:</h3>
-              <p>• Navigate between rooms in your home<br>
-              • Chat with friendly characters for support<br>
-              • Find and examine helpful items<br>
-              • Unlock achievements for your progress</p>
-            </div>
-            
-            <div class="controls-hint">
-              <h3>🎮 How to Play:</h3>
-              <p>• Click on characters to talk with them<br>
-              • Click on items to examine them closely<br>
-              • Use the navigation arrows to move between rooms<br>
-              • Check your achievements in the drawer (top-left)</p>
+            <div class="tutorial-sections">
+              <div class="tutorial-benefits">
+                <h3>🎯 What You'll Learn:</h3>
+                <p>• Navigate between rooms in your home<br>
+                • Chat with friendly characters for support<br>
+                • Find and examine helpful items<br>
+                • Unlock achievements for your progress</p>
+              </div>
+              
+              <div class="controls-hint">
+                <h3>🎮 How to Play:</h3>
+                <p>• Click on characters to talk with them<br>
+                • Click on items to examine them closely<br>
+                • Use the navigation arrows to move between rooms<br>
+                • Check your achievements in the drawer (top-left)</p>
+              </div>
             </div>
           </div>
 
@@ -139,10 +140,12 @@ class StartScreen {
   }
 
   playEntranceAnimation() {
+    // UPDATED: Simple slide-in animation instead of fade cycling
     const content = this.startScreenElement.querySelector(
       ".start-screen-overlay"
     );
     const title = this.startScreenElement.querySelector(".game-title");
+    const info = this.startScreenElement.querySelector(".start-screen-info");
     const buttons = this.startScreenElement.querySelector(
       ".start-screen-buttons"
     );
@@ -150,30 +153,39 @@ class StartScreen {
       ".start-screen-footer"
     );
 
-    // Initial state
-    gsap.set([title, buttons, footer], { opacity: 0, y: 30 });
-
-    // Animate content in
+    // Simple slide-in from top animation
     gsap.fromTo(
       content,
-      { scale: 0.9, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }
+      { y: -50, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
     );
 
-    // Staggered entrance
-    const timeline = gsap.timeline({ delay: 0.3 });
+    // Quick staggered appearance of content sections
+    const timeline = gsap.timeline({ delay: 0.2 });
 
     timeline
-      .to(title, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" })
-      .to(
-        buttons,
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.4"
+      .fromTo(
+        title,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
       )
-      .to(
+      .fromTo(
+        info,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
+      )
+      .fromTo(
+        buttons,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
+      )
+      .fromTo(
         footer,
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.3"
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+        "-=0.2"
       );
 
     // Add gentle sparkle effect for tutorial
@@ -227,17 +239,9 @@ class StartScreen {
   async hide() {
     if (!this.isVisible) return;
 
-    // Animate out
+    // UPDATED: Simple instant hide instead of fade out animation
     if (this.startScreenElement) {
-      gsap.to(this.startScreenElement, {
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.5,
-        ease: "power2.in",
-        onComplete: () => {
-          this.startScreenElement.classList.remove("visible");
-        },
-      });
+      this.startScreenElement.classList.remove("visible");
     }
 
     this.isVisible = false;
