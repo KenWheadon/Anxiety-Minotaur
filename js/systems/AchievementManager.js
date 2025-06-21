@@ -281,20 +281,6 @@ class AchievementManager {
     this.updateProgress();
     this.updateButtonProgress();
 
-    // NEW: Check for game over condition FIRST (before other checks)
-    if (achievementId === FOUND_THE_RAT) {
-      console.log(`💀 GAME OVER triggered by achievement: ${achievementId}`);
-
-      // Delay the game over screen slightly to let the achievement notification show
-      setTimeout(() => {
-        if (this.onGameOverCallback) {
-          this.onGameOverCallback(achievementId);
-        }
-      }, 2000); // 2 second delay to show achievement notification first
-
-      return true; // Return early, don't check for level completion
-    }
-
     // Check for level completion (existing logic)
     let levelCompleted = false;
     if (this.gameEngine.levelManager) {

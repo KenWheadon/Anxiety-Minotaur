@@ -19,7 +19,7 @@ const CONFIG = {
   },
 
   // Game Level Configuration - Start at Level 1 (Home)
-  DEFAULT_LEVEL: 2,
+  DEFAULT_LEVEL: 1,
 
   // Get the starting location based on the default level
   get DEFAULT_LOCATION() {

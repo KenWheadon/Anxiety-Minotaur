@@ -1,7 +1,6 @@
-/* Conversation Panel Styles */
+/* Fixed Conversation Panel Styles */
 .conversation-panel {
   position: fixed;
-  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 500px;
@@ -18,6 +17,7 @@
   overflow: hidden;
 }
 
+/* FIXED: Make header sticky and prevent scrolling */
 .conversation-header {
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   padding: 20px;
@@ -26,6 +26,11 @@
   align-items: center;
   justify-content: space-between;
   min-height: 80px;
+  /* FIXED: Make header sticky */
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .character-info {
@@ -33,11 +38,12 @@
   align-items: center;
   gap: 15px;
   flex: 1;
+  min-width: 0; /* Allow content to shrink */
 }
 
 .character-avatar {
-  width: 100px;
-  height: 100px;
+  width: 60px; /* FIXED: Reduced size for better fit */
+  height: 60px;
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.8);
   background-size: cover;
@@ -53,17 +59,20 @@
 }
 
 .character-name {
-  font-size: 20px;
+  font-size: 18px; /* FIXED: Slightly smaller for mobile */
   font-weight: bold;
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .character-description {
-  font-size: 14px;
+  font-size: 13px; /* FIXED: Smaller text for better fit */
   color: rgba(255, 255, 255, 0.9);
-  line-height: 1.4;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -93,14 +102,19 @@
   transform: scale(1.1);
 }
 
+/* FIXED: Messages container with proper scrolling */
 .conversation-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* FIXED: Prevent horizontal scroll */
   padding: 20px;
   background: rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   gap: 15px;
+  /* FIXED: Ensure proper height calculation */
+  min-height: 0;
+  max-height: calc(100% - 200px); /* Account for header and input */
 }
 
 .conversation-messages::-webkit-scrollbar {
@@ -126,6 +140,7 @@
   flex-direction: column;
   max-width: 80%;
   margin-bottom: 10px;
+  word-wrap: break-word; /* FIXED: Prevent text overflow */
 }
 
 .message.player {
@@ -142,6 +157,7 @@
   padding: 12px 16px;
   border-radius: 18px;
   word-wrap: break-word;
+  word-break: break-word; /* FIXED: Force long words to break */
   line-height: 1.4;
   font-size: 15px;
   max-width: 100%;
@@ -152,14 +168,14 @@
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
   border-bottom-right-radius: 6px;
-  margin-left: 40px;
+  margin-left: 20px; /* FIXED: Reduced margin for more space */
 }
 
 .message.character .message-bubble {
   background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
   color: #2c3e50;
   border-bottom-left-radius: 6px;
-  margin-right: 40px;
+  margin-right: 20px; /* FIXED: Reduced margin for more space */
 }
 
 .message-time {
@@ -169,6 +185,7 @@
   padding: 0 5px;
 }
 
+/* FIXED: Input area with proper positioning */
 .conversation-input-area {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
@@ -176,6 +193,11 @@
   gap: 12px;
   align-items: center;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  /* FIXED: Ensure input area stays at bottom */
+  position: sticky;
+  bottom: 0;
+  z-index: 1001;
+  flex-shrink: 0;
 }
 
 .conversation-input {
@@ -188,6 +210,8 @@
   font-size: 15px;
   outline: none;
   transition: all 0.3s ease;
+  /* FIXED: Prevent input from growing too large */
+  min-width: 0;
 }
 
 .conversation-input::placeholder {
@@ -216,6 +240,7 @@
   font-size: 15px;
   transition: all 0.3s ease;
   white-space: nowrap;
+  flex-shrink: 0; /* FIXED: Prevent button from shrinking */
 }
 
 .send-button:hover:not(:disabled) {
@@ -233,6 +258,7 @@
 
 .conversation-footer {
   padding: 0 20px 20px;
+  flex-shrink: 0; /* FIXED: Prevent footer from shrinking */
 }
 
 .typing-indicator {
@@ -281,7 +307,7 @@
   }
 }
 
-/* Mobile responsiveness */
+/* FIXED: Mobile responsiveness */
 @media (max-width: 768px) {
   .conversation-panel {
     width: 95vw;
@@ -301,15 +327,16 @@
   }
 
   .character-name {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .character-description {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .conversation-messages {
     padding: 15px;
+    max-height: calc(100% - 160px); /* FIXED: Adjust for mobile */
   }
 
   .conversation-input-area {
@@ -319,6 +346,14 @@
   .message-bubble {
     padding: 10px 14px;
     font-size: 14px;
+  }
+
+  .message.player .message-bubble {
+    margin-left: 10px;
+  }
+
+  .message.character .message-bubble {
+    margin-right: 10px;
   }
 }
 
@@ -336,5 +371,236 @@
 
   .conversation-header {
     border-radius: 0;
+    padding: 12px;
+    min-height: 60px;
+  }
+
+  .character-avatar {
+    width: 45px;
+    height: 45px;
+  }
+
+  .character-name {
+    font-size: 15px;
+  }
+
+  .character-description {
+    font-size: 11px;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .conversation-messages {
+    max-height: calc(100% - 140px); /* FIXED: Account for smaller header */
+  }
+}
+
+/* FIXED: Enhanced Energy UI Styles */
+.energy-ui-container {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  /* FIXED: Ensure energy UI is always visible */
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 15px;
+  padding: 12px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.energy-ui-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.energy-ui-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.energy-ui-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.energy-icon {
+  font-size: 18px;
+  color: #e91e63;
+}
+
+.energy-label {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.energy-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.energy-bar {
+  flex: 1;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.energy-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f, #2ecc71);
+  border-radius: 9px;
+  transition: width 0.5s ease;
+  position: relative;
+  min-width: 2px; /* FIXED: Always show some fill */
+}
+
+.energy-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.energy-text {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 45px;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.energy-hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  opacity: 0.8;
+  font-size: 11px;
+}
+
+.duck-icon {
+  font-size: 14px;
+}
+
+.hint-text {
+  color: white;
+  font-style: italic;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* FIXED: Energy state classes for better visibility */
+.energy-ui-container.low-energy {
+  border-color: rgba(231, 76, 60, 0.6);
+  animation: pulse-warning 1.5s infinite;
+  background: rgba(231, 76, 60, 0.1);
+}
+
+@keyframes pulse-warning {
+  0%,
+  100% {
+    border-color: rgba(231, 76, 60, 0.6);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(231, 76, 60, 0.4);
+  }
+  50% {
+    border-color: rgba(231, 76, 60, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(231, 76, 60, 0.6);
+  }
+}
+
+.energy-ui-container.no-energy {
+  border-color: rgba(192, 57, 43, 0.8);
+  background: rgba(192, 57, 43, 0.2);
+  animation: pulse-critical 1s infinite;
+}
+
+@keyframes pulse-critical {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+    border-color: rgba(192, 57, 43, 0.8);
+  }
+  50% {
+    transform: scale(1.05) translateY(0);
+    border-color: rgba(192, 57, 43, 1);
+  }
+}
+
+/* FIXED: Mobile energy UI adjustments */
+@media (max-width: 768px) {
+  .energy-ui-container {
+    top: 8px;
+    right: 15px;
+    padding: 10px 12px;
+  }
+
+  .energy-ui-panel {
+    min-width: 160px;
+  }
+
+  .energy-label {
+    font-size: 13px;
+  }
+
+  .energy-text {
+    font-size: 13px;
+    min-width: 40px;
+  }
+
+  .hint-text {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .energy-ui-container {
+    top: 5px;
+    right: 10px;
+    left: 10px;
+    padding: 8px 10px;
+  }
+
+  .energy-ui-panel {
+    min-width: auto;
+  }
+
+  .energy-ui-header {
+    justify-content: center;
   }
 }

@@ -1,295 +1,294 @@
+// js/systems/LocationNavigator.js - Complete Location Navigation System
+
 class LocationNavigator {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
-    this.navContainer = null;
-    this.currentButtons = [];
-    this.isNavigating = false;
+    this.currentLocationKey = null;
+    this.availableLocations = [];
+    this.navigationContainer = null;
+    this.isEnabled = true;
 
-    this.setupNavigationBar();
+    this.createNavigationUI();
     this.setupEventListeners();
 
-    console.log("🧭 Location navigator initialized");
+    console.log("🧭 LocationNavigator initialized");
   }
 
-  setupNavigationBar() {
-    // Create the navigation container at the bottom
-    this.navContainer = document.createElement("div");
-    this.navContainer.className = "location-navigator";
-    this.navContainer.innerHTML = `
-            <div class="nav-buttons-container"></div>
-            <div class="nav-info">
-                <span class="current-location"></span>
-            </div>
-        `;
+  createNavigationUI() {
+    // Create navigation container
+    this.navigationContainer = document.createElement("div");
+    this.navigationContainer.className = "location-navigator";
+    this.navigationContainer.innerHTML = `
+      <div class="nav-buttons-container"></div>
+      <div class="nav-info">
+        <div class="current-location">Loading...</div>
+      </div>
+    `;
 
-    document.body.appendChild(this.navContainer);
+    document.body.appendChild(this.navigationContainer);
+    console.log("🧭 Navigation UI created");
   }
 
   setupEventListeners() {
-    // Quick navigation with number keys
-    GameEvents.on("quick_navigate", (index) => {
-      if (index < this.currentButtons.length) {
-        const button = this.currentButtons[index];
-        button.click();
+    // Listen for location changes
+    GameEvents.on(GAME_EVENTS.LOCATION_CHANGED, (data) => {
+      this.updateNavigation(data.location);
+    });
+
+    // Keyboard shortcuts for location navigation (1-9)
+    document.addEventListener("keydown", (e) => {
+      if (!this.isEnabled) return;
+
+      // Only handle if not in conversation and not focused on input
+      const isConversationActive =
+        this.gameEngine.conversationManager &&
+        this.gameEngine.conversationManager.isConversationActive;
+      const isInputFocused =
+        document.activeElement.tagName === "INPUT" ||
+        document.activeElement.tagName === "TEXTAREA";
+
+      if (!isConversationActive && !isInputFocused) {
+        if (e.key >= "1" && e.key <= "9") {
+          const locationIndex = parseInt(e.key) - 1;
+          this.navigateByIndex(locationIndex);
+        }
       }
     });
 
-    // Listen for location changes to update current location display
-    GameEvents.on(GAME_EVENTS.LOCATION_CHANGED, (data) => {
-      this.updateCurrentLocationDisplay(data.location);
-    });
+    console.log("🧭 Event listeners set up");
   }
 
-  renderNavigation(currentLocationKey) {
-    const location = locations[currentLocationKey];
-    if (!location) {
-      console.error(`Location not found: ${currentLocationKey}`);
+  // FIXED: Add the missing updateNavigation method
+  updateNavigation(locationKey) {
+    if (!locationKey || !locations[locationKey]) {
+      console.warn("🧭 Invalid location key:", locationKey);
       return;
     }
 
-    const buttonsContainer = this.navContainer.querySelector(
+    this.currentLocationKey = locationKey;
+    const currentLocationData = locations[locationKey];
+
+    // Get available locations from current location
+    this.availableLocations = currentLocationData.locations || [];
+
+    console.log(`🧭 Updating navigation for ${locationKey}`);
+    console.log(`🧭 Available locations:`, this.availableLocations);
+
+    this.renderNavigationButtons();
+    this.updateCurrentLocationDisplay();
+  }
+
+  renderNavigationButtons() {
+    const buttonsContainer = this.navigationContainer.querySelector(
       ".nav-buttons-container"
     );
+    if (!buttonsContainer) return;
 
     // Clear existing buttons
     buttonsContainer.innerHTML = "";
-    this.currentButtons = [];
 
-    // Create button for each accessible location
-    location.locations.forEach((locationKey, index) => {
-      const targetLocation = locations[locationKey];
-      if (targetLocation) {
-        const button = this.createLocationButton(
-          locationKey,
-          targetLocation,
-          index + 1
-        );
-        buttonsContainer.appendChild(button);
-        this.currentButtons.push(button);
+    // Create buttons for each available location
+    this.availableLocations.forEach((locationKey, index) => {
+      const locationData = locations[locationKey];
+      if (!locationData) return;
+
+      const button = document.createElement("button");
+      button.className = "location-nav-button";
+      button.dataset.locationKey = locationKey;
+      button.dataset.index = index;
+
+      // Create readable name from location key
+      const displayName = this.formatLocationName(locationKey);
+      button.textContent = displayName;
+
+      // Add keyboard shortcut indicator
+      if (index < 9) {
+        const shortcut = document.createElement("span");
+        shortcut.className = "nav-shortcut";
+        shortcut.textContent = (index + 1).toString();
+        button.appendChild(shortcut);
       }
-    });
 
-    // Update current location display
-    this.updateCurrentLocationDisplay(currentLocationKey);
-
-    // Animate buttons in
-    this.animateButtonsIn();
-
-    console.log(`🧭 Navigation updated for ${currentLocationKey}`);
-  }
-
-  createLocationButton(locationKey, locationData, shortcutNumber) {
-    const button = document.createElement("button");
-    button.className = "location-nav-button";
-    button.dataset.locationKey = locationKey;
-
-    const displayName = this.getLocationDisplayName(locationKey);
-    button.innerHTML = `
-            ${displayName}
-            <span class="nav-shortcut">${shortcutNumber}</span>
-        `;
-
-    // Hover tooltip
-    button.title = locationData.description;
-
-    // Click handler with navigation logic
-    button.addEventListener("click", () => {
-      this.navigateToLocation(locationKey);
-    });
-
-    // Enhanced hover effects
-    button.addEventListener("mouseenter", () => {
-      this.showLocationPreview(locationData, button);
-      this.gameEngine.renderer.assetManager.playSound(
-        "effects/ui_hover.mp3",
-        0.2
-      );
-    });
-
-    button.addEventListener("mouseleave", () => {
-      this.hideLocationPreview();
-    });
-
-    return button;
-  }
-
-  navigateToLocation(locationKey) {
-    if (this.isNavigating) {
-      return; // Prevent rapid clicking
-    }
-
-    if (locationKey === this.gameEngine.currentLocation) {
-      console.log("Already at this location");
-      return;
-    }
-
-    // CLEAR any open location previews
-    this.hideLocationPreview();
-
-    this.isNavigating = true;
-
-    // Visual feedback
-    const button = this.navContainer.querySelector(
-      `[data-location-key="${locationKey}"]`
-    );
-    if (button) {
-      button.style.background = "rgba(139,195,74,0.8)";
-      button.style.color = "white";
-    }
-
-    // Play navigation sound
-    this.gameEngine.renderer.assetManager.playSound(
-      "effects/location_change.mp3",
-      0.4
-    );
-
-    // Navigate with delay for feedback
-    setTimeout(() => {
-      this.gameEngine.loadLocation(locationKey);
-      this.isNavigating = false;
-    }, 200);
-
-    console.log(`🚶 Navigating to: ${locationKey}`);
-  }
-
-  showLocationPreview(locationData, button) {
-    // Remove any existing preview
-    this.hideLocationPreview();
-
-    const preview = document.createElement("div");
-    preview.className = "location-preview";
-    preview.textContent = locationData.description;
-
-    document.body.appendChild(preview);
-
-    // Position above the button
-    const buttonRect = button.getBoundingClientRect();
-    const previewRect = preview.getBoundingClientRect();
-
-    let left = buttonRect.left + buttonRect.width / 2 - previewRect.width / 2;
-    let top = buttonRect.top - previewRect.height - 10;
-
-    // Keep preview on screen
-    if (left < 10) left = 10;
-    if (left + previewRect.width > window.innerWidth - 10) {
-      left = window.innerWidth - previewRect.width - 10;
-    }
-    if (top < 10) {
-      top = buttonRect.bottom + 10;
-    }
-
-    preview.style.left = left + "px";
-    preview.style.top = top + "px";
-
-    // Animate in
-    gsap.fromTo(
-      preview,
-      { opacity: 0, scale: 0.8, y: 10 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.2, ease: "power2.out" }
-    );
-  }
-
-  hideLocationPreview() {
-    const preview = document.querySelector(".location-preview");
-    if (preview) {
-      gsap.to(preview, {
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.15,
-        onComplete: () => preview.remove(),
+      // Add click handler
+      button.addEventListener("click", () => {
+        this.navigateToLocation(locationKey);
       });
-    }
-  }
 
-  updateCurrentLocationDisplay(locationKey) {
-    const currentLocationSpan =
-      this.navContainer.querySelector(".current-location");
-    if (currentLocationSpan) {
-      currentLocationSpan.textContent =
-        this.getLocationDisplayName(locationKey);
-    }
+      // Add hover preview
+      button.addEventListener("mouseenter", (e) => {
+        this.showLocationPreview(e, locationData);
+      });
 
-    // Update button states
-    this.currentButtons.forEach((button) => {
-      button.classList.remove("current");
-      if (button.dataset.locationKey === locationKey) {
-        button.classList.add("current");
-      }
+      button.addEventListener("mouseleave", () => {
+        this.hideLocationPreview();
+      });
+
+      buttonsContainer.appendChild(button);
     });
+
+    console.log(
+      `🧭 Rendered ${this.availableLocations.length} navigation buttons`
+    );
   }
 
-  animateButtonsIn() {
-    this.currentButtons.forEach((button, index) => {
-      gsap.fromTo(
-        button,
-        {
-          opacity: 0,
-          y: 20,
-          scale: 0.8,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.4,
-          delay: index * 0.1,
-          ease: "back.out(1.7)",
-        }
-      );
-    });
+  updateCurrentLocationDisplay() {
+    const currentLocationElement =
+      this.navigationContainer.querySelector(".current-location");
+    if (!currentLocationElement) return;
+
+    const displayName = this.formatLocationName(this.currentLocationKey);
+    currentLocationElement.textContent = displayName;
   }
 
-  getLocationDisplayName(locationKey) {
-    // Convert snake_case to Title Case
+  formatLocationName(locationKey) {
+    if (!locationKey) return "Unknown";
+
+    // Convert snake_case to Title Case and remove level prefixes
     return locationKey
+      .replace(/^level\d+_/, "") // Remove level prefixes like "level1_"
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   }
 
-  // Show/hide navigation bar
-  show() {
-    gsap.to(this.navContainer, {
-      y: 0,
-      duration: 0.3,
-      ease: "power2.out",
-    });
+  // Navigate to location by array index (for keyboard shortcuts)
+  navigateByIndex(index) {
+    if (index < 0 || index >= this.availableLocations.length) {
+      console.warn(`🧭 Invalid location index: ${index}`);
+      return;
+    }
+
+    const locationKey = this.availableLocations[index];
+    this.navigateToLocation(locationKey);
   }
 
-  hide() {
-    gsap.to(this.navContainer, {
-      y: 70,
-      duration: 0.3,
-      ease: "power2.in",
-    });
-  }
+  // Navigate to specific location
+  async navigateToLocation(locationKey) {
+    if (!this.isEnabled) {
+      console.warn("🧭 Navigation is disabled");
+      return;
+    }
 
-  // Highlight a specific navigation button (for tutorials/hints)
-  highlightButton(locationKey) {
-    const button = this.navContainer.querySelector(
-      `[data-location-key="${locationKey}"]`
-    );
-    if (button) {
-      gsap.to(button, {
-        scale: 1.1,
-        duration: 0.5,
-        ease: "power2.inOut",
-        yoyo: true,
-        repeat: 3,
-      });
+    if (!locations[locationKey]) {
+      console.error(`🧭 Location ${locationKey} not found`);
+      return;
+    }
 
-      button.style.boxShadow = "0 0 20px #FFD700";
-      setTimeout(() => {
-        button.style.boxShadow = "";
-      }, 2000);
+    if (locationKey === this.currentLocationKey) {
+      console.log(`🧭 Already at location ${locationKey}`);
+      return;
+    }
+
+    console.log(`🧭 Navigating to ${locationKey}`);
+
+    try {
+      // Use the game engine's loadLocation method
+      await this.gameEngine.loadLocation(locationKey);
+
+      // Update button states
+      this.updateButtonStates();
+    } catch (error) {
+      console.error(`🧭 Navigation failed:`, error);
     }
   }
 
-  // Get current navigation options (for achievements, etc.)
-  getCurrentOptions() {
-    return this.currentButtons.map((button) => ({
-      key: button.dataset.locationKey,
-      name: this.getLocationDisplayName(button.dataset.locationKey),
-    }));
+  updateButtonStates() {
+    const buttons = this.navigationContainer.querySelectorAll(
+      ".location-nav-button"
+    );
+    buttons.forEach((button) => {
+      button.classList.remove("current");
+
+      // Note: We don't mark current location button since we show available destinations
+      // But we could add visual feedback here if needed
+    });
+  }
+
+  showLocationPreview(event, locationData) {
+    this.hideLocationPreview(); // Remove any existing preview
+
+    const preview = document.createElement("div");
+    preview.className = "location-preview";
+    preview.textContent = locationData.description;
+
+    // Position near the button
+    const buttonRect = event.target.getBoundingClientRect();
+    preview.style.position = "fixed";
+    preview.style.left = buttonRect.left + "px";
+    preview.style.top = buttonRect.top - 60 + "px";
+    preview.style.zIndex = "1001";
+
+    document.body.appendChild(preview);
+    this.currentPreview = preview;
+  }
+
+  hideLocationPreview() {
+    if (this.currentPreview) {
+      this.currentPreview.remove();
+      this.currentPreview = null;
+    }
+  }
+
+  // Enable/disable navigation (useful for cutscenes, etc.)
+  setEnabled(enabled) {
+    this.isEnabled = enabled;
+    this.navigationContainer.style.display = enabled ? "flex" : "none";
+    console.log(`🧭 Navigation ${enabled ? "enabled" : "disabled"}`);
+  }
+
+  // Get current navigation state
+  getNavigationState() {
+    return {
+      currentLocation: this.currentLocationKey,
+      availableLocations: this.availableLocations,
+      enabled: this.isEnabled,
+    };
+  }
+
+  // Reset navigation (for game resets)
+  reset() {
+    this.currentLocationKey = null;
+    this.availableLocations = [];
+    this.hideLocationPreview();
+
+    const buttonsContainer = this.navigationContainer.querySelector(
+      ".nav-buttons-container"
+    );
+    if (buttonsContainer) {
+      buttonsContainer.innerHTML = "";
+    }
+
+    const currentLocationElement =
+      this.navigationContainer.querySelector(".current-location");
+    if (currentLocationElement) {
+      currentLocationElement.textContent = "Loading...";
+    }
+
+    console.log("🧭 Navigation reset");
+  }
+
+  // Show/hide navigation UI
+  show() {
+    if (this.navigationContainer) {
+      this.navigationContainer.style.display = "flex";
+    }
+  }
+
+  hide() {
+    if (this.navigationContainer) {
+      this.navigationContainer.style.display = "none";
+    }
+  }
+
+  // Cleanup
+  destroy() {
+    this.hideLocationPreview();
+
+    if (this.navigationContainer && this.navigationContainer.parentNode) {
+      this.navigationContainer.parentNode.removeChild(this.navigationContainer);
+    }
+
+    // Remove event listeners would be automatic since we're removing the elements
+    console.log("🧭 LocationNavigator destroyed");
   }
 }
