@@ -10,6 +10,7 @@ class GameEngine {
     this.renderer = new Renderer();
     this.interactionHandler = new InteractionHandler(this);
     this.conversationManager = new ConversationManager(this);
+    this.keywordGenerationManager = new KeywordGenerationManager(this);
     this.locationNavigator = new LocationNavigator(this);
     this.levelManager = new LevelManager(this);
     this.achievementManager = new AchievementManager(this);

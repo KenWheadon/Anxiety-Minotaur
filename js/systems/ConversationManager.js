@@ -1,3 +1,5 @@
+// js/systems/ConversationManager.js - Enhanced for Minotaur's Labyrinth
+
 class ConversationManager {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
@@ -12,7 +14,7 @@ class ConversationManager {
     this.createConversationUI();
     this.setupEventListeners();
 
-    console.log("💬 Conversation manager initialized (Anxiety Minotaur)");
+    console.log("💬 Conversation manager initialized (Minotaur's Labyrinth)");
   }
 
   createConversationUI() {
@@ -237,18 +239,18 @@ class ConversationManager {
       const contextualGreeting = await this.aiService.generateResponse(
         this.currentCharacter,
         "The player has returned to talk to you again. Give a brief, friendly greeting acknowledging you've met before.",
-        history
+        character.prompt,
+        history.slice(-3) // Last 3 messages for context
       );
-      return contextualGreeting;
+      return contextualGreeting || this.getFirstMeetingGreeting(character);
     }
   }
 
   getFirstMeetingGreeting(character) {
-    // Simple greeting based on character personality
     const prompt = character.prompt.toLowerCase();
 
-    if (prompt.includes("shy") || prompt.includes("nervous")) {
-      return "Oh! H-hello there... I wasn't expecting visitors...";
+    if (prompt.includes("shy") || prompt.includes("bashful")) {
+      return "Oh... um... H-hello there... I wasn't expecting visitors...";
     } else if (prompt.includes("wise") || prompt.includes("ancient")) {
       return "Welcome, young minotaur. I sense you have questions to ask.";
     } else if (prompt.includes("cheerful") || prompt.includes("excited")) {
@@ -281,6 +283,12 @@ class ConversationManager {
 
     // Add player message
     this.addMessage("player", message);
+
+    // NEW: Emit message for keyword checking
+    GameEvents.emit("CONVERSATION_MESSAGE_SENT", {
+      characterId: this.currentCharacter,
+      message: message,
+    });
 
     // Show typing indicator (except for duck)
     const character = characters[this.currentCharacter];
@@ -351,48 +359,28 @@ class ConversationManager {
     const quackVariations = [
       "Quack!",
       "Quack quack!",
-      "Quack quack quack!",
       "Quack?",
-      "Quack!!",
-      "Quack quack?",
-      "Quack quack quack!!",
-      "Quack! Quack!",
+      "Quack quack quack!",
       "Quaaaack!",
-      "Quack quack quack?",
-      "Quack! Quack quack!",
-      "Quaaaaaack!!",
+      "Quack! Quack!",
+      "Quack quack?!",
     ];
 
-    // Give energy back (Level 2 only)
-    if (this.gameEngine.gameState.currentLevel === 2) {
-      const oldEnergy = this.gameEngine.gameState.socialEnergy;
-      this.gameEngine.gameState.socialEnergy = Math.min(
-        CONFIG.MAX_SOCIAL_ENERGY,
-        this.gameEngine.gameState.socialEnergy + CONFIG.DUCK_ENERGY_RESTORE
-      );
-      const newEnergy = this.gameEngine.gameState.socialEnergy;
+    // Special responses for key phrases
+    const messageLower = message.toLowerCase();
 
-      if (newEnergy > oldEnergy) {
-        console.log(`💝 Duck restored energy: ${oldEnergy} → ${newEnergy}`);
-      }
+    if (messageLower.includes("ready")) {
+      // The key phrase for Level 1 completion!
+      return "Quack quack quack!! (Duck seems very excited for your adventure!)";
     }
 
-    // Check for "ready" keywords in Level 1
-    if (this.gameEngine.gameState.currentLevel === 1) {
-      const readyKeywords = [
-        "ready",
-        "start",
-        "begin",
-        "go",
-        "day",
-        "adventure",
-      ];
-      const messageWords = message.toLowerCase().split(" ");
-
-      if (readyKeywords.some((keyword) => messageWords.includes(keyword))) {
-        // Trigger level completion
-        this.gameEngine.achievementManager.unlockAchievement(READY_FOR_THE_DAY);
-        return "Quack quack!! Quack! (Duck seems excited and ready!)";
+    if (messageLower.includes("tired") || messageLower.includes("energy")) {
+      // Duck helps restore energy in Level 2
+      if (this.gameEngine.gameState.currentLevel === 2) {
+        this.gameEngine.gameState.restoreEnergy();
+        return "Quack! Quack! (Duck gives you comfort and energy - you feel recharged!)";
+      } else {
+        return "Quack! (Duck seems excited and ready!)";
       }
     }
 
@@ -457,38 +445,31 @@ class ConversationManager {
         playerMessage,
         characterResponse
       );
-    } else {
-      console.warn("🏆 AchievementManager not available");
     }
   }
 
   updateCharacterInfo(character) {
-    const characterName = this.currentCharacter
+    const avatar = this.conversationPanel.querySelector(".character-avatar");
+    const name = this.conversationPanel.querySelector(".character-name");
+    const description = this.conversationPanel.querySelector(
+      ".character-description"
+    );
+
+    // Set character avatar image if available
+    if (character.img) {
+      avatar.style.backgroundImage = `url(images/characters/${character.img}.png)`;
+      avatar.style.backgroundSize = "cover";
+      avatar.style.backgroundPosition = "center";
+    }
+
+    // Format character name (remove prefixes, capitalize)
+    name.textContent = this.currentCharacter
+      .replace(/^(npc_|mon_|trap_|info_)/, "")
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-    this.conversationPanel.querySelector(".character-name").textContent =
-      characterName;
-    this.conversationPanel.querySelector(".character-description").textContent =
-      character.description;
-
-    // Update character avatar
-    const avatar = this.conversationPanel.querySelector(".character-avatar");
-    const imagePath = `images/characters/${character.img}.png`;
-    const preloadedImage = this.gameEngine.renderer.assetManager.getImage(
-      `characters/${character.img}`
-    );
-
-    if (preloadedImage) {
-      avatar.style.backgroundImage = `url(${preloadedImage.src})`;
-    } else {
-      avatar.style.backgroundImage = `url(${imagePath})`;
-    }
-
-    avatar.style.backgroundSize = "cover";
-    avatar.style.backgroundPosition = "top center";
-    avatar.style.backgroundRepeat = "no-repeat";
+    description.textContent = character.description || "A mysterious figure.";
   }
 
   clearMessages() {
@@ -496,19 +477,14 @@ class ConversationManager {
       ".conversation-messages"
     );
     messagesContainer.innerHTML = "";
+    this.messageHistory = [];
   }
 
   showConversation() {
     this.conversationPanel.style.display = "flex";
-
-    // Animate in
     gsap.fromTo(
       this.conversationPanel,
-      {
-        opacity: 0,
-        scale: 0.8,
-        y: 50,
-      },
+      { opacity: 0, scale: 0.8, y: 50 },
       {
         opacity: 1,
         scale: 1,

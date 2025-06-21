@@ -12,6 +12,18 @@ const characters = {
     isDuck: true, // Special flag for duck behavior
   },
 
+  [NPC_DUCK2]: {
+    prompt:
+      "An ancient sumo master who understands the balance of strength and strategy. You like to chat about sunny weather and soup.",
+    description:
+      "Once a legendary warrior, now he shares his knowledge with worthy students.",
+    X: 1683,
+    Y: 922,
+    scale: 0.7,
+    img: NPC_DUCK,
+    isDuck: true, // Special flag for duck behavior
+  },
+
   [NPC_SUMO]: {
     prompt:
       "An ancient sumo master who understands the balance of strength and strategy. You like to chat about sunny weather and soup.",

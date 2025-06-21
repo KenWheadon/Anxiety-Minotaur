@@ -425,7 +425,7 @@ class AudioManager {
 
     try {
       localStorage.setItem(
-        "frog-police-audio-settings",
+        "anxiety-minotaur-audio-settings",
         JSON.stringify(settings)
       );
       console.log("🎵 Audio settings saved");
@@ -437,7 +437,7 @@ class AudioManager {
   // Load audio settings from localStorage
   loadSettings() {
     try {
-      const settings = localStorage.getItem("frog-police-audio-settings");
+      const settings = localStorage.getItem("anxiety-minotaur-audio-settings");
       if (settings) {
         const parsed = JSON.parse(settings);
 

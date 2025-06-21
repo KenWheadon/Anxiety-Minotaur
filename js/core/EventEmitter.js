@@ -1,3 +1,5 @@
+// js/core/EventEmitter.js - Updated with new events for keyword system
+
 class EventEmitter {
   constructor() {
     this.listeners = new Map();
@@ -88,16 +90,18 @@ class EventEmitter {
 // Create global event bus
 const GameEvents = new EventEmitter();
 
-// Common game events - FIXED: Now properly defined here
+// Common game events - UPDATED with new keyword system events
 const GAME_EVENTS = {
   LOCATION_CHANGED: "location_changed",
   CHARACTER_INTERACTION: "character_interaction",
   ITEM_EXAMINED: "item_examined",
   CONVERSATION_STARTED: "conversation_started",
   CONVERSATION_ENDED: "conversation_ended",
+  CONVERSATION_MESSAGE_SENT: "conversation_message_sent", // NEW: For keyword detection
+  CHARACTER_UNLOCKED: "character_unlocked", // NEW: When character is unlocked
   ACHIEVEMENT_UNLOCKED: "achievement_unlocked",
-  LEVEL_CHANGED: "level_changed", // NEW: Level progression event
-  LEVEL_COMPLETED: "level_completed", // NEW: Level completion event
+  LEVEL_CHANGED: "level_changed",
+  LEVEL_COMPLETED: "level_completed",
   GAME_SAVED: "game_saved",
   GAME_LOADED: "game_loaded",
   ASSET_LOADED: "asset_loaded",

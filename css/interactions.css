@@ -279,3 +279,98 @@
 .interactable.item:focus {
   outline-color: rgba(33, 150, 243, 0.8);
 }
+
+/* NEW: Character unlock checkmark styles */
+.unlock-checkmark {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  font-size: 28px;
+  z-index: 1000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Bounce animation for checkmarks (fallback if GSAP not available) */
+@keyframes bounceIn {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Character unlock glow effect */
+.character-unlocked {
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+}
+
+/* Level progress button styles */
+.level-progress-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px 30px;
+  font-size: 18px;
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  animation: levelButtonPulse 2s infinite;
+  transition: all 0.3s ease;
+}
+
+.level-progress-button:hover {
+  background: linear-gradient(45deg, #45a049, #4caf50);
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes levelButtonPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Tutorial specific styles */
+.tutorial-character {
+  border: 2px dashed rgba(255, 215, 0, 0.8);
+  border-radius: 8px;
+}
+
+.tutorial-item {
+  border: 2px dashed rgba(33, 150, 243, 0.8);
+  border-radius: 8px;
+}
+
+/* Mobile responsive adjustments for new elements */
+@media (max-width: 768px) {
+  .unlock-checkmark {
+    font-size: 24px;
+    top: -12px;
+    right: -12px;
+  }
+
+  .level-progress-button {
+    bottom: 15px;
+    right: 15px;
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}

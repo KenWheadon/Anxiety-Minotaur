@@ -5,6 +5,7 @@ const LEVELE0_BG = "level0_bg";
 // Location constants (Level 1 - Home)
 const LEVEL1_HOUSE = "level1_house";
 const LEVEL1_LIVINGROOM = "level1_livingroom";
+const LEVEL1_GARDEN = "level1_garden";
 
 // Location constants (Level 2 - Labyrinth)
 const LEVEL2_OUTSIDELAB = "level2_outsidelab";
@@ -21,13 +22,9 @@ const LEVEL2_GOLDROOM = "level2_goldroom";
 // Location constants (Level 3 - Results)
 const LEVEL3_BG = "level3_bg";
 
-// Character constants - Duck
+//Level 1 Character
 const NPC_DUCK = "npc_duck";
-const NPC_DUCK2 = "npc_duck2";
-const NPC_SUMO = "npc_sumo";
-const NPC_SPHINX = "npc_sphinx";
-const NPC_KINGKING = "npc_kingking";
-const NPC_DEMON = "npc_demon";
+const TUTORIAL_PIG = "tutorial_pig";
 
 // Character constants - Monsters (Recruit 2 of 6)
 const MON_SKELETON = "mon_skeleton";
@@ -47,6 +44,13 @@ const INFO_LIB = "info_lib";
 const INFO_KING = "info_king";
 const INFO_PHIL = "info_phil";
 
+// Level 2 NPCs
+const NPC_DUCK2 = "npc_duck2";
+const NPC_SUMO = "npc_sumo";
+const NPC_SPHINX = "npc_sphinx";
+const NPC_KINGKING = "npc_kingking";
+const NPC_DEMON = "npc_demon";
+
 //You Frames
 const YOU_IDLE = "you_idle";
 const YOU_DEAD = "you_dead";
@@ -59,6 +63,7 @@ const ITEM_DUCK = "item_duck";
 const ITEM_HELP = "item_help";
 const ITEM_MAGGLASS = "item_magglass";
 const ITEM_MAMALETTER = "item_mamaletter";
+const TUTORIAL_SEED = "tutorial_seed";
 
 // Item constants (Level 2 - Monster Clues)
 const ITEM_SKELETON = "item_skeleton";
@@ -90,6 +95,7 @@ const ITEM_ART = "item_art";
 const READY_FOR_THE_DAY = "READY_FOR_THE_DAY"; //tell duck you've read the both books
 const TALKED_TO_DUCK = "TALKED_TO_DUCK"; //first chat with duck - doesn't use LLM
 const READ_MOMS_LETTER = "READ_MOMS_LETTER"; //letter from mom mentioning you should read your books
+const TUTORIAL_COMPLETE = "tutorial_complete";
 
 // Achievement constants (Level 2 - Recruitment)
 const RECRUITED_FIRST_MONSTER = "RECRUITED_FIRST_MONSTER"; //

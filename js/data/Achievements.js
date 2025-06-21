@@ -1,3 +1,5 @@
+// js/data/Achievements.js - All achievements for Minotaur's Labyrinth
+
 const achievements = {
   // Level 1 achievements - Tutorial/Home
   [READY_FOR_THE_DAY]: {
@@ -24,6 +26,25 @@ const achievements = {
     hint: "Check out the personal items in your home.",
     characterId: null, // Item interaction
     triggerKeywords: [],
+    isUnlocked: false,
+  },
+
+  // NEW: Tutorial achievement
+  [TUTORIAL_COMPLETE]: {
+    title: "Green Thumb",
+    description:
+      "Successfully helped the gardener pig with their favorite plant!",
+    hint: "Find what the pig needs and mention it in conversation.",
+    characterId: TUTORIAL_PIG,
+    triggerKeywords: [
+      "roses",
+      "tulips",
+      "daisies",
+      "sunflowers",
+      "lilies",
+      "peonies",
+      "orchids",
+    ],
     isUnlocked: false,
   },
 

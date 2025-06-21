@@ -75,15 +75,9 @@ class AchievementManager {
     }
 
     // Fallback: try to guess from achievement constants
-    const level1Achievements = [NOT_STACKING_UP, LOST_THESE_IN_NAM, HOP_TO_IT];
-    const level2Achievements = [VIP_ACCESS, SOUP_TO_GO];
-    const level3Achievements = [
-      SPILLED_HIS_GUTS,
-      FOUND_THE_RAT,
-      ONE_MORE_DRINK,
-      NAME_GAME,
-      ATOMIC_CLOCK,
-    ];
+    const level1Achievements = LEVELS[1].achievements;
+    const level2Achievements = LEVELS[2].achievements;
+    const level3Achievements = LEVELS[3].achievements;
 
     if (level1Achievements.includes(achievementKey)) return 1;
     if (level2Achievements.includes(achievementKey)) return 2;

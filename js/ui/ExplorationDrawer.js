@@ -92,8 +92,8 @@ class ExplorationDrawer {
       };
 
       const jsonData = JSON.stringify(discoveryData);
-      localStorage.setItem("frog-police-discoveries", jsonData);
-      localStorage.setItem("frog-police-discoveries-backup", jsonData);
+      localStorage.setItem("anxiety-minotaur-discoveries", jsonData);
+      localStorage.setItem("anxiety-minotaur-discoveries-backup", jsonData);
 
       console.log("💾 Discoveries saved:");
       console.log("  Characters:", charactersArray);
@@ -107,11 +107,11 @@ class ExplorationDrawer {
   // FIXED: Ensure we load actual names, not counts
   loadDiscoveries() {
     try {
-      let savedData = localStorage.getItem("frog-police-discoveries");
+      let savedData = localStorage.getItem("anxiety-minotaur-discoveries");
 
       if (!savedData) {
         console.log("🔄 No main save, trying backup...");
-        savedData = localStorage.getItem("frog-police-discoveries-backup");
+        savedData = localStorage.getItem("anxiety-minotaur-discoveries-backup");
       }
 
       if (savedData) {
@@ -161,7 +161,7 @@ class ExplorationDrawer {
       console.error("❌ Failed to load discoveries:", error);
       console.error(
         "Raw data was:",
-        localStorage.getItem("frog-police-discoveries")
+        localStorage.getItem("anxiety-minotaur-discoveries")
       );
 
       // Reset to empty sets on error
@@ -191,8 +191,8 @@ class ExplorationDrawer {
     this.discoveredItems.clear();
 
     try {
-      localStorage.removeItem("frog-police-discoveries");
-      localStorage.removeItem("frog-police-discoveries-backup");
+      localStorage.removeItem("anxiety-minotaur-discoveries");
+      localStorage.removeItem("anxiety-minotaur-discoveries-backup");
       console.log("🔄 localStorage cleared");
     } catch (error) {
       console.error("Failed to clear localStorage:", error);
@@ -358,11 +358,11 @@ class ExplorationDrawer {
     console.log("  discoveredItems:", Array.from(this.discoveredItems));
     console.log(
       "  localStorage main:",
-      localStorage.getItem("frog-police-discoveries")
+      localStorage.getItem("anxiety-minotaur-discoveries")
     );
     console.log(
       "  localStorage backup:",
-      localStorage.getItem("frog-police-discoveries-backup")
+      localStorage.getItem("anxiety-minotaur-discoveries-backup")
     );
 
     alert(`Debug Info (check console for details):
@@ -443,7 +443,9 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
 
       // Verify it was saved
       setTimeout(() => {
-        const verification = localStorage.getItem("frog-police-discoveries");
+        const verification = localStorage.getItem(
+          "anxiety-minotaur-discoveries"
+        );
         if (verification && verification.includes(characterKey)) {
           console.log(`✅ Character ${characterKey} verified in localStorage`);
         } else {
@@ -491,7 +493,9 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
 
       // Verify it was saved
       setTimeout(() => {
-        const verification = localStorage.getItem("frog-police-discoveries");
+        const verification = localStorage.getItem(
+          "anxiety-minotaur-discoveries"
+        );
         if (verification && verification.includes(itemKey)) {
           console.log(`✅ Item ${itemKey} verified in localStorage`);
         } else {
