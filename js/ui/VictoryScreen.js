@@ -138,17 +138,17 @@ class VictoryScreen {
           <div class="victory-message">
             <p>🌟 You've successfully helped your gardener neighbor identify their seeds!</p>
             <p>💝 You've learned how to manage social energy and use your duck companion for support!</p>
-            <p>🎮 You're ready for bigger adventures in the full game!</p>
+            <p>🎮 Ready for a completely fresh adventure?</p>
           </div>
           
           <div class="victory-actions">
-            <button class="victory-button continue-game">Complete Game</button>
+            <button class="victory-button continue-game">🔄 Start Fresh Adventure</button>
             <button class="victory-button close-victory">Keep Exploring Tutorial</button>
           </div>
         </div>
         
         <div class="victory-footer">
-          <p>🎊 Tutorial Complete - You're Ready for Adventure! 🎊</p>
+          <p>🎊 Tutorial Complete - Ready for Adventure! 🎊</p>
           <div class="celebration-emojis">
             <span>🦆</span><span>🌱</span><span>💝</span><span>🏆</span>
             <span>✨</span><span>🎉</span><span>🌟</span><span>⭐</span>
@@ -163,15 +163,11 @@ class VictoryScreen {
   }
 
   setupEventListeners() {
-    // Continue to full game button
+    // UPDATED: Complete to fresh adventure button - now resets everything
     this.victoryElement
       .querySelector(".continue-game")
       .addEventListener("click", () => {
-        // For now, this could lead to a credits screen or placeholder
-        alert(
-          "Thanks for playing the tutorial! The full game is coming soon. 🎮"
-        );
-        // Could implement level manager transition to credits here
+        this.handleCompleteGameReset();
       });
 
     // Close victory screen button
@@ -180,6 +176,86 @@ class VictoryScreen {
       .addEventListener("click", () => {
         this.hide();
       });
+  }
+
+  // NEW: Handle complete game reset with user confirmation
+  handleCompleteGameReset() {
+    const confirmed = confirm(
+      "🎮 Ready to start a fresh adventure?\n\n" +
+        "This will:\n" +
+        "• Reset all progress and achievements\n" +
+        "• Clear all discoveries and conversations\n" +
+        "• Return you to the very beginning\n" +
+        "• Keep your audio settings\n\n" +
+        "Start fresh adventure?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    console.log("🎮 Player chose to start fresh adventure");
+
+    // Show reset animation
+    this.showResetAnimation();
+
+    // Delay the actual reset to allow animation to play
+    setTimeout(() => {
+      this.gameEngine.completeGameReset();
+    }, 1500);
+  }
+
+  // NEW: Show reset animation with feedback
+  showResetAnimation() {
+    const content = this.victoryElement.querySelector(".victory-content");
+
+    // Update content to show reset in progress
+    const header = this.victoryElement.querySelector(".victory-header h1");
+    const subtitle = this.victoryElement.querySelector(".victory-header h2");
+    const actions = this.victoryElement.querySelector(".victory-actions");
+
+    if (header) header.textContent = "Starting Fresh Adventure...";
+    if (subtitle)
+      subtitle.textContent = "Resetting progress and preparing new game";
+
+    // Hide action buttons
+    if (actions) actions.style.display = "none";
+
+    // Add spinning icon animation
+    const trophyIcon = this.victoryElement.querySelector(
+      ".victory-trophy-image"
+    );
+    if (trophyIcon) {
+      trophyIcon.textContent = "🔄";
+
+      // Spin animation
+      if (typeof gsap !== "undefined") {
+        gsap.to(trophyIcon, {
+          rotation: 360,
+          duration: 1,
+          repeat: -1,
+          ease: "none",
+        });
+      }
+    }
+
+    // Fade out other elements
+    const elementsToFade = [
+      ".victory-stats",
+      ".victory-achievements",
+      ".victory-flex",
+      ".victory-footer",
+    ];
+
+    elementsToFade.forEach((selector) => {
+      const element = this.victoryElement.querySelector(selector);
+      if (element && typeof gsap !== "undefined") {
+        gsap.to(element, {
+          opacity: 0.3,
+          duration: 0.5,
+        });
+      }
+    });
   }
 
   // UPDATED: show method - mark tutorial as completed in GameState

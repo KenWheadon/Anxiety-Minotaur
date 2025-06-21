@@ -48,7 +48,7 @@ class LevelManager {
         </div>
         
         <div class="level-completion-actions">
-          <button class="level-completion-button continue-to-next">Continue to Full Game</button>
+          <button class="level-completion-button continue-to-next">Complete Game</button>
           <button class="level-completion-button stay-in-tutorial">Keep Exploring Tutorial</button>
         </div>
         

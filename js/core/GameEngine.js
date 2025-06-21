@@ -378,6 +378,74 @@ class GameEngine {
     this.victoryScreen.show(true); // true = try to play cutscene first if available
   }
 
+  // NEW: Complete game reset - called from victory screen "Complete Game" button
+  completeGameReset() {
+    console.log("🔄 Starting complete game reset...");
+
+    // Show loading screen during reset
+    this.loadingScreen.show();
+    this.loadingScreen.updateProgress({
+      percentage: 0,
+      status: "Resetting game...",
+    });
+
+    // Hide victory screen immediately
+    this.victoryScreen.hide();
+
+    // Perform complete reset in stages with progress updates
+    setTimeout(() => {
+      this.loadingScreen.updateProgress({
+        percentage: 20,
+        status: "Clearing save data...",
+      });
+
+      // Clear ALL save data including tutorial completion
+      try {
+        localStorage.removeItem(CONFIG.SAVE_KEY);
+        localStorage.removeItem("anxiety-minotaur-discoveries");
+        localStorage.removeItem("anxiety-minotaur-discoveries-backup");
+        console.log("💾 All save data cleared");
+      } catch (error) {
+        console.warn("Failed to clear some save data:", error);
+      }
+
+      setTimeout(() => {
+        this.loadingScreen.updateProgress({
+          percentage: 50,
+          status: "Resetting game systems...",
+        });
+
+        // Reset victory screen state completely
+        this.victoryScreen.isUnlocked = false;
+        this.victoryScreen.victoryButton.style.display = "none";
+
+        // Do full reset (clears all progress)
+        this.fullReset();
+
+        setTimeout(() => {
+          this.loadingScreen.updateProgress({
+            percentage: 80,
+            status: "Preparing fresh start...",
+          });
+
+          setTimeout(() => {
+            this.loadingScreen.updateProgress({
+              percentage: 100,
+              status: "Ready for new adventure!",
+            });
+
+            setTimeout(() => {
+              this.loadingScreen.hide();
+              console.log(
+                "🎮 Complete game reset finished - ready for fresh start"
+              );
+            }, 1000);
+          }, 500);
+        }, 500);
+      }, 500);
+    }, 500);
+  }
+
   // Reset tutorial state (keep discoveries and audio settings)
   reset() {
     console.log("🔄 Resetting tutorial state...");
@@ -433,29 +501,36 @@ class GameEngine {
     );
   }
 
-  // Full reset including discoveries (for complete tutorial reset)
+  // UPDATED: Enhanced fullReset method with better feedback
   fullReset() {
+    console.log("🔄 Performing full tutorial reset...");
+
     // Do normal reset first
     this.reset();
 
-    // Then reset discoveries
+    // Then reset discoveries completely
     if (this.explorationDrawer) {
-      this.explorationDrawer.resetDiscoveries();
+      try {
+        this.explorationDrawer.resetDiscoveries();
+        console.log("🗺️ Discovery progress reset");
+      } catch (error) {
+        console.warn("Failed to reset discoveries:", error);
+      }
     }
 
-    // Reset audio settings to defaults
-    if (this.audioManager) {
-      this.audioManager.setMasterVolume(1.0);
-      this.audioManager.setBackgroundVolume(0.3);
-      this.audioManager.setSfxVolume(0.7);
-      this.audioManager.isBackgroundMusicEnabled = true;
-      this.audioManager.isSfxEnabled = true;
-      this.audioManager.isMuted = false;
-      this.audioManager.saveSettings();
+    // Keep audio settings (don't reset to preserve user preferences)
+    // The user specifically asked to keep audio settings
+
+    // Reset victory screen completely
+    if (this.victoryScreen) {
+      this.victoryScreen.isUnlocked = false;
+      if (this.victoryScreen.victoryButton) {
+        this.victoryScreen.victoryButton.style.display = "none";
+      }
     }
 
     console.log(
-      "🔄 Full tutorial reset complete - all progress and settings cleared"
+      "🔄 Full tutorial reset complete - all progress cleared, audio settings preserved"
     );
   }
 
