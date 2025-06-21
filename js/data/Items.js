@@ -1,180 +1,258 @@
 const items = {
   // Level 1 Items - World Building
-  [ANXIETY_WORKBOOK]: {
+  [ITEM_DUCK]: {
     description:
-      "Your well-worn copy of 'Social Anxiety for Minotaurs'. Chapter 3: 'Making Friends with Monsters' has lots of highlights and nervous doodles in the margins.",
+      "Remember - if you find yourself anxious, just go pet your duck.",
     X: 200,
     Y: 300,
     scale: 0.5,
-    img: ANXIETY_WORKBOOK,
+    img: ITEM_DUCK,
   },
 
-  [LETTER_FROM_MOM]: {
+  [ITEM_MAMALETTER]: {
     description:
-      "A letter from Mom: 'Remember sweetie, just be yourself! The labyrinth will be wonderful. The other minotaurs will be so proud. PS - don't forget to feed duck! Love you! ❤️'",
+      "Remember sweetie, read your books and make friends with your neighbours. PS - don't forget to pet the duck! Love you! ❤️",
     X: 400,
     Y: 200,
     scale: 0.4,
-    img: LETTER_FROM_MOM,
+    img: ITEM_MAMALETTER,
   },
 
-  [BABY_DUCK_PHOTOS]: {
+  [ITEM_HELP]: {
     description:
-      "Adorable polaroids of duck as a tiny duckling. There's one of you both napping together, another of duck's first swim. The memories make you smile despite your nerves.",
+      "A book detailing how to defend from adventurers by getting intel and recruiting the right monsters and trap maker.",
     X: 300,
     Y: 400,
     scale: 0.3,
-    img: BABY_DUCK_PHOTOS,
+    img: ITEM_HELP,
   },
 
-  [DUCK_TREAT_RECIPE]: {
+  [ITEM_MAGGLASS]: {
     description:
-      "A hand-written recipe card: 'Duck's Favorite Breadcrumbs - Makes duck super happy!' with little drawings of smiling bread pieces. Your handwriting is surprisingly neat.",
+      "You often stare at the stars and contimplate why adventures are always trying to invade your home.",
     X: 500,
     Y: 350,
     scale: 0.4,
-    img: DUCK_TREAT_RECIPE,
-  },
-
-  [LABYRINTH_BLUEPRINT]: {
-    description:
-      "Plans for your labyrinth covered in corrections, revisions, and nervous eraser marks. 'Version 47 - This time it'll work!' is written in the corner with determined handwriting.",
-    X: 250,
-    Y: 450,
-    scale: 0.6,
-    img: LABYRINTH_BLUEPRINT,
+    img: ITEM_MAGGLASS,
   },
 
   // Level 2 Items - Monster Clues
-  [WAR_MEDAL]: {
+  [ITEM_SKELETON]: {
     description:
-      "A tarnished bronze medal with an eagle emblem and 'For Valor' inscription. The ribbon is faded but the weight of honor still feels heavy in your hands.",
+      "A tarnished bronze medal with a faded ribbon, it has an eagle emblem and 'For Valor' inscription. There's a marking on the back.", //the shape of the marking is the skeletons KEY
     X: 350,
     Y: 600,
     scale: 0.4,
-    img: WAR_MEDAL,
-    clueFor: SKELETON_WARRIOR,
+    img: ITEM_SKELETON,
+    clueFor: MON_SKELETON,
   },
 
-  [POLISHED_SCALE]: {
+  [ITEM_SIREN]: {
     description:
-      "An iridescent dragon scale that shifts colors in the light - deep emerald to brilliant gold. It's small but perfectly formed, practically glowing with draconic pride.",
-    X: 450,
-    Y: 700,
-    scale: 0.3,
-    img: POLISHED_SCALE,
-    clueFor: DRAGON_HATCHLING,
-  },
-
-  [ANCIENT_SCROLL]: {
-    description:
-      "A preserved parchment containing complex geometric diagrams and philosophical equations. The knowledge seems to pulse with ancient wisdom and intellectual challenge.",
-    X: 280,
-    Y: 320,
-    scale: 0.5,
-    img: ANCIENT_SCROLL,
-    clueFor: SPHINX,
-  },
-
-  [SILK_THREAD]: {
-    description:
-      "Strong, shimmering thread wound carefully on a wooden spool. The craftsmanship is exquisite - each strand perfectly aligned with patience and artistic precision.",
-    X: 520,
-    Y: 650,
-    scale: 0.3,
-    img: SILK_THREAD,
-    clueFor: GIANT_SPIDER,
-  },
-
-  [GOLDEN_HARP_STRING]: {
-    description:
-      "A delicate golden string that hums melodiously in the breeze. Even the slightest touch produces beautiful notes that seem to demand an audience.",
+      "A worn hammer, it has a faint smell that reminds you of the ocean. It also has a small engraved word on the handle.", //The word is the sirens KEY
     X: 380,
     Y: 380,
     scale: 0.2,
-    img: GOLDEN_HARP_STRING,
-    clueFor: SIREN,
+    img: ITEM_SIREN,
+    clueFor: MON_SIREN,
   },
 
-  [TRADE_CONTRACT]: {
+  [ITEM_DRAGON]: {
     description:
-      "A formal business document with official seals and careful legal language. 'Fair Payment Guaranteed' is stamped in bold letters - the mark of honest dealing.",
+      "An iridescent dragon scale that shifts colors in the light - deep emerald to brilliant gold. It's small but perfectly formed, practically glowing with an emotion.", //the emotion is the dragons KEY
+    X: 450,
+    Y: 700,
+    scale: 0.3,
+    img: ITEM_DRAGON,
+    clueFor: MON_DRAGON,
+  },
+
+  [ITEM_SPIDER]: {
+    description:
+      "Strong, shimmering thread wound carefully on a wooden spool. The craftsmanship is exquisite - each strand perfectly aligned with patience and artistic precision. It smells faintly.", //the smell is the spiders KEY
+    X: 520,
+    Y: 650,
+    scale: 0.3,
+    img: ITEM_SPIDER,
+    clueFor: MON_SPIDER,
+  },
+
+  [ITEM_SPHINX]: {
+    description:
+      "A set of pictures, featuring potions, ingredients, and the Sphinx family. One photo stands out.", //The photo that stands out is the sphinxs KEY
+    X: 280,
+    Y: 320,
+    scale: 0.5,
+    img: ITEM_SPHINX,
+    clueFor: MON_SPHINX,
+  },
+
+  [ITEM_TROLL]: {
+    description:
+      "A smooth stone that is quite astounding to look at. For some reason you lick it, and it has an obvious taste.", //The taste of the rock is the trolls KEY
     X: 420,
     Y: 750,
     scale: 0.4,
-    img: TRADE_CONTRACT,
-    clueFor: TROLL,
+    img: ITEM_TROLL,
+    clueFor: MON_TROLL,
   },
 
   // Level 2 Items - Trap Maker Clues
-  [CLOCKWORK_GEAR]: {
+  [ITEM_KATE]: {
     description:
-      "A precisely machined brass gear with perfect teeth and smooth rotation. The mechanical precision is mesmerizing - clearly made by someone who loves how things work.",
+      "A precisely machined brass gear with perfect teeth and smooth rotation. The mechanical precision is mesmerizing - oddly reminds you of something.", //The thing you are reminded of is Kate's KEY
     X: 300,
     Y: 550,
     scale: 0.3,
-    img: CLOCKWORK_GEAR,
-    clueFor: COGWHEEL_KATE,
+    img: ITEM_KATE,
+    clueFor: TRAP_KATE,
   },
 
-  [CHESS_PIECE]: {
+  [ITEM_PIP]: {
     description:
-      "An ornate king piece carved from dark wood with intricate details. It seems to radiate strategic thinking and intellectual superiority - a mastermind's tool.",
+      "A lovely letter from someone who clearly has feelings for Pip. Just line after line gushing about their love and admeration. They mention an idea for a date.", //The date idea is Pips KEY
     X: 480,
     Y: 420,
     scale: 0.3,
-    img: CHESS_PIECE,
-    clueFor: PUZZLE_MASTER_PIP,
+    img: ITEM_PIP,
+    clueFor: TRAP_PIP,
   },
 
-  [KALEIDOSCOPE]: {
+  [ITEM_IRIS]: {
     description:
-      "A beautiful tube that creates mesmerizing, ever-changing patterns when you look through it. Reality shifts and dances - nothing is quite what it seems.",
+      "A beautiful scroll, tightly bound from prying eyes and likely filled with magic beyond reason. The paper as a specific texture.", //The texture of the paper is Iris's KEY
     X: 400,
     Y: 480,
     scale: 0.4,
-    img: KALEIDOSCOPE,
-    clueFor: ILLUSION_IRIS,
-  },
-
-  [HAMMER_HEAD]: {
-    description:
-      "A well-worn but perfectly balanced hammer head. Honest work has polished the metal smooth - the tool of someone who builds things to last.",
-    X: 320,
-    Y: 680,
-    scale: 0.4,
-    img: HAMMER_HEAD,
-    clueFor: PIT_BOSS_PETE,
+    img: ITEM_IRIS,
+    clueFor: TRAP_IRIS,
   },
 
   // Level 2 Items - Information Dealer Clues
-  [LIBRARY_CARD]: {
+  [ITEM_LIB]: {
     description:
-      "A worn library card with countless date stamps and careful notations. 'Handle books with care' is printed in gentle letters - the mark of someone who treasures knowledge.",
+      "A worn library card with countless date stamps from the last 12 years. The signautre on the back in written in colored ink.", //The color of the ink is Libs KEY
     X: 250,
     Y: 280,
     scale: 0.3,
-    img: LIBRARY_CARD,
-    clueFor: THE_LIBRARIAN,
+    img: ITEM_LIB,
+    clueFor: INFO_LIB,
   },
 
-  [MERCHANT_LEDGER]: {
+  [ITEM_KING]: {
     description:
-      "A leather-bound book filled with careful calculations, profit margins, and trade records. Every transaction is meticulously recorded - the work of a master merchant.",
+      "A contract for the best prices on all goods and services, granted to the Merchant King himself. The contract mentions a specific bylaw that is being exploited.", //The bylaw is Kings KEY
     X: 500,
     Y: 320,
     scale: 0.4,
-    img: MERCHANT_LEDGER,
-    clueFor: THE_MERCHANT_KING,
+    img: ITEM_KING,
+    clueFor: INFO_KING,
   },
 
-  [THINKING_STONE]: {
+  [ITEM_PHIL]: {
     description:
-      "A smooth, perfectly round stone that fits comfortably in your palm. Holding it seems to encourage deep contemplation and consideration of multiple perspectives.",
+      "A book containing the all of the party halls revenue numbers. It seems like they had a best selling drink - what an odd flavor.", //The odd flavor of drink is Phil's KEY
     X: 360,
     Y: 200,
     scale: 0.3,
-    img: THINKING_STONE,
-    clueFor: THE_PHILOSOPHER,
+    img: ITEM_PHIL,
+    clueFor: INFO_PHIL,
+  },
+
+  //extras
+  [ITEM_JACKET]: {
+    description:
+      "The inside pocket contains a crumpled photo of a young siren with defiant eyes and a cocky grin. One sleeve has battle damage - claw marks that perfectly match Giant Spider's leg span.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: ITEM_JACKET,
+  },
+
+  [ITEM_ART]: {
+    description:
+      "A book detailing how to defend from adventurers by getting intel and recruiting the right monsters and trap maker.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: ITEM_ART,
+  },
+
+  [ITEM_STARSBOOK]: {
+    description:
+      "A book detailing how to defend from adventurers by getting intel and recruiting the right monsters and trap maker.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: ITEM_STARSBOOK,
+  },
+
+  [ITEM_POTIONGREEN]: {
+    description:
+      "A round, bulbous bottle made of thick green glass, containing a luminescent liquid that bubbles continuously with an unsettling glow.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: ITEM_POTIONGREEN,
+  },
+
+  [ITEM_POTIONRED]: {
+    description:
+      "A tall, slender bottle made of clear crystal. The cork is sealed with black wax and marked with an alchemical symbol.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: ITEM_POTIONRED,
+  },
+
+  [ITEM_PAINT]: {
+    description:
+      "A wooden box filled with brushes that paint with light instead of pigment and bottles of liquid rainbow.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: ITEM_PAINT,
+  },
+
+  //Images of your character
+  [YOU_IDLE]: {
+    description:
+      "You're worried about the day, but also excited to make your family proud.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: YOU_IDLE,
+
+    [YOU_DUCK]: {
+    description:
+      "No matter how anxious, your pet duck always makes you feel better.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: YOU_DUCK,
+
+    [YOU_DEAD]: {
+    description:
+      "Guess you didn't do your family proud - couldn't even survive one adventurer.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: YOU_DEAD,
+
+    [YOU_SCARED]: {
+    description:
+      "You can't stop thinking about how you still need to talk to more people.... this is the worst.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: YOU_SCARED,
+
+    [YOU_UNSURE]: {
+    description:
+      "You're worried about the day, but also excited to make your family proud.",
+    X: 300,
+    Y: 400,
+    scale: 0.3,
+    img: YOU_UNSURE,
   },
 };

@@ -23,6 +23,10 @@ const LEVEL3_BG = "level3_bg";
 
 // Character constants - Duck
 const NPC_DUCK = "npc_duck";
+const NPC_SUMO = "npc_sumo";
+const NPC_SPHINX = "npc_sphinx";
+const NPC_KINGKING = "npc_kingking";
+const NPC_DEMON = "npc_demon";
 
 // Character constants - Monsters (Recruit 2 of 6)
 const MON_SKELETON = "mon_skeleton";
@@ -32,7 +36,7 @@ const MON_SPIDER = "mon_spider";
 const MON_SPHINX = "mon_sphinx";
 const MON_TROLL = "mon_troll";
 
-// Character constants - Trap Makers (Recruit 1 of 4)
+// Character constants - Trap Makers (Recruit 1 of 3)
 const TRAP_KATE = "trap_kate";
 const TRAP_PIP = "trap_pip";
 const TRAP_IRIS = "trap_iris";
@@ -41,6 +45,13 @@ const TRAP_IRIS = "trap_iris";
 const INFO_LIB = "info_lib";
 const INFO_KING = "info_king";
 const INFO_PHIL = "info_phil";
+
+//You Frames
+const YOU_IDLE = "you_idle";
+const YOU_DEAD = "you_dead";
+const YOU_DUCK = "you_duck";
+const YOU_SCARED = "you_scared";
+const YOU_UNSURE = "you_unsure";
 
 // Item constants (Level 1 - World Building)
 const ITEM_DUCK = "item_duck";
