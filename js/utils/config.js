@@ -1,7 +1,7 @@
 // js/utils/Config.js - Environment-aware configuration for Anxiety Minotaur
 const CONFIG = {
-  GAME_WIDTH: 800,
-  GAME_HEIGHT: 600,
+  GAME_WIDTH: 1600,
+  GAME_HEIGHT: 900,
 
   // Detect if we're in development (localhost) or production
   IS_DEVELOPMENT:
@@ -97,8 +97,8 @@ const CONFIG = {
   DEBUG: true, // Set to false for production
 
   // Social Energy Configuration (Level 2 only)
-  STARTING_SOCIAL_ENERGY: 10,
-  MAX_SOCIAL_ENERGY: 10,
+  STARTING_SOCIAL_ENERGY: 0,
+  MAX_SOCIAL_ENERGY: 6,
   DUCK_ENERGY_RESTORE: 2,
   CONVERSATION_ENERGY_COST: 1,
 

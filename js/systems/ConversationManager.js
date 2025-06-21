@@ -282,7 +282,7 @@ class ConversationManager {
 
     const character = characters[this.currentCharacter];
 
-    // FIXED: Check social energy BEFORE sending message (not when opening chat)
+    // Check social energy BEFORE sending message (not when opening chat)
     if (this.shouldCheckSocialEnergy(character)) {
       if (this.gameEngine.gameState.socialEnergy <= 0) {
         this.showEnergyWarning();
