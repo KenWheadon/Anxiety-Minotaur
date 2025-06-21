@@ -1,4 +1,4 @@
-// js/core/GameState.js - Enhanced for Minotaur's Labyrinth
+// js/core/GameState.js - Enhanced for Anxiety Minotaur
 
 class GameState {
   constructor() {
@@ -45,7 +45,7 @@ class GameState {
       this.save();
     }, 30000);
 
-    console.log("🎮 GameState initialized for Minotaur's Labyrinth");
+    console.log("🎮 GameState initialized for Anxiety Minotaur");
   }
 
   // NEW: Generate random adventurer stats for this playthrough
@@ -397,11 +397,11 @@ class GameState {
             (Date.now() - this.gameProgress.startTime),
         },
         saveTime: Date.now(),
-        saveVersion: "3.0", // Version for Minotaur's Labyrinth
+        saveVersion: "3.0", // Version for Anxiety Minotaur
       };
 
       localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(saveData));
-      console.log("💾 Game saved (Minotaur's Labyrinth v3.0)");
+      console.log("💾 Game saved (Anxiety Minotaur v3.0)");
       GameEvents.emit(GAME_EVENTS.GAME_SAVED);
     } catch (error) {
       console.error("Failed to save game:", error);
@@ -447,7 +447,7 @@ class GameState {
         startTime: Date.now(), // Reset start time for current session
       };
 
-      console.log("📂 Game loaded (Minotaur's Labyrinth v3.0)");
+      console.log("📂 Game loaded (Anxiety Minotaur v3.0)");
       console.log("📂 Recruitment status:", this.getRecruitmentStatus());
 
       GameEvents.emit(GAME_EVENTS.GAME_LOADED);

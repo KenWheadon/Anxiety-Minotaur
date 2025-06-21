@@ -1,4 +1,4 @@
-// js/ui/StartScreen.js - Main menu/start screen for Minotaur's Labyrinth
+// js/ui/StartScreen.js - Main menu/start screen for Anxiety Minotaur
 
 class StartScreen {
   constructor(gameEngine) {
@@ -61,7 +61,7 @@ class StartScreen {
           
           <div class="start-screen-footer">
             <p>Made with 🐂 and 🦆 for puzzle lovers</p>
-            <div class="version-info">Minotaur's Labyrinth v1.0</div>
+            <div class="version-info">Anxiety Minotaur v1.0</div>
           </div>
         </div>
       </div>
@@ -394,7 +394,7 @@ class StartScreen {
   async show() {
     if (this.isShowing) return;
 
-    console.log("🎮 Showing start screen (Minotaur's Labyrinth)");
+    console.log("🎮 Showing start screen (Anxiety Minotaur)");
     this.isShowing = true;
 
     // Load background image
@@ -574,7 +574,7 @@ class StartScreen {
   async startGame() {
     if (!this.isShowing) return;
 
-    console.log("🎮 Starting Minotaur's Labyrinth from start screen");
+    console.log("🎮 Starting Anxiety Minotaur from start screen");
 
     // Play click sound
     if (this.gameEngine.audioManager) {
@@ -637,6 +637,6 @@ class StartScreen {
       this.startScreenElement.parentNode.removeChild(this.startScreenElement);
     }
 
-    console.log("🗑️ Start screen destroyed (Minotaur's Labyrinth)");
+    console.log("🗑️ Start screen destroyed (Anxiety Minotaur)");
   }
 }

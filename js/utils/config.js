@@ -1,4 +1,4 @@
-// js/utils/Config.js - Environment-aware configuration for Minotaur's Labyrinth
+// js/utils/Config.js - Environment-aware configuration for Anxiety Minotaur
 const CONFIG = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
@@ -89,7 +89,7 @@ const CONFIG = {
     }
   },
 
-  SITE_TITLE: "Minotaur's Labyrinth",
+  SITE_TITLE: "Anxiety Minotaur",
   MODEL: "deepseek/deepseek-r1-0528-qwen3-8b:free", // Free model - change as needed
   MAX_TOKENS: 10000, // Maximum tokens for AI responses
 

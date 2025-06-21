@@ -1,4 +1,4 @@
-// js/ui/ResultsScreen.js - Level 3 Results Display for Minotaur's Labyrinth
+// js/ui/ResultsScreen.js - Level 3 Results Display for Anxiety Minotaur
 
 class ResultsScreen {
   constructor(gameEngine) {

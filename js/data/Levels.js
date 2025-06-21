@@ -1,4 +1,4 @@
-// js/data/Levels.js - Minotaur's Labyrinth level definitions
+// js/data/Levels.js - Anxiety Minotaur level definitions
 
 const LEVELS = {
   1: {

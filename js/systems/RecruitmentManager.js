@@ -1,4 +1,4 @@
-// js/systems/RecruitmentManager.js - Handle recruitment logic for Minotaur's Labyrinth
+// js/systems/RecruitmentManager.js - Handle recruitment logic for Anxiety Minotaur
 
 class RecruitmentManager {
   constructor(gameEngine) {

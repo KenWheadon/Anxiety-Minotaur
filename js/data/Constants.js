@@ -1,4 +1,4 @@
-// js/data/Constants.js - Minotaur's Labyrinth constants
+// js/data/Constants.js - Anxiety Minotaur constants
 
 const LEVELE0_BG = "level0_bg";
 

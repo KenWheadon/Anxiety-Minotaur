@@ -12,7 +12,7 @@ class ConversationManager {
     this.createConversationUI();
     this.setupEventListeners();
 
-    console.log("💬 Conversation manager initialized (Minotaur's Labyrinth)");
+    console.log("💬 Conversation manager initialized (Anxiety Minotaur)");
   }
 
   createConversationUI() {
