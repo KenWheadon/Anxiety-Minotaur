@@ -24,7 +24,7 @@ const locations = {
       "The grand entrance to your labyrinth. Time to find the right allies for today's challenge.",
     characters: [MON_SKELETON],
     items: [ITEM_SKELETON],
-    locations: [LEVEL2_FOREST, LEVEL2_POTIONSHOP, LEVEL2_HALL],
+    locations: [LEVEL2_FOREST, LEVEL2_HALL, LEVEL2_POTIONSHOP],
     background: LEVEL2_OUTSIDELAB,
   },
 
@@ -42,7 +42,7 @@ const locations = {
       "The cave's enterence is guarded by two beautifully crafted gargoyles, I can see the Siren's craft mark.",
     characters: [MON_SIREN, TRAP_PIP],
     items: [ITEM_SPIDER],
-    locations: [LEVEL2_FOREST, LEVEL2_CRYSTALCAVE],
+    locations: [LEVEL2_CRYSTALCAVE, LEVEL2_FOREST],
     background: LEVEL2_CAVE,
   },
 
@@ -60,7 +60,7 @@ const locations = {
       "A quaint potion shop, the Sphinx family has been running it for hundreds of years, and each year the potion on top is said to get a bit bigger.",
     characters: [MON_TROLL, MON_SPIDER],
     items: [ITEM_STARSBOOK],
-    locations: [LEVEL2_OUTSIDELAB, LEVEL2_HALL, LEVEL2_POTIONINSIDE],
+    locations: [LEVEL2_POTIONINSIDE, LEVEL2_HALL, LEVEL2_OUTSIDELAB],
     background: LEVEL2_POTIONSHOP,
   },
 
@@ -96,7 +96,7 @@ const locations = {
       "A library filled with riddles and brain teasers. Intellectual challenges await within.",
     characters: [],
     items: [YOU_UNSURE, ITEM_KING],
-    locations: [LEVEL2_HALL],
+    locations: [LEVEL2_HALLINSIDE],
     background: LEVEL2_LIBRARY,
   },
 
@@ -105,7 +105,7 @@ const locations = {
       "A room filled with golds and riches, gems and magical items. You could spend hours just looking at all the different wonderful items.",
     characters: [NPC_KINGKING],
     items: [ITEM_LIB],
-    locations: [LEVEL2_HALL],
+    locations: [LEVEL2_HALLINSIDE],
     background: LEVEL2_GOLDROOM,
   },
 

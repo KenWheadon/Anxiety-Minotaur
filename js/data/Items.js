@@ -60,8 +60,8 @@ const items = {
   [ITEM_DRAGON]: {
     description:
       "An iridescent dragon scale that shifts colors in the light - deep emerald to brilliant gold. It's small but perfectly formed, practically glowing with an emotion.", //the emotion is the dragons KEY
-    X: 450,
-    Y: 700,
+    X: 1420,
+    Y: 730,
     scale: 1,
     img: ITEM_DRAGON,
     clueFor: MON_DRAGON,
@@ -111,8 +111,8 @@ const items = {
   [ITEM_PIP]: {
     description:
       "A lovely letter from someone who clearly has feelings for Pip. Just line after line gushing about their love and admeration. They mention an idea for a date.", //The date idea is Pips KEY
-    X: 480,
-    Y: 420,
+    X: 806,
+    Y: 726,
     scale: 1,
     img: ITEM_PIP,
     clueFor: TRAP_PIP,
@@ -132,8 +132,8 @@ const items = {
   [ITEM_LIB]: {
     description:
       "A worn library card with countless date stamps from the last 12 years. The signautre on the back in written in colored ink.", //The color of the ink is Libs KEY
-    X: 250,
-    Y: 280,
+    X: 1670,
+    Y: 744,
     scale: 1,
     img: ITEM_LIB,
     clueFor: INFO_LIB,
@@ -142,8 +142,8 @@ const items = {
   [ITEM_KING]: {
     description:
       "A contract for the best prices on all goods and services, granted to the Merchant King himself. The contract mentions a specific bylaw that is being exploited.", //The bylaw is Kings KEY
-    X: 500,
-    Y: 320,
+    X: 249,
+    Y: 676,
     scale: 1,
     img: ITEM_KING,
     clueFor: INFO_KING,
@@ -254,8 +254,8 @@ const items = {
   [YOU_UNSURE]: {
     description:
       "You're worried about the day, but also excited to make your family proud.",
-    X: 300,
-    Y: 400,
+    X: 1144,
+    Y: 626,
     scale: 1,
     img: YOU_UNSURE,
   },

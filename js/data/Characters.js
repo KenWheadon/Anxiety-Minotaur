@@ -17,8 +17,8 @@ const characters = {
       "An ancient sumo master who understands the balance of strength and strategy. You like to chat about sunny weather and soup.",
     description:
       "Once a legendary warrior, now he shares his knowledge with worthy students.",
-    X: 1686,
-    Y: 911,
+    X: 1129,
+    Y: 662,
     scale: 1,
     img: NPC_SUMO,
   },
@@ -39,8 +39,8 @@ const characters = {
       "You are a giant King chess piece brought to life by some achient magic long ago. You love bling and gold, and are currently hanging out in the treasure room.",
     description:
       "A giant King chess piece brought to life by some achient magic long ago.",
-    X: 1686,
-    Y: 911,
+    X: 1186,
+    Y: 587,
     scale: 1,
     img: NPC_KINGKING,
   },
@@ -185,7 +185,7 @@ const characters = {
     description:
       "A massive merchant surrounded by goods and ledgers. Knows the value of everything and everyone.",
     X: 420,
-    Y: 300,
+    Y: 602,
     scale: 1,
     img: INFO_KING,
     revealsStatType: "greed", // Reveals adventurer's greed level
