@@ -1,9 +1,9 @@
-// js/core/GameState.js - Fixed social energy system for all levels + Victory Persistence
+// js/core/GameState.js - Version bump to invalidate old saves and ensure social energy starts at 0
 
 class GameState {
   constructor() {
     this.gameId = Date.now();
-    this.version = "4.0";
+    this.version = "5.5"; // BUMPED: From "4.0" to "5.0" to invalidate old saves
     this.currentLocation = null;
     this.currentLevel = 1;
     this.unlockedAchievements = new Set();
@@ -12,11 +12,11 @@ class GameState {
     this.isFirstTimeLoad = true;
     this.maxSocialEnergy = CONFIG.MAX_SOCIAL_ENERGY;
 
-    // ADDED: Track tutorial completion for victory screen persistence
+    // Track tutorial completion for victory screen persistence
     this.tutorialCompleted = false;
 
-    // Initialize social energy for all levels
-    this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
+    // Social energy always starts at 0 for new games
+    this.socialEnergy = 0;
 
     // Game progress tracking
     this.gameProgress = {
@@ -26,7 +26,7 @@ class GameState {
       statsLearned: 0,
     };
 
-    console.log("🎮 GameState initialized for Anxiety Minotaur");
+    console.log("🎮 GameState v5.0 initialized - Social energy starts at 0");
   }
 
   // Initialize game state for a new level
@@ -35,10 +35,11 @@ class GameState {
 
     this.currentLevel = levelNumber;
 
-    // Always ensure social energy is available
+    // For new games, always start social energy at 0
     if (this.socialEnergy === undefined || this.socialEnergy === null) {
-      this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
+      this.socialEnergy = 0;
     }
+
     console.log(
       `💝 Social energy: ${this.socialEnergy}/${this.maxSocialEnergy}`
     );
@@ -46,23 +47,22 @@ class GameState {
 
   // Always allow social energy tracking
   shouldTrackSocialEnergy() {
-    return true; // Available in all levels now
+    return true;
   }
 
-  // ADDED: Mark tutorial as completed (called when victory first achieved)
+  // Mark tutorial as completed (called when victory first achieved)
   markTutorialCompleted() {
     if (!this.tutorialCompleted) {
       this.tutorialCompleted = true;
       console.log("🎉 Tutorial marked as completed in GameState");
-      this.save(); // Save immediately
+      this.save();
       return true;
     }
     return false;
   }
 
-  // UPDATED: More robust tutorial completion check
+  // More robust tutorial completion check
   isTutorialCompleted() {
-    // Check both the flag AND the achievement for backwards compatibility
     return this.tutorialCompleted || this.hasAchievement(TUTORIAL_COMPLETE);
   }
 
@@ -103,7 +103,7 @@ class GameState {
       return true;
     }
 
-    return false; // Not enough energy
+    return false;
   }
 
   // Add conversation to history
@@ -121,7 +121,7 @@ class GameState {
     this.conversationHistory.get(characterKey).push(conversation);
     this.gameProgress.conversationsHad++;
 
-    // Keep only last 10 conversations per character to manage memory
+    // Keep only last 10 conversations per character
     const history = this.conversationHistory.get(characterKey);
     if (history.length > 10) {
       history.splice(0, history.length - 10);
@@ -168,22 +168,22 @@ class GameState {
     return Array.from(this.unlockedAchievements);
   }
 
-  // UPDATED: Save game state - include tutorialCompleted
+  // Save game state - include tutorialCompleted
   save() {
     try {
       const saveData = {
         gameId: this.gameId,
-        version: this.version,
+        version: this.version, // This will now be "5.0"
         currentLocation: this.currentLocation,
         currentLevel: this.currentLevel,
         socialEnergy: this.socialEnergy,
         maxSocialEnergy: this.maxSocialEnergy,
-        tutorialCompleted: this.tutorialCompleted, // ADDED: Save tutorial completion
+        tutorialCompleted: this.tutorialCompleted,
         unlockedAchievements: Array.from(this.unlockedAchievements),
         conversationHistory: Object.fromEntries(
           Array.from(this.conversationHistory.entries()).map(([key, value]) => [
             key,
-            value.slice(-5), // Save only last 5 conversations per character
+            value.slice(-5),
           ])
         ),
         itemsExamined: Array.from(this.itemsExamined),
@@ -200,23 +200,42 @@ class GameState {
     }
   }
 
-  // UPDATED: Load game state - include tutorialCompleted
+  // ENHANCED: Load with version checking to invalidate old saves
   load() {
     try {
       const saveData = localStorage.getItem(CONFIG.SAVE_KEY);
       if (!saveData) {
-        console.log("📂 No save data found");
+        console.log("📂 No save data found - starting fresh");
         return false;
       }
 
       const data = JSON.parse(saveData);
 
-      // Load basic state
+      // VERSION CHECK: Invalidate old save versions
+      if (!data.version || data.version !== this.version) {
+        console.log(
+          `📂 Save version mismatch: found ${data.version}, expected ${this.version}`
+        );
+        console.log("📂 Starting fresh game due to version update");
+
+        // Clear the old save data
+        localStorage.removeItem(CONFIG.SAVE_KEY);
+
+        return false; // This will trigger a fresh start
+      }
+
+      // Load basic state (only if version matches)
       this.gameId = data.gameId || Date.now();
-      this.version = data.version || "4.0";
+      this.version = data.version;
       this.currentLocation = data.currentLocation;
       this.currentLevel = data.currentLevel || 1;
-      this.socialEnergy = data.socialEnergy || CONFIG.STARTING_SOCIAL_ENERGY;
+
+      // Load social energy
+      this.socialEnergy =
+        data.socialEnergy !== undefined && data.socialEnergy !== null
+          ? data.socialEnergy
+          : 0;
+
       this.maxSocialEnergy = data.maxSocialEnergy || CONFIG.MAX_SOCIAL_ENERGY;
 
       // Load tutorial completion status
@@ -225,13 +244,12 @@ class GameState {
       // Load achievements
       this.unlockedAchievements = new Set(data.unlockedAchievements || []);
 
-      // ADDED: Backwards compatibility - if achievement exists but flag doesn't, sync them
+      // Backwards compatibility for tutorial completion
       if (this.hasAchievement(TUTORIAL_COMPLETE) && !this.tutorialCompleted) {
         console.log(
           "🔧 Legacy save detected - syncing tutorial completion flag"
         );
         this.tutorialCompleted = true;
-        // Will be saved automatically by the game engine
       }
 
       // Load conversation history
@@ -254,28 +272,31 @@ class GameState {
       };
 
       this.isFirstTimeLoad = false;
-      console.log(`📂 Game loaded (${this.constructor.name} v${this.version})`);
-      console.log(`🎉 Tutorial completed status: ${this.tutorialCompleted}`);
+      console.log(`📂 Game loaded successfully (v${this.version})`);
       console.log(
-        `🏆 Tutorial achievement unlocked: ${this.hasAchievement(
-          TUTORIAL_COMPLETE
-        )}`
+        `💝 Social energy: ${this.socialEnergy}/${this.maxSocialEnergy}`
       );
+      console.log(`🎉 Tutorial completed: ${this.tutorialCompleted}`);
 
       return true;
     } catch (error) {
       console.error("❌ Failed to load game:", error);
+      console.log("📂 Starting fresh due to load error");
+
+      // Clear corrupted save data
+      localStorage.removeItem(CONFIG.SAVE_KEY);
+
       return false;
     }
   }
 
-  // UPDATED: Reset game state - clear tutorialCompleted
+  // Reset game state - always reset social energy to 0
   reset() {
     this.gameId = Date.now();
     this.currentLocation = null;
     this.currentLevel = 1;
-    this.socialEnergy = CONFIG.STARTING_SOCIAL_ENERGY;
-    this.tutorialCompleted = false; // ADDED: Reset tutorial completion
+    this.socialEnergy = 0;
+    this.tutorialCompleted = false;
     this.unlockedAchievements = new Set();
     this.conversationHistory = new Map();
     this.itemsExamined = new Set();
@@ -286,7 +307,7 @@ class GameState {
       statsLearned: 0,
     };
 
-    console.log("🔄 Game state reset");
+    console.log("🔄 Game state reset - Social energy set to 0");
   }
 
   // Clean up

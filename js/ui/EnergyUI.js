@@ -111,8 +111,8 @@ class EnergyUI {
     const gameState = this.gameEngine.gameState;
 
     // FIXED: Provide default values if gameState properties are undefined
-    const currentEnergy = gameState.socialEnergy || 10;
-    const maxEnergy = gameState.maxSocialEnergy || 10;
+    const currentEnergy = gameState.socialEnergy || 0;
+    const maxEnergy = gameState.maxSocialEnergy || 6;
     const percentage = (currentEnergy / maxEnergy) * 100;
 
     // console.log(`💝 Updating energy display: ${currentEnergy}/${maxEnergy} (${percentage}%)`);
