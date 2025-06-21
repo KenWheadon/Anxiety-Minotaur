@@ -1,4 +1,4 @@
-// js/services/AssetManager.js - Updated with cleaner loadImage integration
+// js/services/AssetManager.js - Complete version using centralized constants
 
 class AssetManager {
   constructor() {
@@ -10,38 +10,25 @@ class AssetManager {
     this.preloadProgress = { loaded: 0, total: 0, percentage: 0 };
     this.onProgressCallback = null;
 
-    // NEW: Initialize AudioManager
+    // Initialize AudioManager
     this.audioManager = new AudioManager();
+
+    // Get asset paths from constants (single source of truth)
+    this.assetPaths = getAllAssetPaths();
+
+    console.log(
+      "📦 AssetManager initialized with",
+      Object.keys(this.assetPaths).length,
+      "asset paths"
+    );
 
     // Placeholder colors for different asset types
     this.placeholderColors = {
       character: "#4CAF50",
       item: "#2196F3",
       background: "#8BC34A",
-      ui: "#FF9800",
+      unknown: "#666666",
     };
-  }
-
-  // HELPER: Extract filename from path (e.g., "characters/npc_duck" -> "npc_duck")
-  extractFilename(path) {
-    if (path.includes("/")) {
-      return path.split("/").pop();
-    }
-    return path;
-  }
-
-  // HELPER: Get folder type from filename by checking which folder it exists in
-  // This is used for placeholder generation when we only have filename
-  async getFolderTypeForFilename(filename) {
-    const folders = ["characters", "backgrounds", "items"];
-    for (const folder of folders) {
-      const fullPath = `images/${folder}/${filename}.png`;
-      if (this.images.has(fullPath)) {
-        return folder;
-      }
-    }
-    // Default to "item" if not found
-    return "item";
   }
 
   // Set progress callback for loading indicators
@@ -62,87 +49,77 @@ class AssetManager {
     }
   }
 
-  // NEW: Preload all game assets including audio
+  // Preload all game assets including audio
   async preloadAllAssets() {
-    console.log("📦 Starting comprehensive asset preload...");
+    console.log("📦 Starting asset preload from constants...");
 
     // Load audio settings first
     this.audioManager.loadSettings();
 
-    const allAssets = this.getAllGameAssets();
-    this.preloadProgress.total = allAssets.length;
+    // Get all image assets from our constants
+    const imageAssets = Object.keys(this.assetPaths);
+    this.preloadProgress.total = imageAssets.length;
     this.preloadProgress.loaded = 0;
 
     this.updateProgress();
 
-    // Start audio preloading in parallel
-    const audioPromise = this.audioManager.preloadAllAudio();
+    // Start audio preloading in parallel (don't block on it)
+    const audioPromise = this.audioManager.preloadAllAudio().catch((error) => {
+      console.warn("Audio preload failed, continuing without audio:", error);
+      return { successful: 0, failed: 0 };
+    });
 
-    const promises = allAssets.map(async (asset) => {
+    // Load all images
+    const promises = imageAssets.map(async (assetKey) => {
       try {
-        if (asset.type === "image") {
-          // UPDATED: Extract filename from asset.path before calling loadImage
-          const filename = this.extractFilename(asset.path);
-          await this.loadImage(filename);
-        } else if (asset.type === "sound") {
-          await this.loadSound(asset.path);
-        }
+        await this.loadImageDirect(assetKey);
         this.preloadProgress.loaded++;
         this.updateProgress();
       } catch (error) {
-        console.warn(`Failed to preload ${asset.path}:`, error);
+        console.warn(`Failed to preload ${assetKey}:`, error);
         this.preloadProgress.loaded++;
         this.updateProgress();
       }
     });
 
-    // Wait for both image/sound assets and audio manager to complete
-    const [assetResults, audioResults] = await Promise.allSettled([
-      Promise.allSettled(promises),
-      audioPromise,
-    ]);
+    // Wait for image assets
+    await Promise.allSettled(promises);
+
+    // Wait for audio (but don't fail if it doesn't work)
+    const audioResults = await audioPromise;
 
     console.log(
-      `📦 Preload complete: ${this.preloadProgress.loaded}/${this.preloadProgress.total} assets`
+      `📦 Asset preload complete: ${this.preloadProgress.loaded}/${this.preloadProgress.total} images`
     );
 
-    if (audioResults.status === "fulfilled") {
+    if (audioResults.successful !== undefined) {
       console.log(
-        `🎵 Audio preload: ${audioResults.value.successful} successful, ${audioResults.value.failed} failed`
+        `🎵 Audio preload: ${audioResults.successful} successful, ${audioResults.failed} failed`
       );
     }
 
     return this.preloadProgress;
   }
 
-  // UPDATED: Get all assets used in the game - now stores just filenames for consistency
+  // Extract filename from path (for backward compatibility)
+  extractFilename(path) {
+    if (path.includes("/")) {
+      return path.split("/").pop();
+    }
+    return path;
+  }
+
+  // Get all assets used in the game
   getAllGameAssets() {
     const assets = [];
 
-    // Background images - store just the background name as filename
-    Object.entries(locations).forEach(([key, location]) => {
+    // Add all predefined asset paths
+    Object.entries(this.assetPaths).forEach(([key, path]) => {
       assets.push({
-        path: location.background, // Just the filename, not full path
+        filename: key,
+        path: path,
         type: "image",
-        category: "background",
-      });
-    });
-
-    // Character images - store just the image name as filename
-    Object.entries(characters).forEach(([key, character]) => {
-      assets.push({
-        path: character.img, // Just the filename, not full path
-        type: "image",
-        category: "character",
-      });
-    });
-
-    // Item images - store just the image name as filename
-    Object.entries(items).forEach(([key, item]) => {
-      assets.push({
-        path: item.img, // Just the filename, not full path
-        type: "image",
-        category: "item",
+        category: this.getCategoryFromPath(path),
       });
     });
 
@@ -166,175 +143,109 @@ class AssetManager {
     return assets;
   }
 
-  // Load image with smart folder ordering to minimize 404s
-  async loadImage(filename) {
-    // Convert filename to lowercase for consistent file lookups
-    const lowerFilename = filename.toLowerCase();
+  getCategoryFromPath(path) {
+    if (path.includes("/characters/")) return "character";
+    if (path.includes("/items/")) return "item";
+    if (path.includes("/backgrounds/")) return "background";
+    return "misc";
+  }
 
-    // Smart folder ordering based on filename patterns
-    const folders = this.getSmartFolderOrder(lowerFilename);
-    let lastError = null;
+  // Main image loading method - uses constants for paths
+  async loadImage(assetKey) {
+    const normalizedKey = assetKey.toLowerCase();
 
-    // Check each subfolder for the image
-    for (const folder of folders) {
-      const fullPath = `images/${folder}/${lowerFilename}.png`;
-
-      // Check if already cached
-      if (this.images.has(fullPath)) {
-        return this.images.get(fullPath);
-      }
-
-      // Check if already loading to prevent race conditions
-      if (this.loadingPromises.has(fullPath)) {
-        return this.loadingPromises.get(fullPath);
-      }
-
-      // Check if image exists silently
-      const exists = await this.checkImageExistsSilently(fullPath);
-      if (!exists) {
-        continue; // File doesn't exist, try next folder
-      }
-
-      // Try to load from this path
-      try {
-        console.log(`🔍 Loading ${lowerFilename} from ${folder} folder...`);
-
-        const loadPromise = this._loadImageInternal(
-          fullPath,
-          folder,
-          lowerFilename
-        );
-        this.loadingPromises.set(fullPath, loadPromise);
-
-        const result = await loadPromise;
-        this.loadingPromises.delete(fullPath);
-
-        console.log(
-          `✅ Successfully loaded ${lowerFilename} from ${folder} folder`
-        );
-        return result;
-      } catch (error) {
-        this.loadingPromises.delete(fullPath);
-        lastError = error;
-        // Continue to next folder
-      }
+    // Check if we have a path for this asset in our constants
+    if (this.assetPaths[normalizedKey]) {
+      return await this.loadImageDirect(normalizedKey);
     }
 
-    // If we get here, the image wasn't found in any subfolder
-    console.warn(`Image ${lowerFilename}.png not found, using placeholder`);
+    // Fallback: try to find by searching constants
+    const foundPath = getAssetPath(assetKey);
+    if (foundPath) {
+      console.log(`📸 Found asset ${assetKey} via fallback search`);
+      // Cache it for next time
+      this.assetPaths[normalizedKey] = foundPath;
+      return await this.loadImageDirect(normalizedKey);
+    }
 
-    // Create a placeholder
-    const placeholderType = folders[0]; // Use first folder as best guess
-    const placeholder = this.createPlaceholderImage(
-      placeholderType,
-      lowerFilename
-    );
-
-    // Cache the placeholder using the most likely path
-    const fallbackPath = `images/${placeholderType}/${lowerFilename}.png`;
-    this.images.set(fallbackPath, placeholder);
-    this.failedAssets.add(fallbackPath);
-
+    console.warn(`❌ Unknown asset requested: ${assetKey}`);
+    // Create placeholder for unknown assets
+    const category = getAssetCategory(assetKey);
+    const placeholder = this.createPlaceholderImage(category, assetKey);
+    this.images.set(normalizedKey, placeholder);
     return placeholder;
   }
 
-  // ADDED: Smart folder ordering based on filename patterns
-  getSmartFolderOrder(filename) {
-    const lowerFilename = filename.toLowerCase();
+  // Load image directly using path from constants
+  async loadImageDirect(assetKey) {
+    const fullPath = this.assetPaths[assetKey];
 
-    // Items folder first for item_ prefixed files
-    if (
-      lowerFilename.startsWith("item_") ||
-      lowerFilename.includes("seed") ||
-      lowerFilename.includes("letter") ||
-      lowerFilename.includes("book") ||
-      lowerFilename.includes("help") ||
-      lowerFilename.includes("mag") ||
-      lowerFilename.includes("dig")
-    ) {
-      return ["items", "characters", "backgrounds"];
+    if (!fullPath) {
+      throw new Error(`No path defined for asset: ${assetKey}`);
     }
 
-    // Characters folder first for character files
-    if (
-      lowerFilename.includes("npc_") ||
-      lowerFilename.includes("character_") ||
-      lowerFilename.includes("_duck") ||
-      lowerFilename.includes("pig") ||
-      lowerFilename.startsWith("you_")
-    ) {
-      return ["characters", "items", "backgrounds"];
+    // Check cache
+    if (this.images.has(assetKey)) {
+      return this.images.get(assetKey);
     }
 
-    // Backgrounds folder first for background files
-    if (
-      lowerFilename.includes("bg") ||
-      lowerFilename.includes("background") ||
-      lowerFilename.includes("level") ||
-      lowerFilename === "bedroom" ||
-      lowerFilename === "livingroom" ||
-      lowerFilename === "garden"
-    ) {
-      return ["backgrounds", "items", "characters"];
+    // Check if loading
+    if (this.loadingPromises.has(assetKey)) {
+      return this.loadingPromises.get(assetKey);
     }
 
-    // Default order if no pattern matches
-    return ["items", "characters", "backgrounds"];
+    console.log(`📸 Loading ${assetKey} from ${fullPath}`);
+
+    const loadPromise = this._loadImageInternal(fullPath);
+    this.loadingPromises.set(assetKey, loadPromise);
+
+    try {
+      const result = await loadPromise;
+      this.loadingPromises.delete(assetKey);
+      this.images.set(assetKey, result);
+      this.loadedAssets.add(fullPath);
+      console.log(`✅ Loaded ${assetKey}`);
+      return result;
+    } catch (error) {
+      this.loadingPromises.delete(assetKey);
+      console.warn(`❌ Failed to load ${assetKey}, using placeholder`);
+
+      // Create placeholder
+      const category = getAssetCategory(assetKey);
+      const placeholder = this.createPlaceholderImage(category, assetKey);
+      this.images.set(assetKey, placeholder);
+      this.failedAssets.add(fullPath);
+
+      return placeholder;
+    }
   }
 
-  // Silent existence check using Image object
-  async checkImageExistsSilently(imagePath) {
-    return new Promise((resolve) => {
+  async _loadImageInternal(fullPath) {
+    return new Promise((resolve, reject) => {
       const img = new Image();
 
-      // Set up handlers before setting src
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
+      img.onload = () => {
+        resolve(img);
+      };
 
-      // Start the check
-      img.src = imagePath;
+      img.onerror = () => {
+        reject(new Error(`Failed to load ${fullPath}`));
+      };
 
-      // Timeout after 500ms to avoid hanging
-      setTimeout(() => resolve(false), 500);
+      img.src = fullPath;
     });
   }
 
-  async _loadImageInternal(fullPath, type, originalPath) {
-    try {
-      const img = new Image();
-      const loadPromise = new Promise((resolve, reject) => {
-        img.onload = () => {
-          console.log(`✅ Loaded image: ${fullPath}`);
-          this.images.set(fullPath, img);
-          this.loadedAssets.add(fullPath);
-          resolve(img);
-        };
-
-        img.onerror = () => {
-          console.warn(`❌ Failed to load image: ${fullPath}`);
-          this.failedAssets.add(fullPath);
-          reject(new Error(`Failed to load ${fullPath}`));
-        };
-      });
-
-      img.src = fullPath;
-      return await loadPromise;
-    } catch (error) {
-      console.warn(`Error loading image ${fullPath}:`, error);
-      this.failedAssets.add(fullPath);
-      throw error;
-    }
-  }
-
   // Create colored placeholder image
-  createPlaceholderImage(type, name) {
+  createPlaceholderImage(category, name) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     canvas.width = 64;
     canvas.height = 64;
 
-    // Fill with type-specific color
-    ctx.fillStyle = this.placeholderColors[type] || "#666666";
+    // Fill with category-specific color
+    ctx.fillStyle =
+      this.placeholderColors[category] || this.placeholderColors.unknown;
     ctx.fillRect(0, 0, 64, 64);
 
     // Add border
@@ -357,15 +268,15 @@ class AssetManager {
     return img;
   }
 
-  // UPDATED: Load background image with fallback - now just passes filename
-  async loadBackground(name) {
+  // Background loading (delegates to main loadImage)
+  async loadBackground(backgroundKey) {
     try {
-      // Extract filename if a path was passed (for backward compatibility)
-      const filename = this.extractFilename(name);
-      return await this.loadImage(filename);
+      return await this.loadImage(backgroundKey);
     } catch (error) {
-      console.warn(`Failed to load background ${name}, using solid color`);
-      return this.createPlaceholderBackground(name);
+      console.warn(
+        `Failed to load background ${backgroundKey}, using placeholder`
+      );
+      return this.createPlaceholderBackground(backgroundKey);
     }
   }
 
@@ -379,21 +290,18 @@ class AssetManager {
     // Create gradient based on location name
     const gradient = ctx.createLinearGradient(0, 0, 0, 600);
 
-    switch (name) {
+    switch (name.toLowerCase()) {
       case "garden":
-      case OUTSIDE_GANG_CLUB:
         gradient.addColorStop(0, "#87CEEB");
         gradient.addColorStop(1, "#228B22");
         break;
-      case "greenhouse":
-      case "saloon":
-        gradient.addColorStop(0, "#98FB98");
-        gradient.addColorStop(1, "#006400");
-        break;
-      case "shed":
-      case "saloon_backroom":
+      case "livingroom":
         gradient.addColorStop(0, "#D2B48C");
         gradient.addColorStop(1, "#8B4513");
+        break;
+      case "bedroom":
+        gradient.addColorStop(0, "#FFB6C1");
+        gradient.addColorStop(1, "#9370DB");
         break;
       default:
         gradient.addColorStop(0, "#87CEEB");
@@ -458,7 +366,7 @@ class AssetManager {
     }
   }
 
-  // NEW: Enhanced play sound using AudioManager
+  // Enhanced play sound using AudioManager
   playSound(path, volume = 1.0) {
     // Map old sound paths to new AudioManager keys
     const soundMapping = {
@@ -467,14 +375,13 @@ class AssetManager {
       "effects/location_change.mp3": "locationChange",
       "effects/achievement.mp3": "achievement",
       "effects/ui_hover.mp3": "uiHover",
-      // New sound effects
       "effects/ui_click.mp3": "click",
       "effects/discovery.mp3": "discovery",
       "effects/chat_open.mp3": "chatOpen",
     };
 
     const soundKey = soundMapping[path];
-    if (soundKey) {
+    if (soundKey && this.audioManager) {
       this.audioManager.playSoundEffect(soundKey, volume);
     } else {
       // Fallback to legacy method
@@ -498,77 +405,76 @@ class AssetManager {
     }
   }
 
-  // NEW: Play background music for level
+  // Play background music for level
   playBackgroundMusic(level) {
-    this.audioManager.playBackgroundMusic(level, true);
-  }
-
-  // NEW: Stop background music
-  stopBackgroundMusic() {
-    this.audioManager.stopBackgroundMusic(true);
-  }
-
-  // UPDATED: Get image - now searches through all cached images by filename
-  getImage(filenameOrPath) {
-    // Extract filename if a path was passed
-    const filename = this.extractFilename(filenameOrPath);
-
-    // Search through all cached images to find one with this filename
-    for (const [fullPath, image] of this.images.entries()) {
-      if (fullPath.includes(`/${filename}.png`)) {
-        return image;
-      }
+    if (this.audioManager) {
+      this.audioManager.playBackgroundMusic(level, true);
     }
-
-    // If not found, return null
-    return null;
   }
 
-  // UPDATED: Preload all assets for a location - now passes just filenames
+  // Stop background music
+  stopBackgroundMusic() {
+    if (this.audioManager) {
+      this.audioManager.stopBackgroundMusic(true);
+    }
+  }
+
+  // Get image from cache
+  getImage(assetKey) {
+    const normalizedKey = assetKey.toLowerCase();
+    return this.images.get(normalizedKey) || null;
+  }
+
+  // Preload all assets for a location
   async preloadLocationAssets(locationData) {
     const promises = [];
 
-    // Load background - just pass the background name
+    // Load background
     promises.push(this.loadBackground(locationData.background));
 
-    // Load character images - extract just the filename
+    // Load character images
     locationData.characters.forEach((charKey) => {
       const char = characters[charKey];
-      if (char) {
+      if (char && char.img) {
         promises.push(this.loadImage(char.img));
       }
     });
 
-    // Load item images - extract just the filename
+    // Load item images
     locationData.items.forEach((itemKey) => {
       const item = items[itemKey];
-      if (item) {
+      if (item && item.img) {
         promises.push(this.loadImage(item.img));
       }
     });
 
     try {
       await Promise.all(promises);
-      console.log(`📦 Location assets ready (cached)`);
+      console.log(
+        `📦 Location assets ready for ${locationData.description || "location"}`
+      );
     } catch (error) {
-      console.warn("Some assets failed to load, but placeholders are ready");
+      console.warn(
+        "Some location assets failed to load, but placeholders are ready"
+      );
     }
   }
 
-  // NEW: Get audio manager for external access
+  // Get audio manager for external access
   getAudioManager() {
     return this.audioManager;
   }
 
   // Get loading statistics
   getStats() {
-    const audioStats = this.audioManager.getStats();
+    const audioStats = this.audioManager ? this.audioManager.getStats() : {};
     return {
       loaded: this.loadedAssets.size,
       failed: this.failedAssets.size,
       total: this.loadedAssets.size + this.failedAssets.size,
       preloadProgress: this.preloadProgress,
       audio: audioStats,
+      totalAssetPaths: Object.keys(this.assetPaths).length,
     };
   }
 
@@ -577,7 +483,7 @@ class AssetManager {
     return this.preloadProgress.loaded >= this.preloadProgress.total * 0.8; // 80% loaded is "ready"
   }
 
-  // NEW: Cleanup including audio
+  // Cleanup including audio
   destroy() {
     if (this.audioManager) {
       this.audioManager.destroy();
