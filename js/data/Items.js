@@ -222,32 +222,36 @@ const items = {
     Y: 400,
     scale: 0.3,
     img: YOU_IDLE,
+  },
 
-    [YOU_DUCK]: {
+  [YOU_DUCK]: {
     description:
       "No matter how anxious, your pet duck always makes you feel better.",
     X: 300,
     Y: 400,
     scale: 0.3,
     img: YOU_DUCK,
+  },
 
-    [YOU_DEAD]: {
+  [YOU_DEAD]: {
     description:
       "Guess you didn't do your family proud - couldn't even survive one adventurer.",
     X: 300,
     Y: 400,
     scale: 0.3,
     img: YOU_DEAD,
+  },
 
-    [YOU_SCARED]: {
+  [YOU_SCARED]: {
     description:
       "You can't stop thinking about how you still need to talk to more people.... this is the worst.",
     X: 300,
     Y: 400,
     scale: 0.3,
     img: YOU_SCARED,
+  },
 
-    [YOU_UNSURE]: {
+  [YOU_UNSURE]: {
     description:
       "You're worried about the day, but also excited to make your family proud.",
     X: 300,

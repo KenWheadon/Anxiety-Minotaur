@@ -3,7 +3,7 @@ const locations = {
   [LEVEL1_HOUSE]: {
     description:
       "Your cozy bedroom with personal mementos. Today's the big day - your first adventurer challenge!",
-    characters: [DUCK_COMPANION, YOU_IDLE],
+    characters: [NPC_DUCK, YOU_IDLE],
     items: [ITEM_DUCK, ITEM_MAMALETTER],
     locations: [LEVEL1_LIVINGROOM],
     background: LEVEL1_HOUSE,
@@ -68,7 +68,7 @@ const locations = {
     description:
       "A workshop filled with ingenious contraptions. Trap makers demonstrate their deadly crafts.",
     characters: [NPC_SPHINX, TRAP_KATE],
-    items: [ITEM_POTIONRED, ITEM_POTIONGREEN, CLOCKWORK_GEAR],
+    items: [ITEM_POTIONRED, ITEM_POTIONGREEN, ITEM_KATE],
     locations: [LEVEL2_POTIONSHOP],
     background: LEVEL2_POTIONINSIDE,
   },

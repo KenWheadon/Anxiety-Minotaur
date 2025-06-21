@@ -135,7 +135,7 @@ const characters = {
     revealsStatType: "fear", // Reveals adventurer's fear level
   },
 
-  [THE_MERCHANT_KING]: {
+  [INFO_KING]: {
     prompt:
       "You are the Merchant King, an enormous trader obsessed with value, exchange, and commerce. You know everything about the incoming adventurer's GREED level. You get excited when someone shows interest in trade, valuable items, or business dealings. You will reveal the adventurer's greed level when properly approached. SECRET: You're drawn to items that represent trade and commerce.",
     description:
@@ -143,11 +143,11 @@ const characters = {
     X: 420,
     Y: 300,
     scale: 1.2,
-    img: THE_MERCHANT_KING,
+    img: INFO_KING,
     revealsStatType: "greed", // Reveals adventurer's greed level
   },
 
-  [THE_PHILOSOPHER]: {
+  [INFO_PHIL]: {
     prompt:
       "You are the Philosopher, an ancient multi-eyed being who considers all perspectives. You know about the incoming adventurer's PRIDE level. You get excited when someone shows interest in deep thinking, contemplation, or philosophical items. You will reveal the adventurer's pride level when properly approached. SECRET: You're drawn to items that encourage thought and reflection.",
     description:
@@ -155,7 +155,7 @@ const characters = {
     X: 370,
     Y: 250,
     scale: 1.0,
-    img: THE_PHILOSOPHER,
+    img: INFO_PHIL,
     revealsStatType: "pride", // Reveals adventurer's pride level
   },
 };

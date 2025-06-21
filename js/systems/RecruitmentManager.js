@@ -21,41 +21,43 @@ class RecruitmentManager {
     // Get all recruitables (monsters + trap makers) and info dealers
     const recruitableNPCs = [
       // Monsters
-      SKELETON_WARRIOR,
-      DRAGON_HATCHLING,
-      SPHINX,
-      GIANT_SPIDER,
-      SIREN,
-      TROLL,
+      MON_SKELETON,
+      MON_DRAGON,
+      MON_SPHINX,
+      MON_SPIDER,
+      MON_SIREN,
+      MON_TROLL,
+
       // Trap Makers
-      COGWHEEL_KATE,
-      PUZZLE_MASTER_PIP,
-      ILLUSION_IRIS,
-      PIT_BOSS_PETE,
+      ITEM_KATE,
+      ITEM_PIP,
+      ITEM_IRIS,
+
       // Info Dealers
-      THE_LIBRARIAN,
-      THE_MERCHANT_KING,
-      THE_PHILOSOPHER,
+      INFO_LIB,
+      INFO_KING,
+      INFO_PHIL,
     ];
 
     // Get all clue items
     const clueItems = [
       // Monster clues
-      WAR_MEDAL,
-      POLISHED_SCALE,
-      ANCIENT_SCROLL,
-      SILK_THREAD,
-      GOLDEN_HARP_STRING,
-      TRADE_CONTRACT,
+      ITEM_SKELETON,
+      ITEM_DRAGON,
+      ITEM_SPHINX,
+      ITEM_SPIDER,
+      ITEM_SIREN,
+      ITEM_TROLL,
+
       // Trap maker clues
-      CLOCKWORK_GEAR,
-      CHESS_PIECE,
-      KALEIDOSCOPE,
-      HAMMER_HEAD,
+      ITEM_KATE,
+      ITEM_PIP,
+      ITEM_IRIS,
+
       // Info dealer clues
-      LIBRARY_CARD,
-      MERCHANT_LEDGER,
-      THINKING_STONE,
+      ITEM_LIB,
+      ITEM_KING,
+      ITEM_PHIL,
     ];
 
     // Assign desires randomly (but ensure each NPC gets a unique item)

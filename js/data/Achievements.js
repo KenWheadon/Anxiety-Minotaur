@@ -4,7 +4,7 @@ const achievements = {
     title: "Ready for the Day",
     description: "Told duck you're ready to start your labyrinth challenge!",
     hint: "Talk to duck about being ready when you've explored your home.",
-    characterId: DUCK_COMPANION,
+    characterId: NPC_DUCK,
     triggerKeywords: ["ready", "start", "begin", "go", "day", "adventure"],
     isUnlocked: false,
   },
@@ -13,7 +13,7 @@ const achievements = {
     title: "Best Friend",
     description: "Had your first conversation with your loyal duck companion.",
     hint: "Your duck is always there to listen and help you recharge.",
-    characterId: DUCK_COMPANION,
+    characterId: NPC_DUCK,
     triggerKeywords: ["quack"], // Triggers on any duck response
     isUnlocked: false,
   },
@@ -61,7 +61,7 @@ const achievements = {
     description:
       "Learned whether the incoming adventurer is brave or cowardly.",
     hint: "The Librarian knows about courage and fear.",
-    characterId: THE_LIBRARIAN,
+    characterId: INFO_LIB,
     triggerKeywords: ["fear", "brave", "courage", "coward"],
     isUnlocked: false,
   },
@@ -71,7 +71,7 @@ const achievements = {
     description:
       "Discovered how greedy or generous the incoming adventurer is.",
     hint: "The Merchant King understands the value of everything.",
-    characterId: THE_MERCHANT_KING,
+    characterId: INFO_KING,
     triggerKeywords: ["greed", "generous", "treasure", "gold"],
     isUnlocked: false,
   },
@@ -80,7 +80,7 @@ const achievements = {
     title: "Know Your Enemy's Pride",
     description: "Learned about the adventurer's level of pride and humility.",
     hint: "The Philosopher sees all perspectives on pride.",
-    characterId: THE_PHILOSOPHER,
+    characterId: INFO_PHIL,
     triggerKeywords: ["pride", "humble", "arrogant", "ego"],
     isUnlocked: false,
   },
@@ -105,7 +105,7 @@ const achievements = {
     isUnlocked: false,
   },
 
-  [ADVENTURER_ESCAPED]: {
+  [KILLED_AT_HOME]: {
     title: "Learning Experience",
     description: "The adventurer escaped, but you learned valuable lessons.",
     hint: "Try different monster and trap combinations next time.",

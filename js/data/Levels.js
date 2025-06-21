@@ -10,7 +10,7 @@ const LEVELS = {
     completionMessage:
       "Time to head to the labyrinth and find the right allies!",
     locations: [LEVEL1_HOUSE, LEVEL1_LIVINGROOM],
-    characters: [DUCK_COMPANION],
+    characters: [NPC_DUCK],
     items: [
       ITEM_DUCK,
       ITEM_MAMALETTER,
@@ -43,7 +43,7 @@ const LEVELS = {
       LEVEL2_LIBRARY,
     ],
     characters: [
-      DUCK_COMPANION, // Energy restoration
+      NPC_DUCK, // Energy restoration
       //NPCS
       NPC_DEMON,
       NPC_KINGKING,
@@ -110,9 +110,9 @@ const LEVELS = {
     startLocation: LEVEL3_BG,
     completionAchievement: null, // No interactive completion - just cutscenes
     completionMessage: "The challenge is complete!",
-    locations: [RESULT_CHAMBER],
+    locations: [LEVEL3_BG],
     characters: [], // No interactive characters in results level
     items: [], // No items to examine
-    achievements: [DEFEATED_ADVENTURER, ADVENTURER_ESCAPED], // One of these will trigger
+    achievements: [DEFEATED_ADVENTURER, KILLED_AT_HOME], // One of these will trigger
   },
 };

@@ -860,7 +860,7 @@ class ResultsScreen {
         }
       }, 2000);
     } else {
-      this.gameEngine.achievementManager.unlockAchievement(ADVENTURER_ESCAPED);
+      this.gameEngine.achievementManager.unlockAchievement(KILLED_AT_HOME);
 
       // Play defeat cutscene after a delay
       setTimeout(() => {
