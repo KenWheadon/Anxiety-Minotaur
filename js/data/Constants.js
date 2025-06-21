@@ -22,62 +22,67 @@ const LEVEL2_GOLDROOM = "level2_goldroom";
 const LEVEL3_BG = "level3_bg";
 
 // Character constants - Duck
-const DUCK_COMPANION = "duck_companion";
+const NPC_DUCK = "npc_duck";
 
 // Character constants - Monsters (Recruit 2 of 6)
-const SKELETON_WARRIOR = "skeleton_warrior";
-const DRAGON_HATCHLING = "dragon_hatchling";
-const SPHINX = "sphinx";
-const GIANT_SPIDER = "giant_spider";
-const SIREN = "siren";
-const TROLL = "troll";
+const MON_SKELETON = "mon_skeleton";
+const MON_SIREN = "mon_siren";
+const MON_DRAGON = "mon_dragon";
+const MON_SPIDER = "mon_spider";
+const MON_SPHINX = "mon_sphinx";
+const MON_TROLL = "mon_troll";
 
 // Character constants - Trap Makers (Recruit 1 of 4)
-const COGWHEEL_KATE = "cogwheel_kate";
-const PUZZLE_MASTER_PIP = "puzzle_master_pip";
-const ILLUSION_IRIS = "illusion_iris";
-const PIT_BOSS_PETE = "pit_boss_pete";
+const TRAP_KATE = "trap_kate";
+const TRAP_PIP = "trap_pip";
+const TRAP_IRIS = "trap_iris";
 
 // Character constants - Information Dealers (Visit All 3)
-const THE_LIBRARIAN = "the_librarian";
-const THE_MERCHANT_KING = "the_merchant_king";
-const THE_PHILOSOPHER = "the_philosopher";
+const INFO_LIB = "info_lib";
+const INFO_KING = "info_king";
+const INFO_PHIL = "info_phil";
 
 // Item constants (Level 1 - World Building)
-const ANXIETY_WORKBOOK = "anxiety_workbook";
-const LETTER_FROM_MOM = "letter_from_mom";
-const BABY_DUCK_PHOTOS = "baby_duck_photos";
-const DUCK_TREAT_RECIPE = "duck_treat_recipe";
-const LABYRINTH_BLUEPRINT = "labyrinth_blueprint";
+const ITEM_DUCK = "item_duck";
+const ITEM_HELP = "item_help";
+const ITEM_MAGGLASS = "item_magglass";
+const ITEM_MAMALETTER = "item_mamaletter";
 
 // Item constants (Level 2 - Monster Clues)
-const WAR_MEDAL = "war_medal";
-const POLISHED_SCALE = "polished_scale";
-const ANCIENT_SCROLL = "ancient_scroll";
-const SILK_THREAD = "silk_thread";
-const GOLDEN_HARP_STRING = "golden_harp_string";
-const TRADE_CONTRACT = "trade_contract";
+const ITEM_SKELETON = "item_skeleton";
+const ITEM_SIREN = "item_siren";
+const ITEM_DRAGON = "item_dragon";
+const ITEM_SPIDER = "item_spider";
+const ITEM_SPHINX = "item_sphinx";
+const ITEM_TROLL = "item_troll";
 
 // Item constants (Level 2 - Trap Maker Clues)
-const CLOCKWORK_GEAR = "clockwork_gear";
-const CHESS_PIECE = "chess_piece";
-const KALEIDOSCOPE = "kaleidoscope";
-const HAMMER_HEAD = "hammer_head";
+const ITEM_KATE = "item_kate";
+const ITEM_PIP = "item_pip";
+const ITEM_IRIS = "item_iris";
 
 // Item constants (Level 2 - Information Dealer Clues)
-const LIBRARY_CARD = "library_card";
-const MERCHANT_LEDGER = "merchant_ledger";
-const THINKING_STONE = "thinking_stone";
+const ITEM_LIB = "item_lib";
+const ITEM_KING = "item_king";
+const ITEM_PHIL = "item_phil";
+
+// Item constants (Level 2 - Story items)
+const ITEM_STARSBOOK = "item_starsbook";
+const ITEM_POTIONRED = "item_potionred";
+const ITEM_POTIONGREEN = "item_potiongreen";
+const ITEM_PAINT = "item_paint";
+const ITEM_JACKET = "item_jacket";
+const ITEM_ART = "item_art";
 
 // Achievement constants (Level 1)
-const READY_FOR_THE_DAY = "READY_FOR_THE_DAY";
-const TALKED_TO_DUCK = "TALKED_TO_DUCK";
-const READ_MOMS_LETTER = "READ_MOMS_LETTER";
+const READY_FOR_THE_DAY = "READY_FOR_THE_DAY"; //tell duck you've read the both books
+const TALKED_TO_DUCK = "TALKED_TO_DUCK"; //first chat with duck - doesn't use LLM
+const READ_MOMS_LETTER = "READ_MOMS_LETTER"; //letter from mom mentioning you should read your books
 
 // Achievement constants (Level 2 - Recruitment)
-const RECRUITED_FIRST_MONSTER = "RECRUITED_FIRST_MONSTER";
-const RECRUITED_SECOND_MONSTER = "RECRUITED_SECOND_MONSTER";
-const HIRED_TRAP_MAKER = "HIRED_TRAP_MAKER";
+const RECRUITED_FIRST_MONSTER = "RECRUITED_FIRST_MONSTER"; //
+const RECRUITED_SECOND_MONSTER = "RECRUITED_SECOND_MONSTER"; //
+const HIRED_TRAP_MAKER = "HIRED_TRAP_MAKER"; //
 const LEARNED_FEAR_LEVEL = "LEARNED_FEAR_LEVEL";
 const LEARNED_GREED_LEVEL = "LEARNED_GREED_LEVEL";
 const LEARNED_PRIDE_LEVEL = "LEARNED_PRIDE_LEVEL";
@@ -85,7 +90,7 @@ const RECRUITMENT_COMPLETE = "RECRUITMENT_COMPLETE";
 
 // Achievement constants (Level 3)
 const DEFEATED_ADVENTURER = "DEFEATED_ADVENTURER";
-const ADVENTURER_ESCAPED = "ADVENTURER_ESCAPED";
+const KILLED_AT_HOME = "KILLED AT HOME";
 
 // Adventurer stat constants
 const FEAR_HIGH = "fear_high";
