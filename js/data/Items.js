@@ -2,37 +2,37 @@ const items = {
   // Level 1 Items - World Building
   [ITEM_DUCK]: {
     description:
-      "Remember - if you find yourself anxious, just go pet your duck.",
-    X: 200,
-    Y: 300,
-    scale: 0.5,
+      "Remember - if you find yourself anxious, just go talk to your duck.",
+    X: 1491,
+    Y: 536,
+    scale: 0.9,
     img: ITEM_DUCK,
   },
 
   [ITEM_MAMALETTER]: {
     description:
-      "Remember sweetie, read your books and make friends with your neighbours. PS - don't forget to pet the duck! Love you! ❤️",
-    X: 400,
-    Y: 200,
-    scale: 0.4,
+      "Remember sweetie, read your books and make friends with your neighbours. PS - tell your duck you're ready to start your adventure! Love you! ❤️",
+    X: 650,
+    Y: 900,
+    scale: 1,
     img: ITEM_MAMALETTER,
   },
 
   [ITEM_HELP]: {
     description:
-      "A book detailing how to defend from adventurers by getting intel and recruiting the right monsters and trap maker.",
-    X: 300,
-    Y: 400,
-    scale: 0.3,
+      "A book detailing how to defend from adventurers by getting intel and then recruiting the perfect two monsters and trap maker based on the adventurers personality.",
+    X: 1317,
+    Y: 650,
+    scale: 1,
     img: ITEM_HELP,
   },
 
   [ITEM_MAGGLASS]: {
     description:
       "You often stare at the stars and contimplate why adventures are always trying to invade your home.",
-    X: 500,
-    Y: 350,
-    scale: 0.4,
+    X: 173,
+    Y: 348,
+    scale: 1,
     img: ITEM_MAGGLASS,
   },
 
@@ -218,18 +218,18 @@ const items = {
   [YOU_IDLE]: {
     description:
       "You're worried about the day, but also excited to make your family proud.",
-    X: 300,
-    Y: 400,
-    scale: 0.3,
+    X: 280,
+    Y: 594,
+    scale: 1,
     img: YOU_IDLE,
   },
 
   [YOU_DUCK]: {
     description:
-      "No matter how anxious, your pet duck always makes you feel better.",
-    X: 300,
-    Y: 400,
-    scale: 0.3,
+      "No matter how anxious, your pet duck always makes you feel better. I should tell him I'm ready to go and tackle today!",
+    X: 453,
+    Y: 680,
+    scale: 1,
     img: YOU_DUCK,
   },
 
@@ -238,7 +238,7 @@ const items = {
       "Guess you didn't do your family proud - couldn't even survive one adventurer.",
     X: 300,
     Y: 400,
-    scale: 0.3,
+    scale: 1,
     img: YOU_DEAD,
   },
 
@@ -247,7 +247,7 @@ const items = {
       "You can't stop thinking about how you still need to talk to more people.... this is the worst.",
     X: 300,
     Y: 400,
-    scale: 0.3,
+    scale: 1,
     img: YOU_SCARED,
   },
 
@@ -256,7 +256,7 @@ const items = {
       "You're worried about the day, but also excited to make your family proud.",
     X: 300,
     Y: 400,
-    scale: 0.3,
+    scale: 1,
     img: YOU_UNSURE,
   },
 };

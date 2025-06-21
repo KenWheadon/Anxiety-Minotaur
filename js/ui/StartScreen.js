@@ -1,4 +1,4 @@
-// js/ui/StartScreen.js - Main menu/start screen for Frog Police: Gang Bust
+// js/ui/StartScreen.js - Main menu/start screen for Minotaur's Labyrinth
 
 class StartScreen {
   constructor(gameEngine) {
@@ -12,7 +12,7 @@ class StartScreen {
     this.createStartScreenUI();
     this.setupEventListeners();
 
-    console.log("🎮 Start Screen initialized");
+    console.log("🎮 Start Screen initialized (Minotaur's Labyrinth)");
   }
 
   createStartScreenUI() {
@@ -24,25 +24,44 @@ class StartScreen {
         
         <div class="start-screen-overlay">
           <div class="game-title">
-            <h1>Frog Police</h1>
-            <h2>Gang Bust</h2>
+            <h1>Minotaur's Labyrinth</h1>
+            <h2>A Social Puzzle Adventure</h2>
           </div>
           
           <div class="start-screen-buttons">
             <button class="start-button play-game" id="play-button">
-              <span class="button-text">Play Game</span>
+              <span class="button-text">Start Adventure</span>
             </button>
             
             <div class="start-screen-info">
-            <p>🏆 Win the super shiny Mega-Cop Trophy for your Police Station ⭐</p>
-            <p>🚓 Go undercover to bust the Kingpin! 🐸</p>
-              <p>👇 Click on characters and items to interact 💡</p>
+              <h3>🎯 Your Mission</h3>
+              <p>You're a socially anxious minotaur preparing your labyrinth for an incoming adventurer!</p>
+              
+              <h3>🎮 How to Play</h3>
+              <p><strong>Level 1:</strong> Explore your home, talk to duck, get ready 🏠</p>
+              <p><strong>Level 2:</strong> Recruit 2 monsters + 1 trap maker, learn adventurer's stats 🧩</p>
+              <p><strong>Level 3:</strong> Watch your strategy play out! 🎭</p>
+              
+              <h3>💝 Social Energy System</h3>
+              <p>• Conversations cost energy (Level 2 only)</p>
+              <p>• Talk to 🦆 duck to recharge anytime!</p>
+              <p>• Plan your conversations wisely</p>
+              
+              <h3>🔍 Finding Clues</h3>
+              <p>• Examine items to learn what NPCs want</p>
+              <p>• Match items to personalities for recruitment</p>
+              <p>• Visit information dealers for adventurer intel</p>
+              
+              <div class="controls-hint">
+                <p>👆 Click characters and items to interact</p>
+                <p>🎹 Press F1 for Discovery Journal, F2 for Achievements</p>
+              </div>
             </div>
           </div>
           
           <div class="start-screen-footer">
-            <p>Made with 🐸 for adventure lovers</p>
-            <div class="version-info">v1.0</div>
+            <p>Made with 🐂 and 🦆 for puzzle lovers</p>
+            <div class="version-info">Minotaur's Labyrinth v1.0</div>
           </div>
         </div>
       </div>
@@ -95,38 +114,42 @@ class StartScreen {
         z-index: 2;
         text-align: center;
         color: white;
-        max-width: 600px;
+        max-width: 700px;
+        max-height: 90vh;
         padding: 40px;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.8);
         border-radius: 20px;
         backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(139, 69, 19, 0.4);
+        overflow-y: auto;
+        box-shadow: 0 0 30px rgba(139, 69, 19, 0.3);
       }
 
       .game-title h1 {
-        font-size: 4rem;
+        font-size: 3.5rem;
         margin: 0 0 10px 0;
-        color: #4CAF50;
+        color: #D2691E;
         text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
         font-weight: bold;
         letter-spacing: 2px;
       }
 
       .game-title h2 {
-        font-size: 2.5rem;
-        margin: 0 0 40px 0;
-        color: #8BC34A;
+        font-size: 1.8rem;
+        margin: 0 0 30px 0;
+        color: #F4A460;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         font-weight: normal;
         letter-spacing: 1px;
+        font-style: italic;
       }
 
       .start-screen-buttons {
-        margin: 40px 0;
+        margin: 30px 0;
       }
 
       .start-button {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        background: linear-gradient(45deg, #D2691E, #F4A460);
         border: none;
         padding: 0;
         border-radius: 15px;
@@ -139,18 +162,18 @@ class StartScreen {
         margin: 15px;
         overflow: hidden;
         position: relative;
-        min-width: 200px;
+        min-width: 220px;
         min-height: 80px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        box-shadow: 0 6px 20px rgba(210, 105, 30, 0.4);
       }
 
       .start-button:hover {
         transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
-        background: linear-gradient(45deg, #66BB6A, #9CCC65);
+        box-shadow: 0 8px 25px rgba(210, 105, 30, 0.6);
+        background: linear-gradient(45deg, #CD853F, #DEB887);
       }
 
       .start-button:active {
@@ -179,17 +202,44 @@ class StartScreen {
 
       .start-screen-info {
         margin: 30px 0;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 1.6;
         color: #E8F5E8;
+        text-align: left;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .start-screen-info h3 {
+        color: #D2691E;
+        margin: 20px 0 10px 0;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       }
 
       .start-screen-info p {
-        margin: 10px 0;
+        margin: 8px 0;
+      }
+
+      .controls-hint {
+        margin-top: 20px;
+        padding: 15px;
+        background: rgba(210, 105, 30, 0.2);
+        border-radius: 8px;
+        border: 1px solid rgba(210, 105, 30, 0.4);
+      }
+
+      .controls-hint p {
+        margin: 5px 0;
+        font-size: 13px;
+        color: #DEB887;
       }
 
       .start-screen-footer {
-        margin-top: 40px;
+        margin-top: 30px;
         font-size: 14px;
         color: rgba(255, 255, 255, 0.7);
       }
@@ -205,14 +255,15 @@ class StartScreen {
         .start-screen-overlay {
           max-width: 90%;
           padding: 30px 20px;
+          max-height: 95vh;
         }
 
         .game-title h1 {
-          font-size: 3rem;
+          font-size: 2.8rem;
         }
 
         .game-title h2 {
-          font-size: 2rem;
+          font-size: 1.5rem;
         }
 
         .start-button {
@@ -222,7 +273,38 @@ class StartScreen {
         }
 
         .start-screen-info {
-          font-size: 14px;
+          font-size: 13px;
+        }
+
+        .start-screen-info h3 {
+          font-size: 16px;
+          margin: 15px 0 8px 0;
+        }
+
+        .controls-hint {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .start-screen-overlay {
+          padding: 20px 15px;
+        }
+
+        .game-title h1 {
+          font-size: 2.2rem;
+        }
+
+        .game-title h2 {
+          font-size: 1.2rem;
+        }
+
+        .start-screen-info {
+          font-size: 12px;
+        }
+
+        .start-screen-info h3 {
+          font-size: 15px;
         }
       }
 
@@ -254,6 +336,25 @@ class StartScreen {
 
       .start-button:hover {
         animation: none;
+      }
+
+      /* Scrollbar styling for mobile */
+      .start-screen-overlay::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .start-screen-overlay::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      .start-screen-overlay::-webkit-scrollbar-thumb {
+        background: rgba(210, 105, 30, 0.5);
+        border-radius: 3px;
+      }
+
+      .start-screen-overlay::-webkit-scrollbar-thumb:hover {
+        background: rgba(210, 105, 30, 0.7);
       }
     `;
 
@@ -293,7 +394,7 @@ class StartScreen {
   async show() {
     if (this.isShowing) return;
 
-    console.log("🎮 Showing start screen");
+    console.log("🎮 Showing start screen (Minotaur's Labyrinth)");
     this.isShowing = true;
 
     // Load background image
@@ -311,7 +412,6 @@ class StartScreen {
 
     // Play background music if available
     if (this.gameEngine.audioManager) {
-      // You could add a special menu music track here
       console.log("🎵 Start screen audio ready");
     }
   }
@@ -329,7 +429,7 @@ class StartScreen {
     try {
       // Load start screen background
       const backgroundImage = new Image();
-      backgroundImage.src = "images/backgrounds/start-screen.png";
+      backgroundImage.src = "images/backgrounds/" + LEVELE0_BG + ".png";
 
       await new Promise((resolve, reject) => {
         backgroundImage.onload = resolve;
@@ -346,27 +446,10 @@ class StartScreen {
       if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
         backgroundElement.style.backgroundImage = `url(${backgroundImage.src})`;
       } else {
-        // Fallback gradient background
+        // Fallback gradient background - minotaur themed
         backgroundElement.style.background =
-          "linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #4CAF50 100%)";
+          "linear-gradient(135deg, #8B4513 0%, #D2691E 25%, #F4A460 50%, #DEB887 75%, #8B4513 100%)";
       }
-
-      // Load play button image (optional - we're using CSS styled button)
-      const playButtonImage = new Image();
-      playButtonImage.src = "images/ui/button-play.png";
-
-      await new Promise((resolve) => {
-        playButtonImage.onload = () => {
-          console.log("🎮 Play button image loaded");
-          // Optionally replace the CSS button with the image
-          // this.applyPlayButtonImage(playButtonImage);
-          resolve();
-        };
-        playButtonImage.onerror = () => {
-          console.log("🎮 Play button image not found, using styled button");
-          resolve();
-        };
-      });
 
       console.log("🎮 Start screen assets loaded");
     } catch (error) {
@@ -434,11 +517,13 @@ class StartScreen {
       .querySelector(".start-screen-content")
       .appendChild(sparkleContainer);
 
-    // Create sparkles
-    for (let i = 0; i < 15; i++) {
+    // Create minotaur-themed sparkles
+    for (let i = 0; i < 20; i++) {
       setTimeout(() => {
         const sparkle = document.createElement("div");
-        sparkle.textContent = "✨";
+        const sparkleOptions = ["✨", "🌟", "⭐", "💫", "🔮", "🏛️", "🗿"];
+        sparkle.textContent =
+          sparkleOptions[Math.floor(Math.random() * sparkleOptions.length)];
         sparkle.style.cssText = `
           position: absolute;
           font-size: ${Math.random() * 20 + 15}px;
@@ -446,6 +531,11 @@ class StartScreen {
           top: ${Math.random() * 100}%;
           pointer-events: none;
           user-select: none;
+          color: ${
+            ["#D2691E", "#F4A460", "#DEB887", "#CD853F"][
+              Math.floor(Math.random() * 4)
+            ]
+          };
         `;
 
         sparkleContainer.appendChild(sparkle);
@@ -470,7 +560,7 @@ class StartScreen {
             },
           }
         );
-      }, i * 200);
+      }, i * 150);
     }
 
     // Clean up sparkle container after animations
@@ -484,7 +574,7 @@ class StartScreen {
   async startGame() {
     if (!this.isShowing) return;
 
-    console.log("🎮 Starting game from start screen");
+    console.log("🎮 Starting Minotaur's Labyrinth from start screen");
 
     // Play click sound
     if (this.gameEngine.audioManager) {
@@ -547,6 +637,6 @@ class StartScreen {
       this.startScreenElement.parentNode.removeChild(this.startScreenElement);
     }
 
-    console.log("🗑️ Start screen destroyed");
+    console.log("🗑️ Start screen destroyed (Minotaur's Labyrinth)");
   }
 }

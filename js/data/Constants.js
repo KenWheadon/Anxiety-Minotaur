@@ -3,7 +3,7 @@
 const LEVELE0_BG = "level0_bg";
 
 // Location constants (Level 1 - Home)
-const LEVEL1_HOUSE = "level1-house";
+const LEVEL1_HOUSE = "level1_house";
 const LEVEL1_LIVINGROOM = "level1_livingroom";
 
 // Location constants (Level 2 - Labyrinth)
@@ -101,7 +101,7 @@ const RECRUITMENT_COMPLETE = "RECRUITMENT_COMPLETE";
 
 // Achievement constants (Level 3)
 const DEFEATED_ADVENTURER = "DEFEATED_ADVENTURER";
-const KILLED_AT_HOME = "KILLED AT HOME";
+const KILLED_AT_HOME = "KILLED_AT_HOME";
 
 // Adventurer stat constants
 const FEAR_HIGH = "fear_high";

@@ -5,9 +5,9 @@ const characters = {
       "You are a loyal duck companion. You only respond with 'Quack!' variations. Never use real words. Respond with 1-5 quacks, sometimes with enthusiasm (!!) or questioning (?). You're supportive and loving. Example responses: 'Quack!', 'Quack quack?', 'Quack quack quack!!', 'Quaaaack!'",
     description:
       "Your faithful duck companion who always listens and never judges. A source of comfort and energy.",
-    X: 400,
-    Y: 500,
-    scale: 0.6,
+    X: 611,
+    Y: 587,
+    scale: 0.7,
     img: NPC_DUCK,
     isDuck: true, // Special flag for duck behavior
   },

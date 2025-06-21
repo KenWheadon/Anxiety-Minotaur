@@ -3,8 +3,8 @@ const locations = {
   [LEVEL1_HOUSE]: {
     description:
       "Your cozy bedroom with personal mementos. Today's the big day - your first adventurer challenge!",
-    characters: [NPC_DUCK, YOU_IDLE],
-    items: [ITEM_DUCK, ITEM_MAMALETTER],
+    characters: [NPC_DUCK],
+    items: [YOU_IDLE, ITEM_DUCK, ITEM_MAMALETTER],
     locations: [LEVEL1_LIVINGROOM],
     background: LEVEL1_HOUSE,
   },
@@ -12,8 +12,8 @@ const locations = {
   [LEVEL1_LIVINGROOM]: {
     description:
       "A homey kitchen where you and duck share meals. The smell of fresh bread helps calm your nerves.",
-    characters: [YOU_DUCK],
-    items: [ITEM_HELP, ITEM_MAGGLASS],
+    characters: [],
+    items: [YOU_DUCK, ITEM_HELP, ITEM_MAGGLASS],
     locations: [LEVEL1_HOUSE],
     background: LEVEL1_LIVINGROOM,
   },
