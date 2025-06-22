@@ -200,41 +200,8 @@ const PIG_KEYWORDS = [
 ];
 
 // NEW: Character-specific keywords for new achievements
-const DEMON_KEYWORDS = [
-  "darkness",
-  "shadow",
-  "fire",
-  "soul",
-  "power",
-  "magic",
-  "ancient",
-  "ritual",
-  "spell",
-  "curse",
-];
+const DEMON_KEYWORDS = "DEMON_KEYWORDS";
 
-const KINGKING_KEYWORDS = [
-  "kingdom",
-  "crown",
-  "royal",
-  "honor",
-  "justice",
-  "rule",
-  "noble",
-  "majesty",
-  "decree",
-  "court",
-];
+const KINGKING_KEYWORDS = "KINGKING_KEYWORDS";
 
-const SUMO_KEYWORDS = [
-  "strength",
-  "honor",
-  "fight",
-  "warrior",
-  "training",
-  "discipline",
-  "respect",
-  "tournament",
-  "champion",
-  "balance",
-];
+const SUMO_KEYWORDS = "SUMO_KEYWORDS";

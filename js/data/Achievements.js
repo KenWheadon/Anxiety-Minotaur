@@ -21,6 +21,8 @@ const achievements = {
       "Successfully helped your gardener neighbor identify their seeds!",
     hint: "Find what the pig needs by exploring the garden and mention it in conversation.",
     characterId: PIG,
+    itemId: TUTORIAL_SEED,
+    keywordId: PIG_KEYWORDS,
     triggerKeywords: [], // Will be populated by KeywordGenerationManager
     isUnlocked: false,
   },
@@ -33,6 +35,8 @@ const achievements = {
     description: "Helped the ancient demon with their mystical research.",
     hint: "The demon wants to know what magic adventurers will sense in their dragon scale!",
     characterId: DEMON,
+    itemId: DRAGON_SCALE,
+    keywordId: DEMON_KEYWORDS,
     triggerKeywords: [], // Will be randomly populated
     isUnlocked: false,
   },
@@ -42,6 +46,8 @@ const achievements = {
     description: "Earned the respect of the noble guardian KingKing.",
     hint: "KingKing is too scared to touch the red potion - help them read what it says!",
     characterId: KINGKING,
+    itemId: RED_POTION,
+    keywordId: KINGKING_KEYWORDS,
     triggerKeywords: [], // Will be randomly populated
     isUnlocked: false,
   },
@@ -51,6 +57,8 @@ const achievements = {
     description: "Gained the trust of the mighty forest warrior.",
     hint: "Sumo found a potion but doesn't know if it's safe - check what type it is!",
     characterId: SUMO,
+    itemId: GREEN_POTION,
+    keywordId: SUMO_KEYWORDS,
     triggerKeywords: [], // Will be randomly populated
     isUnlocked: false,
   },

@@ -23,15 +23,7 @@ const CONFIG = {
 
   // Get the starting location based on the default level
   get DEFAULT_LOCATION() {
-    if (this.DEFAULT_LEVEL === 1) {
-      return BEDROOM;
-    } else if (this.DEFAULT_LEVEL === 2) {
-      return LEVEL2_OUTSIDELAB;
-    } else if (this.DEFAULT_LEVEL === 3) {
-      return LEVEL3_BG;
-    } else {
-      return BEDROOM;
-    }
+    return BEDROOM;
   },
 
   // AI Configuration - Enhanced proxy detection

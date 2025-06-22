@@ -50,7 +50,7 @@ const items = {
 
   [TUTORIAL_SEED]: {
     description:
-      "A seed packet that was delivered today. The gardener pig needs help identifying what type of seeds these are.",
+      "A seed packet that was delivered today. The gardener pig needs to know that these are '{keyword}'.",
     X: 1850,
     Y: 670,
     scale: 0.8,
@@ -108,7 +108,7 @@ const items = {
   // Green Potion - Template for Sumo's safety question
   [GREEN_POTION]: {
     description:
-      "A mysterious green potion labeled '{SUMO_KEYWORD}' - looks safe to drink for warriors.", // TEMPLATE
+      "A mysterious green potion labeled '{keyword}' - looks safe to drink for warriors.", // TEMPLATE
     X: 400,
     Y: 850,
     scale: 0.8,
@@ -118,7 +118,7 @@ const items = {
   // Red Potion - Template for KingKing's inscription question
   [RED_POTION]: {
     description:
-      "A royal red potion with faded text reading '{KINGKING_KEYWORD}' - meant for true rulers.", // TEMPLATE
+      "A royal red potion with faded text reading '{keyword}' - meant for true rulers.", // TEMPLATE
     X: 1600,
     Y: 400,
     scale: 0.9,
@@ -128,7 +128,7 @@ const items = {
   // Dragon Scale - Template for Demon's magic sensing question
   [DRAGON_SCALE]: {
     description:
-      "An ancient dragon scale that pulses with '{DEMON_KEYWORD}' - irresistibly tempting to adventurers.", // TEMPLATE
+      "An ancient dragon scale that pulses with '{keyword}' - irresistibly tempting to adventurers.", // TEMPLATE
     X: 960,
     Y: 400,
     scale: 1.2,

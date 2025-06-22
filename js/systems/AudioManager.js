@@ -20,8 +20,6 @@ class AudioManager {
       // Background music for each level
       backgroundMusic: {
         level1: "music/level1_background.mp3",
-        level2: "music/level2_background.mp3",
-        level3: "music/level3_background.mp3",
       },
       // Sound effects
       soundEffects: {

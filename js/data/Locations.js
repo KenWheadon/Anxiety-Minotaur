@@ -41,7 +41,7 @@ const locations = {
     description:
       "The entrance to an ancient stone labyrinth stands before you. Weathered walls stretch upward, covered in mysterious symbols and fading inscriptions. You can hear strange sounds echoing from within, and the air feels charged with an otherworldly energy. A forest path winds away to the east.",
     characters: [KINGKING], // Royal figure guards the entrance
-    items: [RED_POTION], // Power potion near the entrance
+    items: [GREEN_POTION], // Power potion near the entrance
     locations: [MIDDLE_OF_LABYRINTH, FOREST],
     background: OUTSIDE_LABYRINTH,
   },
@@ -51,7 +51,7 @@ const locations = {
     description:
       "You've reached the heart of the labyrinth. Ancient stones form a circular chamber lit by an eerie, sourceless glow. The walls are covered in symbols that seem to shift when you're not looking directly at them. The air thrums with mystical energy, and shadows dance in the corners of your vision.",
     characters: [DEMON], // Mysterious supernatural entity
-    items: [DRAGON_SCALE], // Rare material in the center
+    items: [RED_POTION], // Rare material in the center
     locations: [OUTSIDE_LABYRINTH, GARDEN],
     background: MIDDLE_OF_LABYRINTH,
   },
@@ -61,7 +61,7 @@ const locations = {
     description:
       "A dense, primordial forest surrounds you. Towering trees create a natural cathedral, their canopy filtering sunlight into dappled patterns on the forest floor. You can hear the distant sound of practice strikes and heavy breathing - someone is training here. The air is fresh and filled with the scent of earth and growing things.",
     characters: [SUMO], // Strong warrior training in nature
-    items: [GREEN_POTION], // Healing potion among the herbs
+    items: [DRAGON_SCALE], // Healing potion among the herbs
     locations: [OUTSIDE_LABYRINTH],
     background: FOREST,
   },

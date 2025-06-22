@@ -1,5 +1,5 @@
 // js/systems/KeywordGenerationManager.js
-// FIXED: Dynamic Keyword Generation for Anxiety Minotaur Tutorial with Lazy Initialization
+// UPDATED: Now properly accesses keywords from keywords.js data structure
 
 class KeywordGenerationManager {
   constructor(gameEngine) {
@@ -7,69 +7,183 @@ class KeywordGenerationManager {
     this.characterKeywords = new Map(); // Character ID -> single keyword
     this.unlockedCharacters = new Set();
     this.isInitialized = false;
+    this.keywordAchievements = []; // Will store achievements that have keyword systems
 
     // Setup event listeners but don't generate keywords yet
     this.setupEventListeners();
 
-    console.log("🔑 Keyword Generation Manager created (not initialized)");
+    console.log(
+      "🔑 Simplified Keyword Generation Manager created (not initialized)"
+    );
   }
 
-  // FIXED: Lazy initialization - called when game is ready
+  // Lazy initialization - called when game is ready
   async initialize() {
     if (this.isInitialized) {
       console.log("🔑 Keyword manager already initialized");
       return;
     }
 
-    console.log("🔑 Initializing keyword generation manager...");
+    console.log("🔑 Initializing achievement-driven keyword generation...");
 
-    // Generate keywords and update descriptions
+    // Find all achievements with keyword systems
+    this.discoverKeywordAchievements();
+
+    // Generate keywords for all keyword-enabled achievements
     this.generateAllKeywords();
+
+    // Update all linked item descriptions
     this.updateAllItemDescriptions();
+
     this.isInitialized = true;
 
-    console.log("🔑 Keyword Generation Manager initialized for tutorial");
+    console.log("🔑 Achievement-driven Keyword Generation Manager initialized");
+    console.log(
+      `🔑 Managing ${this.keywordAchievements.length} keyword-enabled achievements`
+    );
   }
 
-  // FIXED: Generate exactly ONE keyword per character
+  // UPDATED: Find all achievements that have keyword systems
+  discoverKeywordAchievements() {
+    console.log("🔍 Discovering keyword-enabled achievements...");
+
+    if (typeof achievements === "undefined") {
+      console.warn("🔍 No achievements data available");
+      return;
+    }
+
+    if (typeof keywords === "undefined") {
+      console.warn("🔍 No keywords data available");
+      return;
+    }
+
+    this.keywordAchievements = [];
+
+    Object.entries(achievements).forEach(
+      ([achievementKey, achievementData]) => {
+        // Check if this achievement has all the required keyword fields
+        if (
+          achievementData.characterId &&
+          achievementData.itemId &&
+          achievementData.keywordId
+        ) {
+          // Verify the character exists
+          if (
+            typeof characters !== "undefined" &&
+            characters[achievementData.characterId]
+          ) {
+            // Verify the item exists
+            if (typeof items !== "undefined" && items[achievementData.itemId]) {
+              // UPDATED: Check if keywords exist in the keywords data structure
+              if (
+                keywords[achievementData.keywordId] &&
+                Array.isArray(keywords[achievementData.keywordId])
+              ) {
+                this.keywordAchievements.push({
+                  achievementKey,
+                  achievementData,
+                  characterId: achievementData.characterId,
+                  itemId: achievementData.itemId,
+                  keywordArray: keywords[achievementData.keywordId], // UPDATED: Access from keywords object
+                });
+
+                console.log(`🔍 Found keyword achievement: ${achievementKey}`);
+                console.log(`    Character: ${achievementData.characterId}`);
+                console.log(`    Item: ${achievementData.itemId}`);
+                console.log(
+                  `    Keywords: ${achievementData.keywordId} (${
+                    keywords[achievementData.keywordId].length
+                  } options)`
+                );
+              } else {
+                console.warn(
+                  `🔍 Achievement ${achievementKey}: keyword array ${achievementData.keywordId} not found in keywords data`
+                );
+              }
+            } else {
+              console.warn(
+                `🔍 Achievement ${achievementKey}: item ${achievementData.itemId} not found`
+              );
+            }
+          } else {
+            console.warn(
+              `🔍 Achievement ${achievementKey}: character ${achievementData.characterId} not found`
+            );
+          }
+        }
+      }
+    );
+
+    console.log(
+      `🔍 Discovery complete: ${this.keywordAchievements.length} keyword achievements found`
+    );
+  }
+
+  // SIMPLE: Generate keywords for all keyword achievements
   generateAllKeywords() {
-    console.log("🎲 Generating tutorial keywords...");
+    console.log("🎲 Generating keywords for all keyword achievements...");
 
-    // Generate one random keyword for the tutorial pig
-    const selectedKeyword =
-      PIG_KEYWORDS[Math.floor(Math.random() * PIG_KEYWORDS.length)];
-    this.characterKeywords.set(PIG, selectedKeyword);
+    this.keywordAchievements.forEach((config) => {
+      // Pick random keyword from this achievement's keyword array
+      const selectedKeyword =
+        config.keywordArray[
+          Math.floor(Math.random() * config.keywordArray.length)
+        ];
+      this.characterKeywords.set(config.characterId, selectedKeyword);
 
-    console.log(`🔑 Tutorial pig keyword: "${selectedKeyword}"`);
+      console.log(
+        `🔑 ${config.characterId} keyword: "${selectedKeyword}" (for ${config.achievementKey})`
+      );
+    });
 
-    // Emit event for dependency injection instead of direct modification
+    // Emit event for dependency injection (AchievementManager)
     GameEvents.emit("KEYWORDS_GENERATED", {
       characterKeywords: new Map(this.characterKeywords),
     });
 
-    console.log("🎲 Tutorial keyword generation complete");
+    console.log("🎲 Keyword generation complete");
   }
 
-  // Update item descriptions to include the generated keyword
+  // SIMPLE: Update item descriptions for all keyword achievements
   updateAllItemDescriptions() {
-    console.log("📝 Updating tutorial item descriptions...");
+    console.log(
+      "📝 Updating item descriptions for all keyword achievements..."
+    );
 
-    const pigKeyword = this.characterKeywords.get(PIG);
-    if (pigKeyword && items[TUTORIAL_SEED]) {
-      // Update the seed description to include the specific keyword
-      items[
-        TUTORIAL_SEED
-      ].description = `A seed packet labeled "${pigKeyword}" that was delivered today. The gardener pig needs help identifying what type of seeds these are so they know how to plant them properly.`;
+    this.keywordAchievements.forEach((config) => {
+      const keyword = this.characterKeywords.get(config.characterId);
 
-      console.log(
-        `📝 Updated seed packet description with keyword: ${pigKeyword}`
+      if (!keyword) {
+        console.warn(
+          `📝 No keyword found for ${config.characterId}, skipping item update`
+        );
+        return;
+      }
+
+      if (!items[config.itemId]) {
+        console.warn(`📝 Item ${config.itemId} not found, skipping`);
+        return;
+      }
+
+      // Simply replace {keyword} placeholder in the item's existing description
+      const originalDescription = items[config.itemId].description;
+      const updatedDescription = originalDescription.replace(
+        /\{keyword\}/gi,
+        keyword
       );
-    }
 
-    console.log("📝 Tutorial item descriptions updated");
+      items[config.itemId].description = updatedDescription;
+      console.log(
+        `📝 Updated ${config.itemId} description with keyword: "${keyword}"`
+      );
+      console.log(`📝   Before: ${originalDescription}`);
+      console.log(`📝   After: ${updatedDescription}`);
+    });
+
+    console.log("📝 All item descriptions updated");
   }
 
-  // FIXED: Check for the exact keyword match for a specific character
+  // Check for the exact keyword match for ANY character
   checkForKeyword(characterId, playerMessage) {
     if (!this.isInitialized) {
       console.warn("🔑 Keyword manager not initialized yet");
@@ -171,9 +285,6 @@ class KeywordGenerationManager {
         yoyo: true,
         repeat: 1,
       });
-    } else {
-      // Fallback CSS animation
-      checkmark.style.animation = "bounceIn 0.6s ease-out";
     }
   }
 
@@ -194,7 +305,7 @@ class KeywordGenerationManager {
       }
     });
 
-    console.log("🔑 Tutorial keyword event listeners setup complete");
+    console.log("🔑 Event listeners setup complete");
   }
 
   // Utility methods
@@ -215,16 +326,32 @@ class KeywordGenerationManager {
     return Object.fromEntries(this.characterKeywords);
   }
 
-  // Debug method to show keywords
+  // Get discovered achievements (for debugging)
+  getKeywordAchievements() {
+    return this.keywordAchievements.map((config) => ({
+      achievement: config.achievementKey,
+      character: config.characterId,
+      item: config.itemId,
+      keywordCount: config.keywordArray.length,
+      selectedKeyword: this.characterKeywords.get(config.characterId),
+    }));
+  }
+
+  // Debug method to show keywords and configurations
   debugShowKeywords() {
     if (!this.isInitialized) {
       console.log("🔍 Keyword manager not initialized yet");
       return;
     }
 
-    console.log("🔍 DEBUG - Tutorial Keywords:");
-    this.characterKeywords.forEach((keyword, characterId) => {
-      console.log(`  ${characterId}: "${keyword}"`);
+    console.log("🔍 DEBUG - Achievement-Driven Keywords:");
+    this.keywordAchievements.forEach((config) => {
+      const selectedKeyword = this.characterKeywords.get(config.characterId);
+      console.log(`  ${config.achievementKey}:`);
+      console.log(`    Character: ${config.characterId}`);
+      console.log(`    Item: ${config.itemId}`);
+      console.log(`    Selected: "${selectedKeyword}"`);
+      console.log(`    Options: [${config.keywordArray.join(", ")}]`);
     });
   }
 
@@ -232,8 +359,9 @@ class KeywordGenerationManager {
   reset() {
     this.characterKeywords.clear();
     this.unlockedCharacters.clear();
+    this.keywordAchievements = [];
     this.isInitialized = false;
-    console.log("🔄 Keyword system reset for new tutorial");
+    console.log("🔄 Achievement-driven keyword system reset");
   }
 
   // Check if initialized (for external checks)
