@@ -1,0 +1,6 @@
+crystal_cave
+gold_room
+potino_inside
+potion_shop
+trading_hall
+trading_hall_inside

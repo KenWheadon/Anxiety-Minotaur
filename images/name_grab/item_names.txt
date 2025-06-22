@@ -1,0 +1,11 @@
+accounting_book
+golden_gear
+hammer
+old_leather_jacket
+photos_of_potions
+round_stone
+spool_of_spider_silk
+tied_magical_scroll
+unfinished_maze_art
+used_library_card
+valor_medal
