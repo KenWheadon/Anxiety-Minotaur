@@ -10,9 +10,12 @@ class VictoryScreen {
 
     this.createVictoryUI();
     this.createVictoryButton();
+
+    // FIXED: Check victory state on initialization
+    this.syncWithGameState();
   }
 
-  // UPDATED: More robust sync method that checks both the flag AND the achievement
+  // FIXED: More robust sync method that checks both the flag AND the achievement
   syncWithGameState() {
     const gameState = this.gameEngine.gameState;
 
@@ -260,7 +263,7 @@ class VictoryScreen {
     });
   }
 
-  // UPDATED: show method - mark tutorial as completed in GameState
+  // FIXED: show method - mark tutorial as completed and save state
   show(withCutscene = false) {
     if (this.isShowing) return;
 
@@ -271,8 +274,9 @@ class VictoryScreen {
       this.isUnlocked = true;
       this.victoryButton.style.display = "block";
 
-      // ADDED: Mark tutorial as completed in GameState
+      // FIXED: Mark tutorial as completed in GameState and save immediately
       this.gameEngine.gameState.markTutorialCompleted();
+      this.gameEngine.gameState.save();
 
       this.playVictorySequence();
     }

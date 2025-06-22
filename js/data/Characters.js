@@ -1,7 +1,7 @@
 // js/data/Characters.js - Single source for all character data
 
 const CHARACTERS = {
-  // Duck companions - Simple dialogue characters
+  // Duck companions - FIXED: Now with achievement
   [NPC_DUCK]: {
     displayName: "Duck Companion",
     prompt:
@@ -13,7 +13,17 @@ const CHARACTERS = {
     scale: 0.7,
     isDuck: true,
     appearsIn: [LOC_BEDROOM],
-    // No achievement = simple dialogue character
+    // FIXED: Added achievement for duck
+    achievement: {
+      id: MENT_TALKED_TO_DUCK,
+      title: "Duck Whisperer",
+      description: "You spoke duck language and made your companion happy!",
+      hint: "Try speaking your duck's language - what sound do ducks make?",
+      relatedItem: null,
+      possibleKeywords: ["quack"], // Simple keyword for duck
+      selectedKeyword: "quack",
+      isUnlocked: false,
+    },
   },
 
   [NPC_DUCK2]: {
@@ -27,7 +37,17 @@ const CHARACTERS = {
     scale: 0.7,
     isDuck: true,
     appearsIn: [LOC_GARDEN],
-    // No achievement = simple dialogue character
+    // FIXED: Duck2 also gets the same achievement
+    achievement: {
+      id: MENT_TALKED_TO_DUCK,
+      title: "Duck Whisperer",
+      description: "You spoke duck language and made your companion happy!",
+      hint: "Try speaking your duck's language - what sound do ducks make?",
+      relatedItem: null,
+      possibleKeywords: ["quack"],
+      selectedKeyword: "quack",
+      isUnlocked: false,
+    },
   },
 
   // Characters with achievements

@@ -192,6 +192,24 @@ class CutsceneManager {
         e.preventDefault();
       }
     });
+
+    // FIXED: Listen for achievement unlock event with proper data extraction
+    GameEvents.on(GAME_EVENTS.ACHIEVEMENT_UNLOCK, (eventData) => {
+      // Extract the achievement ID from the event data
+      const achievementId = eventData.achievementKey || eventData.achievementId;
+
+      if (achievementId === READY_FOR_THE_DAY) {
+        // Level 1 → Level 2 transition
+        setTimeout(() => {
+          this.transitionToLevel2();
+        }, 2000);
+      } else if (achievementId === RECRUITMENT_COMPLETE) {
+        // Level 2 → Level 3 transition
+        setTimeout(() => {
+          this.transitionToLevel3();
+        }, 2000);
+      }
+    });
   }
 
   // NEW: Set up listener for level changes to preload Level 3 cutscenes

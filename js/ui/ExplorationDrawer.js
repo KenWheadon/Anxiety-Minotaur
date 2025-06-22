@@ -10,6 +10,9 @@ class ExplorationDrawer {
     this.discoveredItems = new Set();
     this.currentFilter = "all";
 
+    // FIXED: Store interval ID for cleanup
+    this.autoSaveInterval = null;
+
     // Load discoveries FIRST - this should populate the Sets with actual names
     this.loadDiscoveries();
 
@@ -314,16 +317,17 @@ class ExplorationDrawer {
         this.debugDiscoveries();
       });
 
-    GameEvents.on(GAME_EVENTS.CHARACTER_INTERACTION, (data) => {
+    // FIXED: Listen for correct event names
+    GameEvents.on(GAME_EVENTS.CHARACTER_INTERACT, (data) => {
       this.discoverCharacter(data.characterKey);
     });
 
-    GameEvents.on(GAME_EVENTS.ITEM_EXAMINED, (data) => {
+    GameEvents.on(GAME_EVENTS.ITEM_INTERACT, (data) => {
       this.discoverItem(data.itemKey);
     });
 
-    // Auto-save every 30 seconds
-    setInterval(() => {
+    // FIXED: Store interval ID for cleanup
+    this.autoSaveInterval = setInterval(() => {
       this.saveDiscoveries();
     }, 30000);
 
@@ -905,6 +909,12 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
   }
 
   destroy() {
+    // FIXED: Clear the interval before saving
+    if (this.autoSaveInterval) {
+      clearInterval(this.autoSaveInterval);
+      this.autoSaveInterval = null;
+    }
+
     this.saveDiscoveries();
 
     if (this.drawerPanel && this.drawerPanel.parentNode) {

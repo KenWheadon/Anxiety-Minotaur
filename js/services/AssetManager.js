@@ -102,7 +102,7 @@ class AssetManager {
     Object.entries(contentManager.getAllCharacters()).forEach(([key, data]) => {
       if (data.assetPath) {
         assets.push({
-          key: key.toLowerCase(),
+          key: key, // FIXED: No lowercase conversion
           path: data.assetPath,
           type: "character",
         });
@@ -113,7 +113,7 @@ class AssetManager {
     Object.entries(contentManager.getAllItems()).forEach(([key, data]) => {
       if (data.assetPath) {
         assets.push({
-          key: key.toLowerCase(),
+          key: key, // FIXED: No lowercase conversion
           path: data.assetPath,
           type: "item",
         });
@@ -124,7 +124,7 @@ class AssetManager {
     Object.entries(contentManager.getAllLocations()).forEach(([key, data]) => {
       if (data.backgroundPath) {
         assets.push({
-          key: key.toLowerCase(),
+          key: key, // FIXED: No lowercase conversion
           path: data.backgroundPath,
           type: "background",
         });
@@ -136,11 +136,11 @@ class AssetManager {
 
   // Main image loading method - uses ContentManager for paths
   async loadImage(assetKey) {
-    const normalizedKey = assetKey.toLowerCase();
+    // FIXED: No normalization - use the key as-is
 
     // Check cache first
-    if (this.images.has(normalizedKey)) {
-      return this.images.get(normalizedKey);
+    if (this.images.has(assetKey)) {
+      return this.images.get(assetKey);
     }
 
     // Get asset path from ContentManager
@@ -148,7 +148,7 @@ class AssetManager {
     let assetType = "unknown";
 
     // Try character
-    const character = contentManager.getCharacter(normalizedKey);
+    const character = contentManager.getCharacter(assetKey);
     if (character && character.assetPath) {
       assetPath = character.assetPath;
       assetType = "character";
@@ -156,7 +156,7 @@ class AssetManager {
 
     // Try item
     if (!assetPath) {
-      const item = contentManager.getItem(normalizedKey);
+      const item = contentManager.getItem(assetKey);
       if (item && item.assetPath) {
         assetPath = item.assetPath;
         assetType = "item";
@@ -165,7 +165,7 @@ class AssetManager {
 
     // Try location background
     if (!assetPath) {
-      const location = contentManager.getLocation(normalizedKey);
+      const location = contentManager.getLocation(assetKey);
       if (location && location.backgroundPath) {
         assetPath = location.backgroundPath;
         assetType = "background";
@@ -174,47 +174,47 @@ class AssetManager {
 
     if (assetPath) {
       console.log(
-        `📸 Loading ${assetType} asset: ${normalizedKey} from ${assetPath}`
+        `📸 Loading ${assetType} asset: ${assetKey} from ${assetPath}`
       );
-      return await this.loadImageDirect(normalizedKey, assetPath);
+      return await this.loadImageDirect(assetKey, assetPath);
     }
 
     console.warn(`❌ Unknown asset requested: ${assetKey}`);
     // Create placeholder for unknown assets
     const placeholder = this.createPlaceholderImage(assetType, assetKey);
-    this.images.set(normalizedKey, placeholder);
+    this.images.set(assetKey, placeholder);
     return placeholder;
   }
 
   // Load image with explicit path
   async loadImageDirect(assetKey, assetPath) {
-    const normalizedKey = assetKey.toLowerCase();
+    // FIXED: No normalization - use the key as-is
 
     // Check cache
-    if (this.images.has(normalizedKey)) {
-      return this.images.get(normalizedKey);
+    if (this.images.has(assetKey)) {
+      return this.images.get(assetKey);
     }
 
     // Check if loading
-    if (this.loadingPromises.has(normalizedKey)) {
-      return this.loadingPromises.get(normalizedKey);
+    if (this.loadingPromises.has(assetKey)) {
+      return this.loadingPromises.get(assetKey);
     }
 
-    console.log(`📸 Loading ${normalizedKey} from ${assetPath}`);
+    console.log(`📸 Loading ${assetKey} from ${assetPath}`);
 
     const loadPromise = this._loadImageInternal(assetPath);
-    this.loadingPromises.set(normalizedKey, loadPromise);
+    this.loadingPromises.set(assetKey, loadPromise);
 
     try {
       const result = await loadPromise;
-      this.loadingPromises.delete(normalizedKey);
-      this.images.set(normalizedKey, result);
+      this.loadingPromises.delete(assetKey);
+      this.images.set(assetKey, result);
       this.loadedAssets.add(assetPath);
-      console.log(`✅ Loaded ${normalizedKey}`);
+      console.log(`✅ Loaded ${assetKey}`);
       return result;
     } catch (error) {
-      this.loadingPromises.delete(normalizedKey);
-      console.warn(`❌ Failed to load ${normalizedKey}, using placeholder`);
+      this.loadingPromises.delete(assetKey);
+      console.warn(`❌ Failed to load ${assetKey}, using placeholder`);
 
       // Determine type from path for better placeholder
       let category = "unknown";
@@ -222,8 +222,8 @@ class AssetManager {
       else if (assetPath.includes("/items/")) category = "item";
       else if (assetPath.includes("/backgrounds/")) category = "background";
 
-      const placeholder = this.createPlaceholderImage(category, normalizedKey);
-      this.images.set(normalizedKey, placeholder);
+      const placeholder = this.createPlaceholderImage(category, assetKey);
+      this.images.set(assetKey, placeholder);
       this.failedAssets.add(assetPath);
 
       return placeholder;
@@ -320,6 +320,7 @@ class AssetManager {
       case "labyrinth":
       case "outside_labyrinth":
       case "middle_of_labyrinth":
+      case "inside_labyrinth":
         gradient.addColorStop(0, "#4B0082");
         gradient.addColorStop(1, "#191970");
         break;
@@ -381,8 +382,8 @@ class AssetManager {
 
   // Get image from cache
   getImage(assetKey) {
-    const normalizedKey = assetKey.toLowerCase();
-    return this.images.get(normalizedKey) || null;
+    // FIXED: No normalization - use the key as-is
+    return this.images.get(assetKey) || null;
   }
 
   // Preload all assets for a location

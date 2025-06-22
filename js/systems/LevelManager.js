@@ -9,6 +9,7 @@ class LevelManager {
 
     this.loadLevelDefinitions();
     this.createLevelCompletionUI();
+    this.setupAchievementListener();
 
     console.log("🎯 Level Manager initialized for tutorial");
   }
@@ -20,6 +21,19 @@ class LevelManager {
     });
 
     console.log(`🎯 Loaded ${this.levels.size} level definition(s)`);
+  }
+
+  setupAchievementListener() {
+    GameEvents.on(GAME_EVENTS.ACHIEVEMENT_UNLOCK, (eventData) => {
+      const achievementId = eventData.achievementKey || eventData.achievementId;
+
+      // Check if this achievement completes the current level
+      if (this.checkLevelCompletion(achievementId)) {
+        console.log(
+          `🎯 Level ${this.currentLevel} completed with achievement: ${achievementId}`
+        );
+      }
+    });
   }
 
   createLevelCompletionUI() {

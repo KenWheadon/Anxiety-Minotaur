@@ -102,9 +102,6 @@ class ConversationManager {
       `💬 START TUTORIAL CONVERSATION - Current: ${this.currentCharacter}, New: ${characterKey}`
     );
 
-    // FIXED: NO energy check here - energy only deducted when sending messages
-    // This allows players to open conversations freely
-
     // If clicking the same character while conversation is active, do nothing
     if (
       this.isConversationActive &&
@@ -346,12 +343,14 @@ class ConversationManager {
       // Add character response
       this.addMessage("character", response);
 
-      // FIXED: Only deduct energy AFTER successful message send
+      // FIXED: Use proper method to spend energy AND update UI
       if (this.shouldCheckSocialEnergy(character)) {
-        this.gameEngine.gameState.socialEnergy--;
-        console.log(
-          `💔 Social energy spent: ${this.gameEngine.gameState.socialEnergy}/${CONFIG.MAX_SOCIAL_ENERGY}`
-        );
+        const energySpent = this.gameEngine.gameState.spendEnergy();
+        if (energySpent && this.gameEngine.energyUI) {
+          // FIXED: Update the energy UI after spending
+          this.gameEngine.energyUI.updateEnergyDisplay();
+          console.log(`💔 Social energy spent and UI updated`);
+        }
       }
 
       // Save to conversation history (including duck conversations)

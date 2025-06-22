@@ -95,20 +95,20 @@ const GAME_EVENTS = {
   // Location events
   LOCATION_CHANGED: "location_changed",
 
-  // Interaction events (renamed for consistency)
-  CHARACTER_INTERACT: "character_interact", // Renamed from CHARACTER_INTERACTION
-  ITEM_INTERACT: "item_interact", // Renamed from ITEM_EXAMINED
+  // Interaction events - FIXED: Now consistent
+  CHARACTER_INTERACT: "character_interact",
+  ITEM_INTERACT: "item_interact", // FIXED: This is what we emit and listen for
 
   // Conversation events
   CONVERSATION_STARTED: "conversation_started",
   CONVERSATION_ENDED: "conversation_ended",
-  CONVERSATION_MESSAGE: "conversation_message", // Renamed from CONVERSATION_MESSAGE_SENT
+  CONVERSATION_MESSAGE: "conversation_message",
 
   // Achievement events
-  ACHIEVEMENT_UNLOCK: "achievement_unlock", // Renamed from ACHIEVEMENT_UNLOCKED
+  ACHIEVEMENT_UNLOCK: "achievement_unlock",
 
   // Character progression events
-  CHARACTER_UNLOCK: "character_unlock", // Renamed from CHARACTER_UNLOCKED
+  CHARACTER_UNLOCK: "character_unlock",
 
   // Level events
   LEVEL_CHANGED: "level_changed",
