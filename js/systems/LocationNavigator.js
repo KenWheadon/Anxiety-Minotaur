@@ -69,7 +69,7 @@ class LocationNavigator {
     const currentLocationData = locations[locationKey];
 
     // Get available locations from current location
-    this.availableLocations = currentLocationData.locations || [];
+    this.availableLocations = currentLocationData.connectsTo || [];
 
     console.log(`🧭 Updating navigation for ${locationKey}`);
     console.log(`🧭 Available locations:`, this.availableLocations);
