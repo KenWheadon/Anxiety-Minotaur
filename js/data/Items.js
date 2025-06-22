@@ -143,4 +143,112 @@ const ITEMS = {
     scale: 0.6,
     appearsIn: [LOC_GARDEN],
   },
+
+  //expansion 1
+  [ITEM_GOLDEN_GEAR]: {
+    displayName: "Golden Gear",
+    description:
+      "A shining gear, likely from some intricate machine. There's a faded sticker that reads '{keyword}'.",
+    X: 1130,
+    Y: 820,
+    scale: 0.8,
+    appearsIn: [LOC_TRADING_HALL],
+  },
+
+  [ITEM_TIED_MAGICAL_SCROLL]: {
+    displayName: "Tied Magical Scroll",
+    description:
+      "A scroll bound by a magically sealed string and marked with a glowing rune. Scribbled faintly near the bottom: '{keyword}'.",
+    X: 1380,
+    Y: 500,
+    scale: 1.0,
+    appearsIn: [LOC_CRYSTAL_CAVE],
+  },
+
+  [ITEM_ROUND_STONE]: {
+    displayName: "Round Stone",
+    description:
+      "A round stone with a visible vein of white mineral running through it. Someone has scratched a tasting note into it: '{keyword}'.",
+    X: 870,
+    Y: 870,
+    scale: 0.85,
+    appearsIn: [LOC_CRYSTAL_CAVE],
+  },
+
+  [ITEM_PHOTOS_OF_POTIONS]: {
+    displayName: "Photos of Potions",
+    description:
+      "A collection of pictures showing various potions and their ingredients. One has a note written on the back: '{keyword}'.",
+    X: 1310,
+    Y: 750,
+    scale: 0.9,
+    appearsIn: [LOC_POTION_SHOP],
+  },
+
+  [ITEM_OLD_LEATHER_JACKET]: {
+    displayName: "Old Leather Jacket",
+    description:
+      "A worn jacket with patches and a giant 'dragon' symbol on the front. Something is in the pocket: '{keyword}'.",
+    X: 1510,
+    Y: 630,
+    scale: 0.95,
+    appearsIn: [LOC_GOLD_ROOM],
+  },
+
+  [ITEM_VALOR_MEDAL]: {
+    displayName: "Valor Medal",
+    description:
+      "A medal from a long-forgotten war. A word is faintly etched on the back: '{keyword}'.",
+    X: 1240,
+    Y: 850,
+    scale: 0.8,
+    appearsIn: [LOC_TRADING_HALL],
+  },
+
+  [ITEM_ACCOUNTING_BOOK]: {
+    displayName: "Accounting Book",
+    description: "Holds all the accounting for the potion shop.",
+    X: 1420,
+    Y: 780,
+    scale: 0.9,
+    appearsIn: [LOC_POTINO_INSIDE],
+  },
+
+  [ITEM_HAMMER]: {
+    displayName: "Hammer",
+    description: "A sturdy hammer, clearly used but still strong.",
+    X: 1000,
+    Y: 700,
+    scale: 0.9,
+    appearsIn: [LOC_TRADING_HALL_INSIDE],
+  },
+
+  [ITEM_SPOOL_OF_SPIDER_SILK]: {
+    displayName: "Spool of Spider Silk",
+    description: "Shiny and bright silk wound neatly on a wooden spool.",
+    X: 900,
+    Y: 640,
+    scale: 0.7,
+    appearsIn: [LOC_TRADING_HALL_INSIDE],
+  },
+
+  [ITEM_UNFINISHED_MAZE_ART]: {
+    displayName: "Unfinished Maze Art",
+    description:
+      "Treadwork art of a labyrinth - though it clearly doesn't match this one.",
+    X: 790,
+    Y: 720,
+    scale: 0.75,
+    appearsIn: [LOC_GOLD_ROOM],
+  },
+
+  [ITEM_USED_LIBRARY_CARD]: {
+    displayName: "Used Library Card",
+    description:
+      "A well-worn card filled out completely over the past 20 years.",
+    X: 1090,
+    Y: 760,
+    scale: 0.8,
+    appearsIn: [LOC_POTINO_INSIDE],
+  },
 };

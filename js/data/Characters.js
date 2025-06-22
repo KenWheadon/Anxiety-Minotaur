@@ -188,4 +188,199 @@ const CHARACTERS = {
       isUnlocked: false,
     },
   },
+
+  //character expansion 1
+  [NPC_BIGJIM]: {
+    displayName: "BigJim",
+    prompt:
+      "You are a massive merchant who wears whatever armor you're currently selling. You're always trying to game the system and see every interaction as a potential sale. You should try to pitch something ridiculous at least once.",
+    description:
+      "A towering merchant always dressed in the latest armor he's trying to sell.",
+    X: 1400,
+    Y: 600,
+    scale: 1.1,
+    isDuck: false,
+    appearsIn: [LOC_TRADING_HALL],
+    achievement: {
+      id: MENT_DEAL_WITH_BIGJIM,
+      title: "Slick Deal",
+      description: "You managed to strike a strange deal with BigJim.",
+      hint: "Check that shiny gear. Does it have a price tag?",
+      relatedItem: ITEM_GOLDEN_GEAR,
+      possibleKeywords: [
+        "100 gold",
+        "10 silver",
+        "1 copper",
+        "20 bars of gold",
+      ],
+      selectedKeyword: null,
+      isUnlocked: false,
+    },
+  },
+  [NPC_CLAIR]: {
+    displayName: "Clair",
+    prompt:
+      "You're Clair, a young sphinx who just took over the potion shop from your father. You're unsure about running it and are trying to stay confident. You like talking potions and ingredients, but are a little overwhelmed.",
+    description:
+      "A young sphinx trying her best to run the family potion shop.",
+    X: 1320,
+    Y: 750,
+    scale: 0.9,
+    isDuck: false,
+    appearsIn: [LOC_POTION_SHOP],
+  },
+  [NPC_EGGWARD]: {
+    displayName: "Eggward",
+    prompt:
+      "You’re a dragon hatchling who refuses to leave your shell. You've been in it for two years. You like talking from inside your shell but won't come out unless someone mentions something really exciting or mysterious.",
+    description: "A reluctant dragon hatchling still living in their shell.",
+    X: 870,
+    Y: 760,
+    scale: 0.8,
+    isDuck: false,
+    appearsIn: [LOC_GOLD_ROOM],
+    achievement: {
+      id: MENT_CRACK_THE_SHELL,
+      title: "Shell Shock",
+      description: "You got Eggward to finally peek out of his shell.",
+      hint: "What's written on the sealed scroll might tempt him out...",
+      relatedItem: ITEM_TIED_MAGICAL_SCROLL,
+      possibleKeywords: ["destiny", "dragonborn", "awakening", "spark"],
+      selectedKeyword: null,
+      isUnlocked: false,
+    },
+  },
+  [NPC_KIBBY]: {
+    displayName: "Kibby",
+    prompt:
+      "You’re a quiet librarian who loves peace and silence. You don’t mind talking, but you tend to be awkward. Try to recommend a book to the player, even if they didn’t ask.",
+    description: "A socially awkward librarian who just wants peace and quiet.",
+    X: 1020,
+    Y: 720,
+    scale: 0.85,
+    isDuck: false,
+    appearsIn: [LOC_POTINO_INSIDE],
+  },
+  [NPC_KRAIG]: {
+    displayName: "Kraig",
+    prompt:
+      "You are a short troll with wild purple hair. You collect rocks, but you’re far more interested in how they taste than how they look. You might ask the player if they’ve licked any good stones recently.",
+    description: "A rock collector with strange culinary curiosity.",
+    X: 880,
+    Y: 700,
+    scale: 0.75,
+    isDuck: false,
+    appearsIn: [LOC_CRYSTAL_CAVE],
+    achievement: {
+      id: MENT_ROCK_SNACK,
+      title: "Rock Gourmet",
+      description: "You helped Kraig identify a truly tasty stone.",
+      hint: "Taste is subjective… but maybe someone labeled this one?",
+      relatedItem: ITEM_ROUND_STONE,
+      possibleKeywords: ["minty", "chalky", "spicy", "earthy"],
+      selectedKeyword: null,
+      isUnlocked: false,
+    },
+  },
+  [NPC_OSTEAO]: {
+    displayName: "Osteao",
+    prompt:
+      "You're a skeleton warrior from a long-forgotten war. You got trapped in the labyrinth wearing a cursed helmet and have been stuck ever since. You're slightly confused, but honorable and kind.",
+    description:
+      "A cursed soldier from a long-past war who never left the battlefield.",
+    X: 950,
+    Y: 600,
+    scale: 1.0,
+    isDuck: false,
+    appearsIn: [LOC_INSIDE_LABYRINTH],
+    achievement: {
+      id: MENT_VALOR_GHOST,
+      title: "Echo of Duty",
+      description: "You helped Osteao remember the war he died in.",
+      hint: "Look at the back of the medal — what's engraved there?",
+      relatedItem: ITEM_VALOR_MEDAL,
+      possibleKeywords: ["duty", "sacrifice", "loyalty", "freedom"],
+      selectedKeyword: null,
+      isUnlocked: false,
+    },
+  },
+  [NPC_PAPA]: {
+    displayName: "Papa",
+    prompt:
+      "You are Papa, a retired potion shopkeeper and father to Clair. You love riddles — the more awkward or quirky, the better. Ask players riddles even if they didn’t want them.",
+    description:
+      "Clair’s eccentric father who retired from the potion shop and now deals mostly in riddles.",
+    X: 1280,
+    Y: 770,
+    scale: 0.95,
+    isDuck: false,
+    appearsIn: [LOC_POTION_SHOP],
+    achievement: {
+      id: MENT_RIDDLE_MASTER,
+      title: "Riddle Me This",
+      description: "You solved one of Papa’s awkward riddles.",
+      hint: "There’s a message on one of the potion photos… maybe it’s the answer?",
+      relatedItem: ITEM_PHOTOS_OF_POTIONS,
+      possibleKeywords: ["courage", "time", "echo", "a shadow"],
+      selectedKeyword: null,
+      isUnlocked: false,
+    },
+  },
+  [NPC_PHILI]: {
+    displayName: "Phili",
+    prompt:
+      "You are Phili, a massive creature with six eyes and a love for philosophy. You believe life is a simulation, and are always looking for someone to debate with. You take everything way too seriously.",
+    description: "A six-eyed philosopher who believes life is a simulation.",
+    X: 890,
+    Y: 690,
+    scale: 1.2,
+    isDuck: false,
+    appearsIn: [LOC_INSIDE_LABYRINTH],
+  },
+  [NPC_SLIPS]: {
+    displayName: "Slips",
+    prompt:
+      "You are a siren in a pink leather jacket. You used to have a different jacket with a dragon on it. You think you left something important in the pockets. Ask the player if they’ve seen it.",
+    description:
+      "A stylish siren searching for something left behind in a lost jacket.",
+    X: 1470,
+    Y: 790,
+    scale: 0.9,
+    isDuck: false,
+    appearsIn: [LOC_TRADING_HALL_INSIDE],
+    achievement: {
+      id: MENT_POCKET_MEMORY,
+      title: "Leather Legacy",
+      description: "You helped Slips discover what was in the old jacket.",
+      hint: "Check the dragon jacket for something she forgot.",
+      relatedItem: ITEM_OLD_LEATHER_JACKET,
+      possibleKeywords: ["note", "cigarette", "picture", "phone number"],
+      selectedKeyword: null,
+      isUnlocked: false,
+    },
+  },
+  [NPC_SPIDER]: {
+    displayName: "Spider",
+    prompt:
+      "You are a giant, talkative spider. You love chatting with strangers and always talk about inviting them over to eat… though it’s unclear whether that means *with* you or *as* dinner.",
+    description:
+      "A friendly(?) spider who’s always looking to invite people over.",
+    X: 770,
+    Y: 640,
+    scale: 1.1,
+    isDuck: false,
+    appearsIn: [LOC_CRYSTAL_CAVE],
+  },
+  [NPC_ZIP]: {
+    displayName: "Zip",
+    prompt:
+      "You're Zip, a Gorgon painter who loves getting new sculptures when adventurers turn to stone. You speak in poetic terms about your art and process, and think you're misunderstood.",
+    description:
+      "An artist who sees statues as inspiration and adventurers as opportunity.",
+    X: 1010,
+    Y: 670,
+    scale: 0.9,
+    isDuck: false,
+    appearsIn: [LOC_INSIDE_LABYRINTH],
+  },
 };
