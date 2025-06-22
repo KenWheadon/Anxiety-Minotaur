@@ -110,16 +110,6 @@ class EnergyUI {
 
     const gameState = this.gameEngine.gameState;
 
-    // DEBUG: Log the actual values
-    console.log("💝 DEBUG - Raw gameState values:");
-    console.log("  gameState.socialEnergy:", gameState.socialEnergy);
-    console.log("  gameState.maxSocialEnergy:", gameState.maxSocialEnergy);
-    console.log(
-      "  CONFIG.STARTING_SOCIAL_ENERGY:",
-      CONFIG.STARTING_SOCIAL_ENERGY
-    );
-    console.log("  CONFIG.MAX_SOCIAL_ENERGY:", CONFIG.MAX_SOCIAL_ENERGY);
-
     // FIXED: Use !== undefined to properly handle 0 values
     const currentEnergy =
       gameState.socialEnergy !== undefined
@@ -127,11 +117,6 @@ class EnergyUI {
         : CONFIG.STARTING_SOCIAL_ENERGY;
     const maxEnergy = gameState.maxSocialEnergy || CONFIG.MAX_SOCIAL_ENERGY;
     const percentage = (currentEnergy / maxEnergy) * 100;
-
-    console.log("💝 DEBUG - Calculated values:");
-    console.log("  currentEnergy:", currentEnergy);
-    console.log("  maxEnergy:", maxEnergy);
-    console.log("  percentage:", percentage);
 
     // Update bar width
     this.energyBar.style.width = Math.max(percentage, 2) + "%";

@@ -264,7 +264,7 @@ class AchievementManager {
 
     // Check for tutorial completion
     if (
-      achievementId === TUTORIAL_COMPLETE &&
+      achievementId === MENT_TUTORIAL_COMPLETE &&
       this.onTutorialCompleteCallback
     ) {
       console.log("🎉 Tutorial completed! Triggering victory callback...");
@@ -512,7 +512,7 @@ class AchievementManager {
 
   // Check if tutorial is complete
   isTutorialComplete() {
-    return this.unlockedAchievements.has(TUTORIAL_COMPLETE);
+    return this.unlockedAchievements.has(MENT_TUTORIAL_COMPLETE);
   }
 
   // Reset all achievements
