@@ -3,7 +3,7 @@
 class GameState {
   constructor() {
     this.gameId = Date.now();
-    this.version = "7.0"; // BUMPED: From "4.0" to "5.0" to invalidate old saves
+    this.version = "8.0";
     this.currentLocation = null;
     this.currentLevel = 1;
     this.unlockedAchievements = new Set();
@@ -88,7 +88,7 @@ class GameState {
     return false;
   }
 
-  // Spend energy (conversations) - works in all levels but only deducts in Level 2+
+  // Spend energy (conversations) - now works in all levels
   spendEnergy(amount = CONFIG.CONVERSATION_ENERGY_COST) {
     if (this.socialEnergy >= amount) {
       this.socialEnergy -= amount;

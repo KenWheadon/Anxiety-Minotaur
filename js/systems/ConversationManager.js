@@ -1,4 +1,4 @@
-// js/systems/ConversationManager.js - FIXED: Energy management and event handling
+// js/systems/ConversationManager.js - FIXED: Proper energy deduction using GameState methods
 
 class ConversationManager {
   constructor(gameEngine) {
@@ -101,6 +101,9 @@ class ConversationManager {
     console.log(
       `💬 START TUTORIAL CONVERSATION - Current: ${this.currentCharacter}, New: ${characterKey}`
     );
+
+    // FIXED: NO energy check here - energy only deducted when sending messages
+    // This allows players to open conversations freely
 
     // If clicking the same character while conversation is active, do nothing
     if (
@@ -279,11 +282,31 @@ class ConversationManager {
 
     const character = characters[this.currentCharacter];
 
-    // Check social energy BEFORE sending message (not when opening chat)
+    // FIXED: Check social energy BEFORE sending message using proper GameState method
     if (this.shouldCheckSocialEnergy(character)) {
-      if (this.gameEngine.gameState.socialEnergy <= 0) {
+      // Use GameState's spendEnergy method which handles level-based logic
+      const canAfford = this.gameEngine.gameState.spendEnergy(
+        CONFIG.CONVERSATION_ENERGY_COST
+      );
+
+      if (!canAfford) {
+        console.log(
+          `💔 Not enough energy to send message (current: ${this.gameEngine.gameState.socialEnergy})`
+        );
         this.showEnergyWarning();
         return; // Don't send message if no energy
+      }
+
+      console.log(
+        `💔 Energy spent: ${CONFIG.CONVERSATION_ENERGY_COST} (now ${this.gameEngine.gameState.socialEnergy}/${this.gameEngine.gameState.maxSocialEnergy})`
+      );
+
+      // Update energy UI immediately
+      if (this.gameEngine.energyUI) {
+        this.gameEngine.energyUI.showEnergyLoss(
+          CONFIG.CONVERSATION_ENERGY_COST
+        );
+        this.gameEngine.energyUI.updateEnergyDisplay();
       }
     }
 
@@ -343,16 +366,6 @@ class ConversationManager {
       // Add character response
       this.addMessage("character", response);
 
-      // FIXED: Use proper method to spend energy AND update UI
-      if (this.shouldCheckSocialEnergy(character)) {
-        const energySpent = this.gameEngine.gameState.spendEnergy();
-        if (energySpent && this.gameEngine.energyUI) {
-          // FIXED: Update the energy UI after spending
-          this.gameEngine.energyUI.updateEnergyDisplay();
-          console.log(`💔 Social energy spent and UI updated`);
-        }
-      }
-
       // Save to conversation history (including duck conversations)
       this.gameEngine.gameState.addConversation(
         this.currentCharacter,
@@ -377,6 +390,19 @@ class ConversationManager {
         "character",
         "I'm sorry, I seem to have lost my words for a moment..."
       );
+
+      // FIXED: Refund energy if the response failed
+      if (this.shouldCheckSocialEnergy(character)) {
+        this.gameEngine.gameState.socialEnergy +=
+          CONFIG.CONVERSATION_ENERGY_COST;
+        console.log(
+          `💝 Refunded energy due to error: ${this.gameEngine.gameState.socialEnergy}/${this.gameEngine.gameState.maxSocialEnergy}`
+        );
+
+        if (this.gameEngine.energyUI) {
+          this.gameEngine.energyUI.updateEnergyDisplay();
+        }
+      }
     }
 
     // Re-enable input

@@ -110,20 +110,34 @@ class EnergyUI {
 
     const gameState = this.gameEngine.gameState;
 
-    // FIXED: Provide default values if gameState properties are undefined
+    // DEBUG: Log the actual values
+    console.log("💝 DEBUG - Raw gameState values:");
+    console.log("  gameState.socialEnergy:", gameState.socialEnergy);
+    console.log("  gameState.maxSocialEnergy:", gameState.maxSocialEnergy);
+    console.log(
+      "  CONFIG.STARTING_SOCIAL_ENERGY:",
+      CONFIG.STARTING_SOCIAL_ENERGY
+    );
+    console.log("  CONFIG.MAX_SOCIAL_ENERGY:", CONFIG.MAX_SOCIAL_ENERGY);
+
+    // FIXED: Use !== undefined to properly handle 0 values
     const currentEnergy =
-      gameState.socialEnergy || CONFIG.STARTING_SOCIAL_ENERGY;
+      gameState.socialEnergy !== undefined
+        ? gameState.socialEnergy
+        : CONFIG.STARTING_SOCIAL_ENERGY;
     const maxEnergy = gameState.maxSocialEnergy || CONFIG.MAX_SOCIAL_ENERGY;
     const percentage = (currentEnergy / maxEnergy) * 100;
 
-    // console.log(`💝 Updating energy display: ${currentEnergy}/${maxEnergy} (${percentage}%)`);
+    console.log("💝 DEBUG - Calculated values:");
+    console.log("  currentEnergy:", currentEnergy);
+    console.log("  maxEnergy:", maxEnergy);
+    console.log("  percentage:", percentage);
 
     // Update bar width
-    this.energyBar.style.width = Math.max(percentage, 2) + "%"; // FIXED: Minimum 2% width
+    this.energyBar.style.width = Math.max(percentage, 2) + "%";
 
     // Update text
     this.energyText.textContent = `${currentEnergy}/${maxEnergy}`;
-
     // FIXED: Update container styling based on energy level
     const container = this.energyContainer;
     container.classList.remove("low-energy", "no-energy");
