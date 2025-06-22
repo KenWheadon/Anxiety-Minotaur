@@ -30,55 +30,28 @@ const achievements = {
   // Demon conversation achievement
   [MET_THE_DEMON]: {
     title: "Ancient Wisdom",
-    description:
-      "Engaged in deep philosophical conversation with the labyrinth's ancient guardian.",
-    hint: "The demon in the labyrinth's heart enjoys discussing mystical and philosophical matters.",
+    description: "Helped the ancient demon with their mystical research.",
+    hint: "The demon wants to know what magic adventurers will sense in their dragon scale!",
     characterId: DEMON,
-    triggerKeywords: []], // Will be populated by KeywordGenerationManager
+    triggerKeywords: [], // Will be randomly populated
     isUnlocked: false,
   },
 
-  // KingKing conversation achievement
   [ROYAL_AUDIENCE]: {
     title: "Royal Recognition",
-    description:
-      "Earned the respect and acknowledgment of the noble guardian KingKing.",
-    hint: "The royal guardian appreciates discussions of honor, justice, and nobility.",
+    description: "Earned the respect of the noble guardian KingKing.",
+    hint: "KingKing is too scared to touch the red potion - help them read what it says!",
     characterId: KINGKING,
-    triggerKeywords: [], 
+    triggerKeywords: [], // Will be randomly populated
     isUnlocked: false,
   },
 
-  // Sumo conversation achievement
   [WARRIOR_RESPECT]: {
-    title: "Strength and Harmony",
-    description:
-      "Found balance between power and peace through conversation with the forest warrior.",
-    hint: "The sumo warrior values strength, discipline, and respect for nature.",
+    title: "Warrior's Trust",
+    description: "Gained the trust of the mighty forest warrior.",
+    hint: "Sumo found a potion but doesn't know if it's safe - check what type it is!",
     characterId: SUMO,
-    triggerKeywords: [],
-    isUnlocked: false,
-  },
-
-  // Item collection achievement
-  [POTION_COLLECTOR]: {
-    title: "Alchemist's Apprentice",
-    description:
-      "Discovered both the mystical green and red potions hidden throughout the realm.",
-    hint: "Explore the forest and labyrinth entrance to find magical potions.",
-    characterId: null, // Not tied to a specific character - exploration based
-    triggerKeywords: [],
-    isUnlocked: false,
-  },
-
-  // Exploration achievement
-  [LABYRINTH_EXPLORER]: {
-    title: "Brave Explorer",
-    description:
-      "Ventured into the mysterious labyrinth and discovered its ancient secrets.",
-    hint: "Explore all the new areas beyond your home to unlock this achievement.",
-    characterId: null, // Not tied to a specific character - exploration based
-    triggerKeywords: [],
+    triggerKeywords: [], // Will be randomly populated
     isUnlocked: false,
   },
 };

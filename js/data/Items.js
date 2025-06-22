@@ -105,30 +105,30 @@ const items = {
 
   // NEW MAGICAL ITEMS
 
-  // Green Potion - Forest (healing/energy restoration)
+  // Green Potion - Template for Sumo's safety question
   [GREEN_POTION]: {
     description:
-      "A shimmering green potion in an ornate glass bottle. The liquid seems to pulse with a gentle, natural energy, and you can smell hints of forest herbs and spring water. Ancient runes are etched into the bottle's surface. This looks like it could restore health and vitality to anyone who drinks it.",
+      "A mysterious green potion labeled '{SUMO_KEYWORD}' - looks safe to drink for warriors.", // TEMPLATE
     X: 400,
     Y: 850,
     scale: 0.8,
     img: GREEN_POTION,
   },
 
-  // Red Potion - Outside Labyrinth (power/strength enhancement)
+  // Red Potion - Template for KingKing's inscription question
   [RED_POTION]: {
     description:
-      "A mysterious red potion that glows with an inner fire. The crimson liquid swirls hypnotically within its crystal container, and you can feel warmth radiating from it even through the glass. The bottle is sealed with black wax marked with arcane symbols. This appears to be a potion of strength or magical power.",
+      "A royal red potion with faded text reading '{KINGKING_KEYWORD}' - meant for true rulers.", // TEMPLATE
     X: 1600,
     Y: 400,
     scale: 0.9,
     img: RED_POTION,
   },
 
-  // Dragon Scale - Middle of Labyrinth (rare crafting material)
+  // Dragon Scale - Template for Demon's magic sensing question
   [DRAGON_SCALE]: {
     description:
-      "An enormous scale from an ancient dragon, easily the size of a dinner plate. It shimmers with an iridescent quality, shifting between deep emerald and brilliant gold depending on how the light hits it. The scale feels surprisingly warm to the touch and seems to hum with residual magical energy. This is incredibly rare and valuable - dragons haven't been seen in these lands for centuries.",
+      "An ancient dragon scale that pulses with '{DEMON_KEYWORD}' - irresistibly tempting to adventurers.", // TEMPLATE
     X: 960,
     Y: 400,
     scale: 1.2,

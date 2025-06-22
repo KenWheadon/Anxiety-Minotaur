@@ -1,4 +1,4 @@
-// js/systems/LocationNavigator.js - Complete Location Navigation System
+// js/systems/LocationNavigator.js - Complete Location Navigation System with Fixed Tooltips
 
 class LocationNavigator {
   constructor(gameEngine) {
@@ -114,7 +114,7 @@ class LocationNavigator {
         this.navigateToLocation(locationKey);
       });
 
-      // Add hover preview
+      // FIXED: Add hover preview with proper positioning
       button.addEventListener("mouseenter", (e) => {
         this.showLocationPreview(e, locationData);
       });
@@ -204,6 +204,7 @@ class LocationNavigator {
     });
   }
 
+  // FIXED: Improved tooltip positioning that appears above the button
   showLocationPreview(event, locationData) {
     this.hideLocationPreview(); // Remove any existing preview
 
@@ -211,15 +212,54 @@ class LocationNavigator {
     preview.className = "location-preview";
     preview.textContent = locationData.description;
 
-    // Position near the button
-    const buttonRect = event.target.getBoundingClientRect();
-    preview.style.position = "fixed";
-    preview.style.left = buttonRect.left + "px";
-    preview.style.top = buttonRect.top - 60 + "px";
-    preview.style.zIndex = "1001";
+    // Add some basic styling to ensure proper sizing
+    preview.style.cssText = `
+      position: fixed;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      max-width: 200px;
+      word-wrap: break-word;
+      z-index: 1001;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    `;
 
+    // Add to DOM first so we can measure it
     document.body.appendChild(preview);
+
+    // Get button and preview dimensions
+    const buttonRect = event.target.getBoundingClientRect();
+    const previewRect = preview.getBoundingClientRect();
+
+    // Calculate position - center horizontally above the button
+    let left = buttonRect.left + buttonRect.width / 2 - previewRect.width / 2;
+    let top = buttonRect.top - previewRect.height - 8; // 8px gap above button
+
+    // Ensure tooltip doesn't go off screen horizontally
+    const screenPadding = 10;
+    if (left < screenPadding) {
+      left = screenPadding;
+    } else if (left + previewRect.width > window.innerWidth - screenPadding) {
+      left = window.innerWidth - previewRect.width - screenPadding;
+    }
+
+    // If tooltip would appear above viewport, show it below the button instead
+    if (top < screenPadding) {
+      top = buttonRect.bottom + 8; // 8px gap below button
+    }
+
+    // Apply final position
+    preview.style.left = left + "px";
+    preview.style.top = top + "px";
+
+    // Store reference for cleanup
     this.currentPreview = preview;
+
+    console.log(`🧭 Showing preview for location at (${left}, ${top})`);
   }
 
   hideLocationPreview() {

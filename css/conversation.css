@@ -113,7 +113,7 @@
   flex-direction: column;
   gap: 15px;
   /* FIXED: Ensure proper height calculation */
-  min-height: 0;
+  min-height: 60%;
   max-height: calc(100% - 200px); /* Account for header and input */
 }
 
@@ -211,7 +211,7 @@
   outline: none;
   transition: all 0.3s ease;
   /* FIXED: Prevent input from growing too large */
-  min-width: 0;
+  min-width: 100%;
 }
 
 .conversation-input::placeholder {

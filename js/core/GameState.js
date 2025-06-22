@@ -3,7 +3,7 @@
 class GameState {
   constructor() {
     this.gameId = Date.now();
-    this.version = "5.5"; // BUMPED: From "4.0" to "5.0" to invalidate old saves
+    this.version = "6.0"; // BUMPED: From "4.0" to "5.0" to invalidate old saves
     this.currentLocation = null;
     this.currentLevel = 1;
     this.unlockedAchievements = new Set();

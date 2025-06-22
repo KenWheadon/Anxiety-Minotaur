@@ -4,13 +4,17 @@ class AIService {
     this.apiKey = null;
     this.isAvailable = false;
     this.isInitialized = false;
-    this.fallbackResponses = new Map();
     this.requestQueue = [];
     this.isProcessingQueue = false;
 
     this.setupFallbackResponses();
 
     console.log("🤖 AI Service created (will initialize when first used)");
+  }
+
+  setupFallbackResponses() {
+    // Single fallback response for all characters when AI fails
+    this.fallbackResponse = "Seems like they aren't talkative right now.";
   }
 
   // Initialize the service when first needed
@@ -30,42 +34,6 @@ class AIService {
     this.isInitialized = true;
 
     console.log("🤖 AI Service initialization complete");
-  }
-
-  setupFallbackResponses() {
-    // Generic fallback responses by character personality type
-    this.fallbackResponses.set("shy", [
-      "Oh... um... hello there. I don't really know what to say...",
-      "I'm not very good at talking to people... sorry.",
-      "Maybe we could just... sit quietly together?",
-      "I hope I'm not bothering you...",
-      "Sometimes I wish I could be braver...",
-    ]);
-
-    this.fallbackResponses.set("wise", [
-      "In my many years, I have learned that patience is a virtue.",
-      "Every season brings change, and with it, new understanding.",
-      "Sometimes the most profound truths are found in silence.",
-    ]);
-
-    this.fallbackResponses.set("cheerful", [
-      "Oh how wonderful to see you! What a beautiful day!",
-      "There's always something exciting happening around here!",
-      "You simply must tell me about your adventures!",
-    ]);
-
-    this.fallbackResponses.set("mysterious", [
-      "Some secrets are meant to be discovered slowly...",
-      "Perhaps you will understand in time...",
-      "Listen carefully to what the wind whispers...",
-    ]);
-
-    // Default responses for unknown personalities
-    this.fallbackResponses.set("default", [
-      "Hello there! Nice to meet you.",
-      "Feel free to look around and explore.",
-      "Is there anything you'd like to know?",
-    ]);
   }
 
   async checkServiceAvailability() {
@@ -113,7 +81,7 @@ class AIService {
 
     const character = characters[characterKey];
     if (!character) {
-      return this.getFallbackResponse("default");
+      return this.fallbackResponse;
     }
 
     console.log(`🤖 Generating response for ${characterKey}: "${message}"`);
@@ -156,10 +124,7 @@ class AIService {
           console.log(`🤖 API response received: "${response}"`);
         } else {
           console.log(`🤖 Using fallback response for ${request.characterKey}`);
-          response = this.getFallbackResponse(
-            request.character,
-            request.message
-          );
+          response = this.fallbackResponse;
         }
 
         request.resolve(response);
@@ -171,28 +136,32 @@ class AIService {
           `🤖 AI request failed for ${request.characterKey}:`,
           error
         );
-        const fallback = this.getFallbackResponse(
-          request.character,
-          request.message
-        );
-        console.log(`🤖 Using fallback response: "${fallback}"`);
-        request.resolve(fallback);
+        console.log(`🤖 Using fallback response: "${this.fallbackResponse}"`);
+        request.resolve(this.fallbackResponse);
       }
     }
 
     this.isProcessingQueue = false;
   }
 
+  // ENHANCED: Now automatically injects English-only instruction
   async makeAPIRequest(
     characterKey,
     message,
     prompt,
     conversationHistory = []
   ) {
+    // Always prepend the English instruction to the system prompt
+    const systemPrompt = `Please always respond 100% in English.
+
+${prompt}
+
+You live around a labyrinth and are chatting with the friendly but shy Minotaur. Keep responses short (1-3 sentences) and in character.`;
+
     const messages = [
       {
         role: "system",
-        content: `${prompt}\n\nYou are in a frog police gang exploration game. Keep responses short (1-3 sentences) and in character. If the player asks about secrets or hidden things, be mysterious but give subtle hints.`,
+        content: systemPrompt,
       },
     ];
 
@@ -274,61 +243,6 @@ class AIService {
     }
   }
 
-  getFallbackResponse(character, message = "") {
-    // Try to match character personality to fallback type
-    let personalityType = "default";
-
-    if (character && character.prompt) {
-      const prompt = character.prompt.toLowerCase();
-      if (prompt.includes("shy") || prompt.includes("bashful")) {
-        personalityType = "shy";
-      } else if (
-        prompt.includes("wise") ||
-        prompt.includes("ancient") ||
-        prompt.includes("old")
-      ) {
-        personalityType = "wise";
-      } else if (
-        prompt.includes("cheerful") ||
-        prompt.includes("excited") ||
-        prompt.includes("happy")
-      ) {
-        personalityType = "cheerful";
-      } else if (
-        prompt.includes("mysterious") ||
-        prompt.includes("secret") ||
-        prompt.includes("enigmatic")
-      ) {
-        personalityType = "mysterious";
-      }
-    }
-
-    const responses = this.fallbackResponses.get(personalityType);
-
-    // Simple context-aware response selection
-    let selectedResponse;
-    if (
-      message.toLowerCase().includes("secret") ||
-      message.toLowerCase().includes("hidden")
-    ) {
-      const mysteriousResponses = this.fallbackResponses.get("mysterious");
-      selectedResponse =
-        mysteriousResponses[
-          Math.floor(Math.random() * mysteriousResponses.length)
-        ];
-    } else if (
-      message.toLowerCase().includes("hello") ||
-      message.toLowerCase().includes("hi")
-    ) {
-      selectedResponse = responses[0]; // Use first response for greetings
-    } else {
-      selectedResponse =
-        responses[Math.floor(Math.random() * responses.length)];
-    }
-
-    return selectedResponse;
-  }
-
   // Utility methods
   delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -349,10 +263,7 @@ class AIService {
       isAvailable: this.isAvailable,
       isInitialized: this.isInitialized,
       queueLength: this.requestQueue.length,
-      fallbackResponseCount: Array.from(this.fallbackResponses.values()).reduce(
-        (total, responses) => total + responses.length,
-        0
-      ),
+      fallbackResponse: this.fallbackResponse,
       environment: CONFIG.IS_DEVELOPMENT ? "development" : "production",
       usingProxy: CONFIG.IS_USING_PROXY,
       apiUrl: this.apiUrl,
