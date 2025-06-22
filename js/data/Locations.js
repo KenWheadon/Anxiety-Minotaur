@@ -1,68 +1,51 @@
-// js/data/Locations.js - Tutorial locations for Anxiety Minotaur
-// UPDATED: Added new labyrinth and forest areas
+// js/data/Locations.js - Simplified location definitions
 
-const locations = {
-  // ORIGINAL TUTORIAL LOCATIONS
-
-  // Tutorial Bedroom - Starting location with duck and worldbuilding
-  [BEDROOM]: {
+const LOCATIONS = {
+  [LOC_BEDROOM]: {
+    displayName: "Bedroom",
     description:
       "Your cozy bedroom where you feel safe and comfortable. Your duck companion is here, and there are some personal items around. You can hear your gardener neighbor in the living room - they seem to need help with something.",
-    characters: [NPC_DUCK],
-    items: [YOU_IDLE, ITEM_DUCK, ITEM_MAMALETTER],
-    locations: [LIVINGROOM],
-    background: BEDROOM,
+    background: LOC_BEDROOM,
+    connectsTo: [LOC_LIVINGROOM],
   },
 
-  // Tutorial Living Room - Main challenge location with pig NPC
-  [LIVINGROOM]: {
+  [LOC_LIVINGROOM]: {
+    displayName: "Living Room",
     description:
       "Your living room where you sometimes chat with neighbors. The gardener pig is here and seems to need help with something garden-related. There are some useful books and tools around.",
-    characters: [PIG],
-    items: [YOU_SCARED, ITEM_HELP, ITEM_MAGGLASS, ITEM_STARSBOOK],
-    locations: [BEDROOM, GARDEN],
-    background: LIVINGROOM,
+    background: LOC_LIVINGROOM,
+    connectsTo: [LOC_BEDROOM, LOC_GARDEN],
   },
 
-  // Tutorial Garden - Discovery location with seed item and duck (now connects to expanded world)
-  [GARDEN]: {
+  [LOC_GARDEN]: {
+    displayName: "Garden",
     description:
       "Your peaceful garden area. You can see the pig in the distance preparing to plant something, and there are some items here including what looks like a seed packet. Your duck companion is also here if you need comfort. A winding path leads deeper into the surrounding wilderness.",
-    characters: [NPC_DUCK2],
-    items: [YOU_UNSURE, TUTORIAL_SEED, PIG_DIG],
-    locations: [LIVINGROOM, MIDDLE_OF_LABYRINTH], // NEW: Connection to expanded world
-    background: GARDEN,
+    background: LOC_GARDEN,
+    connectsTo: [LOC_LIVINGROOM, LOC_INSIDE_LABYRINTH],
   },
 
-  // NEW LOCATIONS
-
-  // Outside Labyrinth - Entrance to the mysterious labyrinth
-  [OUTSIDE_LABYRINTH]: {
+  [LOC_OUTSIDE_LABYRINTH]: {
+    displayName: "Outside Labyrinth",
     description:
       "The entrance to an ancient stone labyrinth stands before you. Weathered walls stretch upward, covered in mysterious symbols and fading inscriptions. You can hear strange sounds echoing from within, and the air feels charged with an otherworldly energy. A forest path winds away to the east.",
-    characters: [KINGKING], // Royal figure guards the entrance
-    items: [GREEN_POTION], // Power potion near the entrance
-    locations: [MIDDLE_OF_LABYRINTH, FOREST],
-    background: OUTSIDE_LABYRINTH,
+    background: LOC_OUTSIDE_LABYRINTH,
+    connectsTo: [LOC_INSIDE_LABYRINTH, LOC_FOREST],
   },
 
-  // Middle of Labyrinth - Central hub with the demon
-  [MIDDLE_OF_LABYRINTH]: {
+  [LOC_INSIDE_LABYRINTH]: {
+    displayName: "Heart of Labyrinth",
     description:
       "You've reached the heart of the labyrinth. Ancient stones form a circular chamber lit by an eerie, sourceless glow. The walls are covered in symbols that seem to shift when you're not looking directly at them. The air thrums with mystical energy, and shadows dance in the corners of your vision.",
-    characters: [DEMON], // Mysterious supernatural entity
-    items: [RED_POTION], // Rare material in the center
-    locations: [OUTSIDE_LABYRINTH, GARDEN],
-    background: MIDDLE_OF_LABYRINTH,
+    background: LOC_INSIDE_LABYRINTH,
+    connectsTo: [LOC_OUTSIDE_LABYRINTH, LOC_GARDEN],
   },
 
-  // Forest - Natural area with the sumo warrior
-  [FOREST]: {
+  [LOC_FOREST]: {
+    displayName: "Ancient Forest",
     description:
       "A dense, primordial forest surrounds you. Towering trees create a natural cathedral, their canopy filtering sunlight into dappled patterns on the forest floor. You can hear the distant sound of practice strikes and heavy breathing - someone is training here. The air is fresh and filled with the scent of earth and growing things.",
-    characters: [SUMO], // Strong warrior training in nature
-    items: [DRAGON_SCALE], // Healing potion among the herbs
-    locations: [OUTSIDE_LABYRINTH],
-    background: FOREST,
+    background: LOC_FOREST,
+    connectsTo: [LOC_OUTSIDE_LABYRINTH],
   },
 };

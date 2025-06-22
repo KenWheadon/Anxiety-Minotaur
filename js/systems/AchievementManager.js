@@ -1,4 +1,4 @@
-// js/systems/AchievementManager.js - FIXED: Unified keyword checking and dependency injection
+// js/systems/AchievementManager.js - UPDATED: Uses ContentManager for achievements
 
 class AchievementManager {
   constructor(gameEngine) {
@@ -20,44 +20,28 @@ class AchievementManager {
     console.log("🏆 Achievement manager initialized for tutorial");
   }
 
-  // FIXED: Dependency injection - load achievements with keyword data
-  loadAchievementsWithKeywords(keywordData) {
-    if (typeof achievements !== "undefined") {
-      Object.entries(achievements).forEach(([key, achievementData]) => {
-        const achievement = { ...achievementData };
-
-        // Apply keyword data if available
-        if (
-          achievement.characterId &&
-          keywordData.has(achievement.characterId)
-        ) {
-          const keyword = keywordData.get(achievement.characterId);
-          if (key === TUTORIAL_COMPLETE) {
-            achievement.triggerKeywords = [keyword];
-            console.log(`🏆 Applied keyword "${keyword}" to ${key}`);
-          }
-        }
-
-        this.achievements.set(key, {
-          ...achievement,
-          id: key,
-          unlockedAt: null,
-          progress: 0,
-        });
-      });
-
-      this.isInitialized = true;
-      console.log(
-        `🏆 Loaded ${this.achievements.size} tutorial achievements with keyword data`
-      );
-    } else {
-      console.warn("🏆 No achievements data available");
-    }
-  }
-
   // Set callback for when tutorial is completed
   setTutorialCompleteCallback(callback) {
     this.onTutorialCompleteCallback = callback;
+  }
+
+  // UPDATED: Load achievements from ContentManager instead of global variables
+  loadAchievementsWithKeywords() {
+    const achievementsData = contentManager.getAllAchievements();
+
+    Object.entries(achievementsData).forEach(([key, achievementData]) => {
+      this.achievements.set(key, {
+        ...achievementData,
+        id: key,
+        unlockedAt: null,
+        progress: 0,
+      });
+    });
+
+    this.isInitialized = true;
+    console.log(
+      `🏆 Loaded ${this.achievements.size} achievements from ContentManager`
+    );
   }
 
   createAchievementButton() {
@@ -138,7 +122,7 @@ class AchievementManager {
         });
       });
 
-    // FIXED: Listen for standardized conversation messages
+    // Listen for standardized conversation messages
     GameEvents.on(GAME_EVENTS.CONVERSATION_MESSAGE, (eventData) => {
       if (!this.isInitialized) {
         console.warn("🏆 Achievement manager not initialized yet");
@@ -172,7 +156,7 @@ class AchievementManager {
     });
   }
 
-  // FIXED: Unified keyword checking for all characters
+  // Check achievement triggers for conversation messages
   checkTriggers(characterKey, message, response) {
     if (!this.isInitialized) {
       console.warn("🏆 Achievement system not ready");
@@ -213,7 +197,7 @@ class AchievementManager {
     });
   }
 
-  // FIXED: Unified keyword checking method - both duck and pig check player message
+  // Check if message contains trigger keywords
   checkKeywordTriggers(triggerKeywords, characterKey, message) {
     if (!triggerKeywords || triggerKeywords.length === 0) {
       return false;
@@ -226,7 +210,7 @@ class AchievementManager {
     return triggerKeywords.some((keyword) => {
       const normalizedKeyword = keyword.toLowerCase();
 
-      // FIXED: Duck checks for 'quack' in player message, pig checks for its specific keyword
+      // Duck checks for 'quack' in player message, others check for exact word match
       let found = false;
 
       if (characterKey === NPC_DUCK || characterKey === NPC_DUCK2) {

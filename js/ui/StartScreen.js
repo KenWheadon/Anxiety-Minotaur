@@ -136,8 +136,12 @@ class StartScreen {
       );
 
       // UPDATED: Use the new loadBackground method which now handles just the filename
+      const backgroundPath = contentManager.getSpecialBackground("title");
       const backgroundImage =
-        await this.gameEngine.renderer.assetManager.loadBackground("level0_bg");
+        await this.gameEngine.renderer.assetManager.loadImageDirect(
+          "startscreen-title",
+          backgroundPath
+        );
 
       if (backgroundImage && backgroundImage.src) {
         backgroundElement.style.backgroundImage = `url(${backgroundImage.src})`;
@@ -157,7 +161,7 @@ class StartScreen {
       const leftImageElement =
         this.startScreenElement.querySelector("#title-image-left");
       const leftImage = await this.gameEngine.renderer.assetManager.loadImage(
-        "npc_duck" // Just the filename, no path or folder
+        "duck" // Just the filename, no path or folder
       );
 
       if (leftImage && leftImage.src) {

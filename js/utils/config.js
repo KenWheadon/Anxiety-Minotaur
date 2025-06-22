@@ -23,7 +23,7 @@ const CONFIG = {
 
   // Get the starting location based on the default level
   get DEFAULT_LOCATION() {
-    return BEDROOM;
+    return LOC_BEDROOM;
   },
 
   // AI Configuration - Enhanced proxy detection

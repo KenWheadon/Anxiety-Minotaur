@@ -6,21 +6,21 @@ const LEVELS = {
     name: "Tutorial: Helping Your Neighbor & Exploring the Realm",
     description:
       "Your gardener neighbor needs help identifying some seeds. Explore your expanded home and the mysterious labyrinth beyond, meet fascinating characters, and discover magical items while helping solve the mystery!",
-    startLocation: BEDROOM,
-    completionAchievement: TUTORIAL_COMPLETE,
+    startLocation: LOC_BEDROOM,
+    completionAchievement: MENT_TUTORIAL_COMPLETE,
     completionMessage:
       "Wonderful! You've successfully helped your neighbor and explored the mystical realm beyond!",
 
     // EXPANDED: All locations including new areas
     locations: [
       // Original home areas
-      BEDROOM,
-      LIVINGROOM,
-      GARDEN,
+      LOC_BEDROOM,
+      LOC_LIVINGROOM,
+      LOC_GARDEN,
       // NEW: Expanded world areas
-      OUTSIDE_LABYRINTH,
-      MIDDLE_OF_LABYRINTH,
-      FOREST,
+      LOC_OUTSIDE_LABYRINTH,
+      LOC_INSIDE_LABYRINTH,
+      LOC_FOREST,
     ],
 
     // EXPANDED: All characters including new NPCs
@@ -28,45 +28,42 @@ const LEVELS = {
       // Original tutorial characters
       NPC_DUCK,
       NPC_DUCK2,
-      PIG,
+      NPC_PIG,
       // NEW: Expanded cast
-      DEMON,
-      KINGKING,
-      SUMO,
+      NPC_DEMON,
+      NPC_KINGKING,
+      NPC_SUMO,
     ],
 
     // EXPANDED: All items including new magical items
     items: [
       // Original worldbuilding items
-      ITEM_DUCK,
+      ITEM_ANXIETY_BOOK,
       ITEM_MAMALETTER,
-      ITEM_HELP,
+      ITEM_DUMMIES_BOOK,
       ITEM_MAGGLASS,
       ITEM_STARSBOOK,
-      TUTORIAL_SEED,
+      ITEM_SEED,
       PIG_DIG,
       YOU_IDLE,
       YOU_DUCK,
       YOU_SCARED,
       YOU_UNSURE,
       // NEW: Magical items
-      GREEN_POTION,
-      RED_POTION,
-      DRAGON_SCALE,
+      ITEM_GREEN_POTION,
+      ITEM_RED_POTION,
+      ITEM_DRAGON_SCALE,
     ],
 
     // EXPANDED: All achievements including new character and exploration achievements
     achievements: [
       // Original tutorial achievements
-      TALKED_TO_DUCK,
-      TUTORIAL_COMPLETE,
+      MENT_TALKED_TO_DUCK,
+      MENT_TUTORIAL_COMPLETE,
       // NEW: Character interaction achievements
-      MET_THE_DEMON,
-      ROYAL_AUDIENCE,
-      WARRIOR_RESPECT,
-      // NEW: Collection and exploration achievements
-      POTION_COLLECTOR,
-      LABYRINTH_EXPLORER,
+      MENT_MET_THE_DEMON,
+      MENT_ROYAL_AUDIENCE,
+      MENT_WARRIOR_RESPECT,
     ],
   },
 };

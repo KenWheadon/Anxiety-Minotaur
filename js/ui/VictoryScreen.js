@@ -18,7 +18,9 @@ class VictoryScreen {
 
     // Check both the tutorial completed flag AND if the tutorial achievement is unlocked
     const hasCompletedFlag = gameState.isTutorialCompleted();
-    const hasTutorialAchievement = gameState.hasAchievement(TUTORIAL_COMPLETE);
+    const hasTutorialAchievement = gameState.hasAchievement(
+      MENT_TUTORIAL_COMPLETE
+    );
 
     const wasCompleted = hasCompletedFlag || hasTutorialAchievement;
 

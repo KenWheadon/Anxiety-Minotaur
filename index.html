@@ -51,19 +51,18 @@
     </script>
 
     <!-- IMPORTANT: Load in this exact order! -->
+
     <!-- 1. Configuration (after local config attempt) -->
     <script src="js/utils/config.js"></script>
 
-    <!-- 2. Constants before data files -->
+    <!-- 2. NEW: Constants FIRST - All constants defined before anything uses them -->
     <script src="js/data/Constants.js"></script>
 
-    <!-- 3. Data files (now constants are available) -->
-    <script src="js/data/Levels.js"></script>
-    <script src="js/data/Locations.js"></script>
+    <!-- 3. NEW: Content definitions (using constants) -->
     <script src="js/data/Characters.js"></script>
     <script src="js/data/Items.js"></script>
-    <script src="js/data/Keywords.js"></script>
-    <script src="js/data/Achievements.js"></script>
+    <script src="js/data/Locations.js"></script>
+    <script src="js/data/ContentManager.js"></script>
 
     <!-- 4. Core utilities -->
     <script src="js/core/EventEmitter.js"></script>
@@ -91,7 +90,6 @@
     <script src="js/systems/InteractionHandler.js"></script>
     <script src="js/systems/ConversationManager.js"></script>
     <script src="js/systems/KeywordGenerationManager.js"></script>
-    <!-- NEW -->
     <script src="js/systems/LocationNavigator.js"></script>
     <script src="js/systems/LevelManager.js"></script>
     <script src="js/systems/AchievementManager.js"></script>

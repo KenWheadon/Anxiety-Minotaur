@@ -3,7 +3,7 @@
 class GameState {
   constructor() {
     this.gameId = Date.now();
-    this.version = "6.0"; // BUMPED: From "4.0" to "5.0" to invalidate old saves
+    this.version = "7.0"; // BUMPED: From "4.0" to "5.0" to invalidate old saves
     this.currentLocation = null;
     this.currentLevel = 1;
     this.unlockedAchievements = new Set();
@@ -63,7 +63,9 @@ class GameState {
 
   // More robust tutorial completion check
   isTutorialCompleted() {
-    return this.tutorialCompleted || this.hasAchievement(TUTORIAL_COMPLETE);
+    return (
+      this.tutorialCompleted || this.hasAchievement(MENT_TUTORIAL_COMPLETE)
+    );
   }
 
   // Restore energy (duck conversations) - works in all levels
@@ -245,7 +247,10 @@ class GameState {
       this.unlockedAchievements = new Set(data.unlockedAchievements || []);
 
       // Backwards compatibility for tutorial completion
-      if (this.hasAchievement(TUTORIAL_COMPLETE) && !this.tutorialCompleted) {
+      if (
+        this.hasAchievement(MENT_TUTORIAL_COMPLETE) &&
+        !this.tutorialCompleted
+      ) {
         console.log(
           "🔧 Legacy save detected - syncing tutorial completion flag"
         );
