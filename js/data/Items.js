@@ -16,8 +16,8 @@ const ITEMS = {
     displayName: "Dragon Scale",
     description:
       "An ancient dragon scale that pulses with '{keyword}' - irresistibly tempting to adventurers.",
-    X: 960,
-    Y: 400,
+    X: 1440,
+    Y: 605,
     scale: 1.2,
     appearsIn: [LOC_FOREST],
   },
@@ -159,8 +159,8 @@ const ITEMS = {
     displayName: "Tied Magical Scroll",
     description:
       "A scroll bound by a magically sealed string and marked with a glowing rune. Scribbled faintly near the bottom: '{keyword}'.",
-    X: 1380,
-    Y: 500,
+    X: 1802,
+    Y: 975,
     scale: 1.0,
     appearsIn: [LOC_CRYSTAL_CAVE],
   },
@@ -172,7 +172,7 @@ const ITEMS = {
     X: 870,
     Y: 870,
     scale: 0.85,
-    appearsIn: [LOC_CRYSTAL_CAVE],
+    appearsIn: [LOC_OUTSIDE_LABYRINTH],
   },
 
   [ITEM_PHOTOS_OF_POTIONS]: {
@@ -189,9 +189,9 @@ const ITEMS = {
     displayName: "Old Leather Jacket",
     description:
       "A worn jacket with patches and a giant 'dragon' symbol on the front. Something is in the pocket: '{keyword}'.",
-    X: 1510,
-    Y: 630,
-    scale: 0.95,
+    X: 1721,
+    Y: 478,
+    scale: 1,
     appearsIn: [LOC_GOLD_ROOM],
   },
 
@@ -236,8 +236,8 @@ const ITEMS = {
     displayName: "Unfinished Maze Art",
     description:
       "Treadwork art of a labyrinth - though it clearly doesn't match this one.",
-    X: 790,
-    Y: 720,
+    X: 329,
+    Y: 666,
     scale: 0.75,
     appearsIn: [LOC_GOLD_ROOM],
   },

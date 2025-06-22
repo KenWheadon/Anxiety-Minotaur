@@ -90,8 +90,8 @@ const CONFIG = {
 
   // Social Energy Configuration (Level 2 only)
   STARTING_SOCIAL_ENERGY: 0,
-  MAX_SOCIAL_ENERGY: 6,
-  DUCK_ENERGY_RESTORE: 2,
+  MAX_SOCIAL_ENERGY: 8,
+  DUCK_ENERGY_RESTORE: 1,
   CONVERSATION_ENERGY_COST: 1,
 
   // Helper method to check if we're using the proxy

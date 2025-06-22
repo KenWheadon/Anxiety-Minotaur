@@ -207,9 +207,9 @@ const CHARACTERS = {
       "You are a mighty sumo wrestler training in the forest. You've saw a green potion in the cave but can't tell if it was ok to drink or not. You should ask the player if they can go find out the type of the green potion. The player is a kind Minotaur who lives in the labyrinth nearby. You heard that the Minotaur is best friends with Duck, your older cousin. You like to joke about how much you can lift and often say 'I bet I could even lift...... THE WORLD",
     description:
       "A powerful warrior who needs help reading a 'green potion' label.",
-    X: 800,
-    Y: 700,
-    scale: 1.1,
+    X: 1141,
+    Y: 650,
+    scale: 0.8,
     isDuck: false,
     appearsIn: [LOC_FOREST],
     achievement: {
@@ -273,13 +273,14 @@ const CHARACTERS = {
     isDuck: false,
     appearsIn: [LOC_POTINO_INSIDE],
   },
+
   [NPC_EGGWARD]: {
     displayName: "Eggward",
     prompt:
       "You are Eggward, a dragon hatchling who refuses to leave your shell. You’ve been in it for two years. You are talking with the minotaur of the labyrinth — they seem nice but nervous. You like chatting from inside the shell, but wont be happy until someone tells you whats written on a magical scroll they saw. You love how comfy and warm the shell always is and refuses to leave your shell. You've been in it for two years.",
     description: "A reluctant dragon hatchling still living in their shell.",
-    X: 870,
-    Y: 760,
+    X: 927,
+    Y: 436,
     scale: 0.8,
     isDuck: false,
     appearsIn: [LOC_GOLD_ROOM],
@@ -294,6 +295,7 @@ const CHARACTERS = {
       isUnlocked: false,
     },
   },
+
   [NPC_KIBBY]: {
     displayName: "Kibby",
     prompt:
@@ -305,13 +307,14 @@ const CHARACTERS = {
     isDuck: false,
     appearsIn: [LOC_POTION_SHOP],
   },
+
   [NPC_KRAIG]: {
     displayName: "Kraig",
     prompt:
       "You are a short troll with wild purple hair. You collect rocks, but you’re far more interested in how they taste than how they look. You might ask the player if they’ve licked any good stones recently.",
     description: "A rock collector with strange culinary curiosity.",
-    X: 880,
-    Y: 700,
+    X: 611,
+    Y: 732,
     scale: 0.75,
     isDuck: false,
     appearsIn: [LOC_CRYSTAL_CAVE],
@@ -326,6 +329,7 @@ const CHARACTERS = {
       isUnlocked: false,
     },
   },
+
   [NPC_OSTEAO]: {
     displayName: "Osteao",
     prompt:
@@ -348,6 +352,7 @@ const CHARACTERS = {
       isUnlocked: false,
     },
   },
+
   [NPC_PAPA]: {
     displayName: "Papa",
     prompt:
@@ -370,17 +375,19 @@ const CHARACTERS = {
       isUnlocked: false,
     },
   },
+
   [NPC_PHILI]: {
     displayName: "Phili",
     prompt:
       "You are Phili, a massive creature with six eyes and a love for philosophy. You believe life is a simulation, and are always looking for someone to debate with. You take everything way too seriously.",
     description: "A six-eyed philosopher who believes life is a simulation.",
-    X: 890,
+    X: 390,
     Y: 690,
     scale: 1.2,
     isDuck: false,
     appearsIn: [LOC_FOREST],
   },
+
   [NPC_SLIPS]: {
     displayName: "Slips",
     prompt:
@@ -403,18 +410,20 @@ const CHARACTERS = {
       isUnlocked: false,
     },
   },
+
   [NPC_SPIDER]: {
     displayName: "Spider",
     prompt:
       "You are a giant, talkative spider. You love chatting with strangers and always talk about inviting them over to eat… though it’s unclear whether that means *with* you or *as* dinner. You sometimes end sentences with *CRUNCH CRUNCH* and then wink.",
     description:
       "A friendly(?) spider who’s always looking to invite people over.",
-    X: 770,
-    Y: 640,
+    X: 1334,
+    Y: 704,
     scale: 1.1,
     isDuck: false,
     appearsIn: [LOC_CRYSTAL_CAVE],
   },
+
   [NPC_ZIP]: {
     displayName: "Zip",
     prompt:
