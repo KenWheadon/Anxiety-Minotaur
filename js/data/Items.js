@@ -1,4 +1,6 @@
 const items = {
+  // ORIGINAL TUTORIAL ITEMS
+
   // Level 1 Items - World Building
   [ITEM_DUCK]: {
     description:
@@ -99,5 +101,37 @@ const items = {
     Y: 515,
     scale: 0.6,
     img: YOU_UNSURE,
+  },
+
+  // NEW MAGICAL ITEMS
+
+  // Green Potion - Forest (healing/energy restoration)
+  [GREEN_POTION]: {
+    description:
+      "A shimmering green potion in an ornate glass bottle. The liquid seems to pulse with a gentle, natural energy, and you can smell hints of forest herbs and spring water. Ancient runes are etched into the bottle's surface. This looks like it could restore health and vitality to anyone who drinks it.",
+    X: 400,
+    Y: 850,
+    scale: 0.8,
+    img: GREEN_POTION,
+  },
+
+  // Red Potion - Outside Labyrinth (power/strength enhancement)
+  [RED_POTION]: {
+    description:
+      "A mysterious red potion that glows with an inner fire. The crimson liquid swirls hypnotically within its crystal container, and you can feel warmth radiating from it even through the glass. The bottle is sealed with black wax marked with arcane symbols. This appears to be a potion of strength or magical power.",
+    X: 1600,
+    Y: 400,
+    scale: 0.9,
+    img: RED_POTION,
+  },
+
+  // Dragon Scale - Middle of Labyrinth (rare crafting material)
+  [DRAGON_SCALE]: {
+    description:
+      "An enormous scale from an ancient dragon, easily the size of a dinner plate. It shimmers with an iridescent quality, shifting between deep emerald and brilliant gold depending on how the light hits it. The scale feels surprisingly warm to the touch and seems to hum with residual magical energy. This is incredibly rare and valuable - dragons haven't been seen in these lands for centuries.",
+    X: 960,
+    Y: 400,
+    scale: 1.2,
+    img: DRAGON_SCALE,
   },
 };

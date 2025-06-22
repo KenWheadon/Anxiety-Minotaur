@@ -37,10 +37,8 @@ class KeywordGenerationManager {
 
     // Generate one random keyword for the tutorial pig
     const selectedKeyword =
-      TUTORIAL_PIG_KEYWORDS[
-        Math.floor(Math.random() * TUTORIAL_PIG_KEYWORDS.length)
-      ];
-    this.characterKeywords.set(TUTORIAL_PIG, selectedKeyword);
+      PIG_KEYWORDS[Math.floor(Math.random() * PIG_KEYWORDS.length)];
+    this.characterKeywords.set(PIG, selectedKeyword);
 
     console.log(`🔑 Tutorial pig keyword: "${selectedKeyword}"`);
 
@@ -56,7 +54,7 @@ class KeywordGenerationManager {
   updateAllItemDescriptions() {
     console.log("📝 Updating tutorial item descriptions...");
 
-    const pigKeyword = this.characterKeywords.get(TUTORIAL_PIG);
+    const pigKeyword = this.characterKeywords.get(PIG);
     if (pigKeyword && items[TUTORIAL_SEED]) {
       // Update the seed description to include the specific keyword
       items[

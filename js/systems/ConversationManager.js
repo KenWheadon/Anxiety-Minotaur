@@ -256,7 +256,7 @@ class ConversationManager {
 
   getFirstMeetingGreeting(character) {
     // Tutorial pig specific greeting
-    if (this.currentCharacter === TUTORIAL_PIG) {
+    if (this.currentCharacter === PIG) {
       return "Oh, hello there! I'm so glad you're here. I really need some help with something garden-related. I can't see very well anymore, and I'm having trouble identifying some seeds that were delivered today.";
     }
 
