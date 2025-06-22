@@ -54,7 +54,7 @@ const CONFIG = {
   // Proxy URL - Update this with your actual Vercel deployment URL
   get PROXY_URL() {
     // Replace 'your-vercel-app' with your actual Vercel app name
-    return "https://minotaur-labyrinth.vercel.app/api/chat";
+    return "https://anxiety-minotaur.vercel.app/api/chat";
   },
 
   // API Key - only used in development for direct calls
@@ -89,7 +89,7 @@ const CONFIG = {
 
   SITE_TITLE: "Anxiety Minotaur",
   MODEL: "deepseek/deepseek-r1-0528-qwen3-8b:free", // Free model - change as needed
-  MAX_TOKENS: 10000, // Maximum tokens for AI responses
+  MAX_TOKENS: 5000, // Maximum tokens for AI responses
 
   // Game Configuration
   SAVE_KEY: "minotaur-labyrinth-save",
