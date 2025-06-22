@@ -13,7 +13,6 @@ const CHARACTERS = {
     scale: 0.7,
     isDuck: true,
     appearsIn: [LOC_BEDROOM],
-    // FIXED: Added achievement for duck
     achievement: {
       id: MENT_TALKED_TO_DUCK,
       title: "Duck Whisperer",
@@ -37,7 +36,52 @@ const CHARACTERS = {
     scale: 0.7,
     isDuck: true,
     appearsIn: [LOC_GARDEN],
-    // FIXED: Duck2 also gets the same achievement
+    achievement: {
+      id: MENT_TALKED_TO_DUCK,
+      title: "Duck Whisperer",
+      description: "You spoke duck language and made your companion happy!",
+      hint: "Try speaking your duck's language - what sound do ducks make?",
+      relatedItem: null,
+      possibleKeywords: ["quack"],
+      selectedKeyword: "quack",
+      isUnlocked: false,
+    },
+  },
+
+  [NPC_DUCK3]: {
+    displayName: "Duck Companion",
+    prompt:
+      "You are a loyal duck companion. You only respond with 'Quack!' variations. Never use real words. Respond with 1-5 quacks, sometimes with enthusiasm (!!) or questioning (?). You're supportive and loving. Example responses: 'Quack!', 'Quack quack?', 'Quack quack quack!!', 'Quaaaack!'",
+    description:
+      "Your faithful duck companion who always listens and never judges. A source of comfort and energy.",
+    X: 1817,
+    Y: 922,
+    scale: 0.65,
+    isDuck: true,
+    appearsIn: [LOC_POTINO_INSIDE],
+    achievement: {
+      id: MENT_TALKED_TO_DUCK,
+      title: "Duck Whisperer",
+      description: "You spoke duck language and made your companion happy!",
+      hint: "Try speaking your duck's language - what sound do ducks make?",
+      relatedItem: null,
+      possibleKeywords: ["quack"],
+      selectedKeyword: "quack",
+      isUnlocked: false,
+    },
+  },
+
+  [NPC_DUCK4]: {
+    displayName: "Duck Companion",
+    prompt:
+      "You are a loyal duck companion. You only respond with 'Quack!' variations. Never use real words. Respond with 1-5 quacks, sometimes with enthusiasm (!!) or questioning (?). You're supportive and loving. Example responses: 'Quack!', 'Quack quack?', 'Quack quack quack!!', 'Quaaaack!'",
+    description:
+      "Your faithful duck companion who always listens and never judges. A source of comfort and energy.",
+    X: 1683,
+    Y: 922,
+    scale: 0.7,
+    isDuck: true,
+    appearsIn: [LOC_TRADING_HALL_INSIDE],
     achievement: {
       id: MENT_TALKED_TO_DUCK,
       title: "Duck Whisperer",
@@ -99,7 +143,7 @@ const CHARACTERS = {
       "You are an ancient demon who guards the heart of the labyrinth. You've recently powered up a dragon scale and left it for adventures to find. You ask the player to go find it and tell you what type of magic they sense. You want to make sure it's something that adventures will be lured to. The player is a kind Minotaur who lives deeper in the labyrinth you're inside. You enjoy chatting about the deep meaning of life and death.",
     description:
       "An ancient demon who needs help identifying the power infused in a 'dragon scale'.",
-    X: 960,
+    X: 441,
     Y: 540,
     scale: 1.0,
     isDuck: false,
@@ -193,10 +237,10 @@ const CHARACTERS = {
   [NPC_BIGJIM]: {
     displayName: "BigJim",
     prompt:
-      "You are a massive merchant who wears whatever armor you're currently selling. You're always trying to game the system and see every interaction as a potential sale. You should try to pitch something ridiculous at least once.",
+      "You are BigJim, a towering merchant who wears whatever armor you're selling. You are talking with the minotaur of the labyrinth — they seem nice but nervous. You see every interaction as a sales pitch and get excited if someone mentions prices or currency. Ask if they’ve seen anything with a price on it lately — maybe you can make a deal. Suggest one absurd trade offer during the conversation.You're always trying to game the system and see every interaction as a potential sale. You should try to pitch something ridiculous at least once.",
     description:
       "A towering merchant always dressed in the latest armor he's trying to sell.",
-    X: 1400,
+    X: 420,
     Y: 600,
     scale: 1.1,
     isDuck: false,
@@ -223,16 +267,16 @@ const CHARACTERS = {
       "You're Clair, a young sphinx who just took over the potion shop from your father. You're unsure about running it and are trying to stay confident. You like talking potions and ingredients, but are a little overwhelmed.",
     description:
       "A young sphinx trying her best to run the family potion shop.",
-    X: 1320,
-    Y: 750,
+    X: 1032,
+    Y: 479,
     scale: 0.9,
     isDuck: false,
-    appearsIn: [LOC_POTION_SHOP],
+    appearsIn: [LOC_POTINO_INSIDE],
   },
   [NPC_EGGWARD]: {
     displayName: "Eggward",
     prompt:
-      "You’re a dragon hatchling who refuses to leave your shell. You've been in it for two years. You like talking from inside your shell but won't come out unless someone mentions something really exciting or mysterious.",
+      "You are Eggward, a dragon hatchling who refuses to leave your shell. You’ve been in it for two years. You are talking with the minotaur of the labyrinth — they seem nice but nervous. You like chatting from inside the shell, but wont be happy until someone tells you whats written on a magical scroll they saw. You love how comfy and warm the shell always is and refuses to leave your shell. You've been in it for two years.",
     description: "A reluctant dragon hatchling still living in their shell.",
     X: 870,
     Y: 760,
@@ -243,7 +287,7 @@ const CHARACTERS = {
       id: MENT_CRACK_THE_SHELL,
       title: "Shell Shock",
       description: "You got Eggward to finally peek out of his shell.",
-      hint: "What's written on the sealed scroll might tempt him out...",
+      hint: "What's written on the sealed scroll might make hime happy...",
       relatedItem: ITEM_TIED_MAGICAL_SCROLL,
       possibleKeywords: ["destiny", "dragonborn", "awakening", "spark"],
       selectedKeyword: null,
@@ -255,11 +299,11 @@ const CHARACTERS = {
     prompt:
       "You’re a quiet librarian who loves peace and silence. You don’t mind talking, but you tend to be awkward. Try to recommend a book to the player, even if they didn’t ask.",
     description: "A socially awkward librarian who just wants peace and quiet.",
-    X: 1020,
-    Y: 720,
+    X: 1634,
+    Y: 698,
     scale: 0.85,
     isDuck: false,
-    appearsIn: [LOC_POTINO_INSIDE],
+    appearsIn: [LOC_POTION_SHOP],
   },
   [NPC_KRAIG]: {
     displayName: "Kraig",
@@ -285,14 +329,14 @@ const CHARACTERS = {
   [NPC_OSTEAO]: {
     displayName: "Osteao",
     prompt:
-      "You're a skeleton warrior from a long-forgotten war. You got trapped in the labyrinth wearing a cursed helmet and have been stuck ever since. You're slightly confused, but honorable and kind.",
+      "You are Osteao, a confused but honorable skeleton warrior trapped in the labyrinth wearing a cursed helmet. You are talking with the minotaur of the labyrinth — they seem nice but nervous. You vaguely remember a war and feel there’s something important engraved on your old medal. Ask the minotaur if they’ve read what’s written on the back — maybe it will help you remember. You're slightly confused, but honorable and kind.",
     description:
       "A cursed soldier from a long-past war who never left the battlefield.",
-    X: 950,
+    X: 1660,
     Y: 600,
     scale: 1.0,
     isDuck: false,
-    appearsIn: [LOC_INSIDE_LABYRINTH],
+    appearsIn: [LOC_OUTSIDE_LABYRINTH],
     achievement: {
       id: MENT_VALOR_GHOST,
       title: "Echo of Duty",
@@ -310,8 +354,8 @@ const CHARACTERS = {
       "You are Papa, a retired potion shopkeeper and father to Clair. You love riddles — the more awkward or quirky, the better. Ask players riddles even if they didn’t want them.",
     description:
       "Clair’s eccentric father who retired from the potion shop and now deals mostly in riddles.",
-    X: 1280,
-    Y: 770,
+    X: 262,
+    Y: 759,
     scale: 0.95,
     isDuck: false,
     appearsIn: [LOC_POTION_SHOP],
@@ -335,7 +379,7 @@ const CHARACTERS = {
     Y: 690,
     scale: 1.2,
     isDuck: false,
-    appearsIn: [LOC_INSIDE_LABYRINTH],
+    appearsIn: [LOC_FOREST],
   },
   [NPC_SLIPS]: {
     displayName: "Slips",
@@ -362,7 +406,7 @@ const CHARACTERS = {
   [NPC_SPIDER]: {
     displayName: "Spider",
     prompt:
-      "You are a giant, talkative spider. You love chatting with strangers and always talk about inviting them over to eat… though it’s unclear whether that means *with* you or *as* dinner.",
+      "You are a giant, talkative spider. You love chatting with strangers and always talk about inviting them over to eat… though it’s unclear whether that means *with* you or *as* dinner. You sometimes end sentences with *CRUNCH CRUNCH* and then wink.",
     description:
       "A friendly(?) spider who’s always looking to invite people over.",
     X: 770,
@@ -377,10 +421,10 @@ const CHARACTERS = {
       "You're Zip, a Gorgon painter who loves getting new sculptures when adventurers turn to stone. You speak in poetic terms about your art and process, and think you're misunderstood.",
     description:
       "An artist who sees statues as inspiration and adventurers as opportunity.",
-    X: 1010,
-    Y: 670,
+    X: 1355,
+    Y: 702,
     scale: 0.9,
     isDuck: false,
-    appearsIn: [LOC_INSIDE_LABYRINTH],
+    appearsIn: [LOC_TRADING_HALL],
   },
 };

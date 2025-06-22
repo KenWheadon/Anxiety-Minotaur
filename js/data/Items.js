@@ -26,8 +26,8 @@ const ITEMS = {
     displayName: "Red Potion",
     description:
       "A royal red potion with faded text reading '{keyword}' - meant for true rulers.",
-    X: 1600,
-    Y: 400,
+    X: 1523,
+    Y: 420,
     scale: 0.9,
     appearsIn: [LOC_INSIDE_LABYRINTH],
   },
@@ -87,8 +87,8 @@ const ITEMS = {
     displayName: "Star Guide",
     description:
       "A book about reading the stars and understanding natural cycles. It mentions how different plants grow better at different times.",
-    X: 185,
-    Y: 835,
+    X: 89,
+    Y: 694,
     scale: 1,
     appearsIn: [LOC_GARDEN],
   },
@@ -149,10 +149,10 @@ const ITEMS = {
     displayName: "Golden Gear",
     description:
       "A shining gear, likely from some intricate machine. There's a faded sticker that reads '{keyword}'.",
-    X: 1130,
-    Y: 820,
+    X: 208,
+    Y: 711,
     scale: 0.8,
-    appearsIn: [LOC_TRADING_HALL],
+    appearsIn: [LOC_TRADING_HALL_INSIDE],
   },
 
   [ITEM_TIED_MAGICAL_SCROLL]: {
@@ -179,8 +179,8 @@ const ITEMS = {
     displayName: "Photos of Potions",
     description:
       "A collection of pictures showing various potions and their ingredients. One has a note written on the back: '{keyword}'.",
-    X: 1310,
-    Y: 750,
+    X: 772,
+    Y: 847,
     scale: 0.9,
     appearsIn: [LOC_POTION_SHOP],
   },
@@ -199,8 +199,8 @@ const ITEMS = {
     displayName: "Valor Medal",
     description:
       "A medal from a long-forgotten war. A word is faintly etched on the back: '{keyword}'.",
-    X: 1240,
-    Y: 850,
+    X: 1700,
+    Y: 882,
     scale: 0.8,
     appearsIn: [LOC_TRADING_HALL],
   },
@@ -208,8 +208,8 @@ const ITEMS = {
   [ITEM_ACCOUNTING_BOOK]: {
     displayName: "Accounting Book",
     description: "Holds all the accounting for the potion shop.",
-    X: 1420,
-    Y: 780,
+    X: 1592,
+    Y: 909,
     scale: 0.9,
     appearsIn: [LOC_POTINO_INSIDE],
   },
@@ -217,10 +217,10 @@ const ITEMS = {
   [ITEM_HAMMER]: {
     displayName: "Hammer",
     description: "A sturdy hammer, clearly used but still strong.",
-    X: 1000,
-    Y: 700,
+    X: 231,
+    Y: 1002,
     scale: 0.9,
-    appearsIn: [LOC_TRADING_HALL_INSIDE],
+    appearsIn: [LOC_GARDEN],
   },
 
   [ITEM_SPOOL_OF_SPIDER_SILK]: {
@@ -246,8 +246,8 @@ const ITEMS = {
     displayName: "Used Library Card",
     description:
       "A well-worn card filled out completely over the past 20 years.",
-    X: 1090,
-    Y: 760,
+    X: 475,
+    Y: 868,
     scale: 0.8,
     appearsIn: [LOC_POTINO_INSIDE],
   },

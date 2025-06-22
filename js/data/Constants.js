@@ -20,6 +20,8 @@ const LOC_TRADING_HALL_INSIDE = "trading_hall_inside";
 // Character constants
 const NPC_DUCK = "duck";
 const NPC_DUCK2 = "duck2";
+const NPC_DUCK3 = "duck3";
+const NPC_DUCK4 = "duck4";
 const NPC_PIG = "pig";
 const NPC_DEMON = "demon";
 const NPC_KINGKING = "kingking";
