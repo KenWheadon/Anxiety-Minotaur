@@ -1,11 +1,22 @@
-// js/data/ContentManager.js - Auto-generation utilities integrated into system
+// js/data/ContentManager.js - Updated to include level completion data
 
 class ContentManager {
   constructor() {
     this.characters = {};
     this.items = {};
     this.locations = {};
-    this.specialBackgrounds = {}; // NEW: pseudo-backgrounds like title
+    this.specialBackgrounds = {};
+
+    // NEW: Game configuration that replaces level data
+    this.gameConfig = {
+      tutorialName: "Tutorial: Helping Your Neighbor & Exploring the Realm",
+      tutorialDescription:
+        "Your gardener neighbor needs help identifying some seeds. Explore your expanded home and the mysterious labyrinth beyond, meet fascinating characters, and discover magical items while helping solve the mystery!",
+      startLocation: LOC_BEDROOM,
+      completionAchievement: MENT_TUTORIAL_COMPLETE,
+      completionMessage:
+        "Wonderful! You've successfully helped your neighbor and explored the mystical realm beyond!",
+    };
 
     this.initialize();
   }
@@ -17,7 +28,7 @@ class ContentManager {
     this.processCharacters();
     this.processItems();
     this.processLocations();
-    this.processSpecialBackgrounds(); // NEW
+    this.processSpecialBackgrounds();
 
     // Auto-populate location contents
     this.populateLocationContents();
@@ -191,11 +202,44 @@ class ContentManager {
     return achievements;
   }
 
+  // NEW: Methods to access game config (replacing level data)
+  getGameConfig() {
+    return this.gameConfig;
+  }
+
+  getStartLocation() {
+    return this.gameConfig.startLocation;
+  }
+
+  getCompletionAchievement() {
+    return this.gameConfig.completionAchievement;
+  }
+
+  getCompletionMessage() {
+    return this.gameConfig.completionMessage;
+  }
+
+  // NEW: Get all content as if it was a "level" (for compatibility)
+  getTutorialContent() {
+    return {
+      name: this.gameConfig.tutorialName,
+      description: this.gameConfig.tutorialDescription,
+      startLocation: this.gameConfig.startLocation,
+      completionAchievement: this.gameConfig.completionAchievement,
+      completionMessage: this.gameConfig.completionMessage,
+      locations: Object.keys(this.locations),
+      characters: Object.keys(this.characters),
+      items: Object.keys(this.items),
+      achievements: Object.keys(this.getAllAchievements()),
+    };
+  }
+
   debugContent() {
     console.group("🐛 Content Debug");
     console.log("Characters:", this.characters);
     console.log("Items:", this.items);
     console.log("Locations:", this.locations);
+    console.log("Game Config:", this.gameConfig);
     console.groupEnd();
   }
 }

@@ -1,10 +1,7 @@
 // js/data/Constants.js - All constants defined first
 
-const LEVELS = "levels";
-
-const LOC_TITLE = "title";
-
 // Location constants
+const LOC_TITLE = "title";
 const LOC_BEDROOM = "bedroom";
 const LOC_LIVINGROOM = "livingroom";
 const LOC_GARDEN = "garden";

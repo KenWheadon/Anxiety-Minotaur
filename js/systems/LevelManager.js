@@ -1,39 +1,14 @@
-// js/systems/LevelManager.js - Simplified for tutorial
+// js/systems/LevelManager.js - Simplified to use ContentManager
 
 class LevelManager {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
-    this.currentLevel = 1;
-    this.levels = new Map();
+    this.currentLevel = 1; // Keep for compatibility
     this.levelCompletionScreen = null;
 
-    this.loadLevelDefinitions();
     this.createLevelCompletionUI();
-    this.setupAchievementListener();
 
     console.log("🎯 Level Manager initialized for tutorial");
-  }
-
-  loadLevelDefinitions() {
-    // Load tutorial level definition
-    Object.entries(LEVELS).forEach(([levelNum, levelData]) => {
-      this.levels.set(parseInt(levelNum), levelData);
-    });
-
-    console.log(`🎯 Loaded ${this.levels.size} level definition(s)`);
-  }
-
-  setupAchievementListener() {
-    GameEvents.on(GAME_EVENTS.ACHIEVEMENT_UNLOCK, (eventData) => {
-      const achievementId = eventData.achievementKey || eventData.achievementId;
-
-      // Check if this achievement completes the current level
-      if (this.checkLevelCompletion(achievementId)) {
-        console.log(
-          `🎯 Level ${this.currentLevel} completed with achievement: ${achievementId}`
-        );
-      }
-    });
   }
 
   createLevelCompletionUI() {
@@ -113,11 +88,10 @@ class LevelManager {
 
   // Check if tutorial is completed based on achievement
   checkLevelCompletion(achievementId) {
-    const currentLevelData = this.levels.get(this.currentLevel);
-    if (!currentLevelData) return false;
+    const completionAchievement = contentManager.getCompletionAchievement();
 
     // Check if this achievement completes the tutorial
-    if (currentLevelData.completionAchievement === achievementId) {
+    if (completionAchievement === achievementId) {
       console.log(`🎯 Tutorial completed with achievement: ${achievementId}`);
       this.showLevelCompletion(achievementId);
       return true;
@@ -137,14 +111,13 @@ class LevelManager {
       }
     }
 
-    // Update messaging
+    // Update messaging from ContentManager
     const subtitle = this.levelCompletionScreen.querySelector(
       ".level-completion-subtitle"
     );
-    const currentLevelData = this.levels.get(this.currentLevel);
-    if (subtitle && currentLevelData) {
+    if (subtitle) {
       subtitle.textContent =
-        currentLevelData.completionMessage ||
+        contentManager.getCompletionMessage() ||
         "Great job helping your neighbor!";
     }
 
@@ -234,13 +207,8 @@ class LevelManager {
   }
 
   async loadLevel(levelNumber) {
-    const levelData = this.levels.get(levelNumber);
-    if (!levelData) {
-      console.error(`❌ Level ${levelNumber} not found`);
-      return false;
-    }
-
-    console.log(`🎯 Loading level ${levelNumber}: ${levelData.name}`);
+    // Since we only have one level (tutorial), we always load from ContentManager
+    console.log(`🎯 Loading tutorial content`);
 
     // Update current level
     this.currentLevel = levelNumber;
@@ -249,75 +217,27 @@ class LevelManager {
     this.gameEngine.gameState.currentLevel = levelNumber;
     this.gameEngine.gameState.save();
 
-    // Load the starting location for this level
-    await this.gameEngine.loadLocation(levelData.startLocation);
+    // Load the starting location from ContentManager
+    const startLocation = contentManager.getStartLocation();
+    await this.gameEngine.loadLocation(startLocation);
 
     // Emit level changed event
     GameEvents.emit(GAME_EVENTS.LEVEL_CHANGED, {
       level: levelNumber,
-      levelData: levelData,
+      levelData: contentManager.getTutorialContent(),
     });
 
     return true;
   }
 
-  // Get current level data with proper references
+  // Get current level data from ContentManager
   getCurrentLevelData() {
-    const levelData = this.levels.get(this.currentLevel);
-    if (!levelData) return null;
-
-    return {
-      ...levelData,
-      locationData: this.getLocationDataForLevel(levelData),
-      characterData: this.getCharacterDataForLevel(levelData),
-      itemData: this.getItemDataForLevel(levelData),
-      achievementData: this.getAchievementDataForLevel(levelData),
-    };
+    return contentManager.getTutorialContent();
   }
 
-  getLocationDataForLevel(levelData) {
-    const locationData = {};
-    levelData.locations.forEach((locationKey) => {
-      if (locations[locationKey]) {
-        locationData[locationKey] = locations[locationKey];
-      }
-    });
-    return locationData;
-  }
-
-  getCharacterDataForLevel(levelData) {
-    const characterData = {};
-    levelData.characters.forEach((characterKey) => {
-      if (characters[characterKey]) {
-        characterData[characterKey] = characters[characterKey];
-      }
-    });
-    return characterData;
-  }
-
-  getItemDataForLevel(levelData) {
-    const itemData = {};
-    levelData.items.forEach((itemKey) => {
-      if (items[itemKey]) {
-        itemData[itemKey] = items[itemKey];
-      }
-    });
-    return itemData;
-  }
-
-  getAchievementDataForLevel(levelData) {
-    const achievementData = {};
-    levelData.achievements.forEach((achievementKey) => {
-      if (achievements[achievementKey]) {
-        achievementData[achievementKey] = achievements[achievementKey];
-      }
-    });
-    return achievementData;
-  }
-
-  // Get total levels count
+  // Get total levels count (always 1 for tutorial)
   getTotalLevels() {
-    return this.levels.size;
+    return 1;
   }
 
   // Reset for tutorial reset
