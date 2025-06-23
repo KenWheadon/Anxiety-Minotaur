@@ -1,0 +1,128 @@
+{
+  "name": "anxiety-minotaur",
+  "version": "1.0.0",
+  "description": "Work up the nerves to talk to monsters, trappers, and info brokers so you can defend yourself.",
+  "main": "electron-main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "electron .",
+    "electron": "electron .",
+    "electron-dev": "electron . --dev",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never",
+    "dist-win": "electron-builder --win",
+    "dist-mac": "electron-builder --mac",
+    "dist-linux": "electron-builder --linux",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "anxiety",
+    "minotaur",
+    "social",
+    "indie"
+  ],
+  "author": "Weird Demon Games",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^36.5.0",
+    "electron-builder": "^25.0.5"
+  },
+  "build": {
+    "appId": "com.weirddemongames.anxiety-minotaur",
+    "productName": "Anxiety Minotaur",
+    "copyright": "Copyright © 2025 Weird Demon Games",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!node_modules",
+      "!dist",
+      "!build",
+      "!*.md",
+      "!.git*",
+      "!*.log"
+    ],
+    "extraResources": [
+      {
+        "from": "models",
+        "to": "models",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "publisherName": "Weird Demon Games",
+      "artifactName": "${productName}-${version}-Setup.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.games",
+      "artifactName": "${productName}-${version}.${ext}"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "Game",
+      "vendor": "Weird Demon Games",
+      "artifactName": "${productName}-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Anxiety Minotaur",
+      "installerHeaderIcon": "build/icon.ico"
+    },
+    "dmg": {
+      "title": "${productName} ${version}",
+      "backgroundColor": "#1a1a2e",
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    }
+  }
+}
