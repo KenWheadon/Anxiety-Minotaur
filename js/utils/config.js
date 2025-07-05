@@ -1,162 +1,184 @@
-// js/utils/Config.js - Environment-aware configuration for Anxiety Minotaur
+/**
+ * Course Forge MVP - Configuration Constants
+ * Centralized configuration for the application
+ */
+
 const CONFIG = {
-  GAME_WIDTH: 1600,
-  GAME_HEIGHT: 900,
+  // ====== API PROVIDER TOGGLE ======
+  // Set to true for ChatGPT API (secure, for real course data)
+  // Set to false for OpenRouter/DeepSeek (free, for debugging)
+  USE_CHATGPT_API: false,
 
-  // Detect if we're in development (localhost) or production
-  IS_DEVELOPMENT:
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1" ||
-    window.location.hostname.includes("localhost"),
+  // File Upload Settings
+  MAX_FILE_SIZE: 15 * 1024 * 1024, // 15MB in bytes
+  SUPPORTED_EXTENSIONS: ["txt", "docx", "json"],
 
-  // Detect if we're running on itch.io
-  get IS_ITCH_IO() {
-    return (
-      window.location.hostname.includes(".itch.io") ||
-      window.location.hostname.includes("itch.zone") ||
-      window.location.hostname.includes("ssl.hwcdn.net")
-    );
+  // API Configuration
+  API_ENDPOINTS: {
+    OPENROUTER: "https://openrouter.ai/api/v1/chat/completions",
+    OPENAI: "https://api.openai.com/v1/chat/completions",
   },
 
-  // Game Level Configuration - Start at Level 1 (Home)
-  DEFAULT_LEVEL: 1,
+  // Model Settings
+  AI_MODELS: {
+    // OpenRouter/DeepSeek Models (free)
+    DEEPSEEK_R1: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+    DEEPSEEK_CHAT: "deepseek/deepseek-chat",
 
-  // Get the starting location based on the default level
-  get DEFAULT_LOCATION() {
-    return LOC_BEDROOM;
+    // OpenAI/ChatGPT Models (secure)
+    GPT_4O: "gpt-4o",
+    GPT_4O_MINI: "gpt-4o-mini",
+    GPT_4_TURBO: "gpt-4-turbo",
   },
 
-  // AI Configuration - Enhanced proxy detection
-  get AI_API_URL() {
-    if (this.IS_DEVELOPMENT) {
-      // In development, you can choose to use proxy or direct
-      // Use direct if you have local config, proxy if you want to test proxy
-      const useProxy = false; // Set to true to test proxy in development
-      if (useProxy) {
-        return this.PROXY_URL;
-      } else {
-        return "https://openrouter.ai/api/v1/chat/completions";
+  // Local Storage Keys
+  LOCAL_STORAGE_KEYS: {
+    COURSE_STATE: "courseforge_state",
+    API_KEY: "courseforge_api_key",
+    USER_PREFERENCES: "courseforge_preferences",
+  },
+
+  // UI Settings
+  UI: {
+    ANIMATION_DURATION: 250,
+    STATUS_MESSAGE_DURATION: 1250,
+    ERROR_MESSAGE_DURATION: 4500,
+  },
+
+  // Content Processing
+  CONTENT: {
+    MAX_WORD_COUNT: 15000,
+    MIN_WORD_COUNT: 100,
+    DEFAULT_CHUNK_COUNT: 8,
+    MAX_CHUNK_COUNT: 20,
+  },
+
+  // Slide Types
+  SLIDE_TYPES: [
+    { value: "title", label: "Title Slide", icon: "type" },
+    { value: "courseInfo", label: "Course Information", icon: "info" },
+    { value: "textAndImage", label: "Text and Image", icon: "image" },
+    { value: "textAndBullets", label: "Text with Bullets", icon: "list" },
+    { value: "iconsWithTitles", label: "Icons with Titles", icon: "grid-3x3" },
+    { value: "faq", label: "FAQ", icon: "help-circle" },
+    { value: "flipCards", label: "Flip Cards", icon: "square-stack" },
+    { value: "multipleChoice", label: "Multiple Choice", icon: "check-square" },
+    { value: "tabs", label: "Tabs", icon: "tabs" },
+    { value: "popups", label: "Information Popups", icon: "message-square" },
+  ],
+
+  // Default Course Configuration
+  DEFAULTS: {
+    COURSE_CONFIG: {
+      title: "",
+      estimatedDuration: "",
+      targetAudience: "",
+      learningObjectives: [],
+      additionalGuidance: "",
+      sourceContent: "",
+      uploadedFiles: [],
+    },
+
+    CHUNK: {
+      title: "New Chunk",
+      slideType: "textAndImage",
+      isLocked: false,
+      sourceContent: "",
+      order: 0,
+      generatedContent: null,
+    },
+  },
+
+  // Validation Rules
+  VALIDATION: {
+    COURSE_TITLE: {
+      MIN_LENGTH: 3,
+      MAX_LENGTH: 100,
+    },
+    LEARNING_OBJECTIVES: {
+      MIN_COUNT: 1,
+      MAX_COUNT: 10,
+    },
+    CHUNK_TITLE: {
+      MIN_LENGTH: 3,
+      MAX_LENGTH: 80,
+    },
+  },
+
+  // Error Messages
+  ERROR_MESSAGES: {
+    FILE_TOO_LARGE: "File is too large (max 15MB)",
+    UNSUPPORTED_FILE_TYPE: "Unsupported file type",
+    INVALID_JSON: "Invalid JSON file format",
+    NO_CONTENT: "No content found in uploaded files",
+    MISSING_TITLE: "Course title is required",
+    MISSING_OBJECTIVES: "At least one learning objective is required",
+    API_ERROR: "Failed to communicate with AI service",
+    NETWORK_ERROR: "Network connection error",
+    PROCESSING_ERROR: "Error processing content",
+  },
+
+  // Success Messages
+  SUCCESS_MESSAGES: {
+    FILE_UPLOADED: "File uploaded successfully",
+    COURSE_LOADED: "Course loaded successfully",
+    CONTENT_CHUNKED: "Content chunked successfully",
+    SLIDE_GENERATED: "Slide content generated successfully",
+    COURSE_EXPORTED: "Course exported successfully",
+  },
+
+  // Debug Settings
+  DEBUG: {
+    ENABLED: true, // Set to false in production
+    LOG_LEVEL: "info", // 'debug', 'info', 'warn', 'error'
+  },
+
+  // Helper methods for API provider logic
+  getActiveAPIProvider() {
+    return this.USE_CHATGPT_API ? "OPENAI" : "OPENROUTER";
+  },
+
+  getActiveAPIEndpoint() {
+    return this.USE_CHATGPT_API
+      ? this.API_ENDPOINTS.OPENAI
+      : this.API_ENDPOINTS.OPENROUTER;
+  },
+
+  getDefaultModel() {
+    return this.USE_CHATGPT_API
+      ? this.AI_MODELS.GPT_4O_MINI
+      : this.AI_MODELS.DEEPSEEK_R1;
+  },
+
+  getModelForTask(task) {
+    if (this.USE_CHATGPT_API) {
+      // Use different GPT models based on task complexity
+      switch (task) {
+        case "chunking":
+          return this.AI_MODELS.GPT_4O_MINI; // Faster for chunking
+        case "content_generation":
+          return this.AI_MODELS.GPT_4O; // Better quality for content
+        default:
+          return this.AI_MODELS.GPT_4O_MINI;
       }
     } else {
-      // In production (including itch.io), always use proxy
-      return this.PROXY_URL;
-    }
-  },
-
-  // Proxy URL - Update this with your actual Vercel deployment URL
-  get PROXY_URL() {
-    // Replace 'your-vercel-app' with your actual Vercel app name
-    return "https://anxiety-minotaur.vercel.app/api/chat";
-  },
-
-  // API Key - only used in development for direct calls
-  get OPENROUTER_API_KEY() {
-    if (this.IS_DEVELOPMENT) {
-      // Check if local config has been loaded
-      if (
-        typeof window !== "undefined" &&
-        window.LOCAL_CONFIG &&
-        window.LOCAL_CONFIG.OPENROUTER_API_KEY
-      ) {
-        return window.LOCAL_CONFIG.OPENROUTER_API_KEY;
-      } else {
-        return null;
+      // Use DeepSeek models
+      switch (task) {
+        case "chunking":
+          return this.AI_MODELS.DEEPSEEK_R1; // Free model for chunking
+        case "content_generation":
+          return this.AI_MODELS.DEEPSEEK_CHAT; // Better for content
+        default:
+          return this.AI_MODELS.DEEPSEEK_R1;
       }
-    } else {
-      // In production, the API key is handled server-side by the proxy
-      return null;
-    }
-  },
-
-  // Site configuration
-  get SITE_URL() {
-    if (this.IS_DEVELOPMENT) {
-      return "http://localhost:3000";
-    } else if (this.IS_ITCH_IO) {
-      return window.location.origin; // Use current itch.io URL
-    } else {
-      return window.location.origin; // Use current domain
-    }
-  },
-
-  SITE_TITLE: "Anxiety Minotaur",
-  MODEL: "deepseek/deepseek-r1-0528-qwen3-8b:free", // Free model - change as needed
-  MAX_TOKENS: 5000, // Maximum tokens for AI responses
-
-  // Game Configuration
-  SAVE_KEY: "minotaur-labyrinth-save",
-  ANIMATION_SPEED: 0.3,
-  DEBUG: true, // Set to false for production
-
-  // Social Energy Configuration (Level 2 only)
-  STARTING_SOCIAL_ENERGY: 0,
-  MAX_SOCIAL_ENERGY: 6,
-  DUCK_ENERGY_RESTORE: 2,
-  CONVERSATION_ENERGY_COST: 1,
-
-  // Helper method to check if we're using the proxy
-  get IS_USING_PROXY() {
-    return this.AI_API_URL.includes("/api/chat");
-  },
-
-  // Helper method to check if local config is available (for development)
-  isLocalConfigReady() {
-    return (
-      !this.IS_DEVELOPMENT ||
-      (typeof window !== "undefined" &&
-        window.LOCAL_CONFIG &&
-        window.LOCAL_CONFIG.OPENROUTER_API_KEY)
-    );
-  },
-
-  // Helper method to wait for local config to load
-  async waitForLocalConfig(timeoutMs = 5000) {
-    if (!this.IS_DEVELOPMENT) return true;
-
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < timeoutMs) {
-      if (window.LOCAL_CONFIG && window.LOCAL_CONFIG.OPENROUTER_API_KEY) {
-        console.log("✅ Local config loaded successfully");
-        return true;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
-    console.warn("⚠️ LOCAL_CONFIG not found or missing API key after timeout.");
-    console.warn(
-      "⚠️ Create js/utils/local.config.js with your OPENROUTER_API_KEY."
-    );
-    console.warn("⚠️ Will use proxy for API calls.");
-    return false;
-  },
-
-  // Helper method to log current environment - enhanced
-  async logEnvironment() {
-    console.log("🌍 Environment Info:");
-    console.log("  - Development:", this.IS_DEVELOPMENT);
-    console.log("  - Itch.io:", this.IS_ITCH_IO);
-    console.log("  - Default Level:", this.DEFAULT_LEVEL);
-    console.log("  - Default Location:", this.DEFAULT_LOCATION);
-    console.log("  - API URL:", this.AI_API_URL);
-    console.log("  - Using Proxy:", this.IS_USING_PROXY);
-    console.log("  - Site URL:", this.SITE_URL);
-    console.log("  - Game Title:", this.SITE_TITLE);
-
-    if (this.IS_DEVELOPMENT) {
-      // Wait for local config to load before logging
-      const configReady = await this.waitForLocalConfig();
-      console.log("  - Local Config Loaded:", configReady);
-      console.log("  - Has API Key:", !!this.OPENROUTER_API_KEY);
-    } else {
-      console.log("  - API Key:", "Handled by proxy");
-    }
-
-    // Show what will happen with AI requests
-    if (this.IS_USING_PROXY) {
-      console.log("🔗 API requests will go through proxy at:", this.PROXY_URL);
-    } else {
-      console.log("🔗 API requests will go directly to OpenRouter");
     }
   },
 };
+
+// Freeze the config object to prevent accidental modifications
+Object.freeze(CONFIG);
+
+// Export for module systems (if needed)
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = CONFIG;
+}
