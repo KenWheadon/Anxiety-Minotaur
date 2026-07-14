@@ -21,8 +21,8 @@ const CONFIG = {
 
   // Model Settings
   AI_MODELS: {
-    // OpenRouter/DeepSeek Models (free)
-    DEEPSEEK_R1: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+    // OpenRouter free auto-routing model
+    OPENROUTER_FREE: "openrouter/free",
     DEEPSEEK_CHAT: "deepseek/deepseek-chat",
 
     // OpenAI/ChatGPT Models (secure)
@@ -147,7 +147,7 @@ const CONFIG = {
   getDefaultModel() {
     return this.USE_CHATGPT_API
       ? this.AI_MODELS.GPT_4O_MINI
-      : this.AI_MODELS.DEEPSEEK_R1;
+      : this.AI_MODELS.OPENROUTER_FREE;
   },
 
   getModelForTask(task) {
@@ -162,14 +162,14 @@ const CONFIG = {
           return this.AI_MODELS.GPT_4O_MINI;
       }
     } else {
-      // Use DeepSeek models
+      // Use free models/DeepSeek models
       switch (task) {
         case "chunking":
-          return this.AI_MODELS.DEEPSEEK_R1; // Free model for chunking
+          return this.AI_MODELS.OPENROUTER_FREE; // Free model for chunking
         case "content_generation":
           return this.AI_MODELS.DEEPSEEK_CHAT; // Better for content
         default:
-          return this.AI_MODELS.DEEPSEEK_R1;
+          return this.AI_MODELS.OPENROUTER_FREE;
       }
     }
   },
