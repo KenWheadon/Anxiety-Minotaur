@@ -148,7 +148,7 @@ class VictoryScreen {
           
           <div class="victory-actions">
             <button class="victory-button continue-game">🔄 Start Fresh Adventure</button>
-            <button class="victory-button close-victory">Keep Exploring Tutorial</button>
+            <button class="victory-button close-victory">✅ Continue Playing</button>
           </div>
         </div>
         
@@ -325,6 +325,11 @@ class VictoryScreen {
     // Restore body scrolling
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
+
+    // Re-enable game interactions so the player can continue exploring
+    if (this.gameEngine && this.gameEngine.interactionHandler) {
+      this.gameEngine.interactionHandler.setInteractionsEnabled(true);
+    }
   }
 
   updateStats() {

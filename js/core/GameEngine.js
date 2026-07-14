@@ -318,7 +318,8 @@ class GameEngine {
 
   handleTutorialVictory() {
     console.log("🎉 TUTORIAL COMPLETE! Victory achieved!");
-    this.interactionHandler.setInteractionsEnabled(false);
+    // End any active conversation but keep interactions enabled so the player
+    // can continue exploring after dismissing the victory popup.
     if (this.conversationManager.isActive())
       this.conversationManager.endConversation();
     this.victoryScreen.show(true);
