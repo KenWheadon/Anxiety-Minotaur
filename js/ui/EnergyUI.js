@@ -1,17 +1,18 @@
-// js/ui/EnergyUI.js - FIXED: Social Energy Display for All Levels
+// js/ui/EnergyUI.js - Left Sidebar Menu with Vertical Social Energy
 
 class EnergyUI {
   constructor(gameEngine) {
     this.gameEngine = gameEngine;
     this.energyContainer = null;
+    this.menuPopup = null;
     this.energyBar = null;
     this.energyText = null;
     this.isVisible = false;
 
-    // FIXED: Create UI immediately and show it
+    // Create UI immediately and show it
     this.createEnergyUI();
     this.setupEventListeners();
-    this.show(); // FIXED: Show immediately for testing
+    this.show();
 
     console.log("💝 Energy UI initialized and shown");
   }
@@ -40,46 +41,135 @@ class EnergyUI {
   }
 
   createEnergyUI() {
-    // FIXED: Remove existing energy UI if it exists
+    // Remove existing energy UI if it exists
     if (this.energyContainer) {
       this.energyContainer.remove();
     }
+    if (this.menuPopup) {
+      this.menuPopup.remove();
+    }
 
+    // Create left menu container (the vertical bar)
     this.energyContainer = document.createElement("div");
-    this.energyContainer.className = "energy-ui-container";
+    this.energyContainer.className = "energy-ui-container left-menu-container";
     this.energyContainer.innerHTML = `
-      <div class="energy-ui-panel">
-        <div class="energy-ui-header">
-          <span class="energy-icon">💝</span>
-          <span class="energy-label">Social Energy</span>
+      <div class="left-bar-header">
+        <span class="left-bar-menu-icon">☰</span>
+        <span class="left-bar-title">Menu</span>
+      </div>
+      <div class="vertical-energy-wrapper">
+        <span class="vertical-energy-label">💝</span>
+        <div class="vertical-energy-bar">
+          <div class="vertical-energy-fill"></div>
         </div>
-        <div class="energy-bar-container">
-          <div class="energy-bar">
-            <div class="energy-fill"></div>
-          </div>
-          <div class="energy-text">10/10</div>
-        </div>
-        <div class="energy-hint">
-          <span class="duck-icon">🦆</span>
-          <span class="hint-text">Talk to duck to recharge!</span>
-        </div>
+        <div class="vertical-energy-text">0/0</div>
+      </div>
+      <div class="left-bar-footer">
+        <span class="duck-menu-icon" title="Talk to duck to recharge!">🦆</span>
       </div>
     `;
 
-    // FIXED: Use the CSS styles from the conversation.css file
     document.body.appendChild(this.energyContainer);
 
-    // Get references
-    this.energyBar = this.energyContainer.querySelector(".energy-fill");
-    this.energyText = this.energyContainer.querySelector(".energy-text");
+    // Get references for vertical fill and badge
+    this.energyBar = this.energyContainer.querySelector(".vertical-energy-fill");
+    this.energyText = this.energyContainer.querySelector(".vertical-energy-text");
 
-    console.log("💝 Energy UI created and added to DOM");
+    // Create the slide-out menu popup
+    this.menuPopup = document.createElement("div");
+    this.menuPopup.className = "left-menu-popup";
+    this.menuPopup.innerHTML = `
+      <div class="menu-popup-header">
+        <h3>Dashboard</h3>
+      </div>
+      <button class="menu-popup-option trophies-option" id="menu-btn-trophies">
+        <span class="option-icon">🏆</span>
+        <span class="option-label">Trophies</span>
+      </button>
+      <button class="menu-popup-option journal-option" id="menu-btn-journal">
+        <span class="option-icon">📖</span>
+        <span class="option-label">Discovery Journal</span>
+      </button>
+      <button class="menu-popup-option music-option" id="menu-btn-music">
+        <span class="option-icon">🎵</span>
+        <span class="option-label">Music & Sounds</span>
+      </button>
+    `;
+
+    document.body.appendChild(this.menuPopup);
+
+    // Setup menu interactions
+    this.setupMenuInteractions();
+
+    console.log("💝 Left menu bar & popup created and added to DOM");
+  }
+
+  setupMenuInteractions() {
+    // Toggle menu popup on left bar click
+    this.energyContainer.addEventListener("click", (e) => {
+      this.toggleMenu();
+      e.stopPropagation();
+    });
+
+    // Stop propagation inside menu popup so clicking it doesn't trigger close
+    this.menuPopup.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    // Close menu when clicking anywhere else on document
+    document.addEventListener("click", () => {
+      this.closeMenu();
+    });
+
+    // Close menu on ESC if it is open
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.menuPopup.classList.contains("open")) {
+        this.closeMenu();
+      }
+    });
+
+    // Trophies option
+    this.menuPopup.querySelector("#menu-btn-trophies").addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.closeMenu();
+      if (this.gameEngine.achievementManager) {
+        this.gameEngine.achievementManager.showAchievementPanel();
+      }
+    });
+
+    // Discovery Journal option
+    this.menuPopup.querySelector("#menu-btn-journal").addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.closeMenu();
+      if (this.gameEngine.explorationDrawer) {
+        this.gameEngine.explorationDrawer.showDrawer();
+      }
+    });
+
+    // Music option
+    this.menuPopup.querySelector("#menu-btn-music").addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.closeMenu();
+      if (this.gameEngine.audioSettingsUI) {
+        this.gameEngine.audioSettingsUI.toggleSettingsPanel();
+      }
+    });
+  }
+
+  toggleMenu() {
+    const isOpen = this.menuPopup.classList.toggle("open");
+    this.energyContainer.classList.toggle("popup-open", isOpen);
+  }
+
+  closeMenu() {
+    this.menuPopup.classList.remove("open");
+    this.energyContainer.classList.remove("popup-open");
   }
 
   show() {
     if (this.isVisible) return;
 
-    // FIXED: Create UI if it doesn't exist
+    // Create UI if it doesn't exist
     if (!this.energyContainer) {
       this.createEnergyUI();
     }
@@ -98,6 +188,7 @@ class EnergyUI {
     if (this.energyContainer) {
       this.energyContainer.classList.remove("visible");
     }
+    this.closeMenu();
 
     console.log("💝 Energy UI hidden");
   }
@@ -110,7 +201,6 @@ class EnergyUI {
 
     const gameState = this.gameEngine.gameState;
 
-    // FIXED: Use !== undefined to properly handle 0 values
     const currentEnergy =
       gameState.socialEnergy !== undefined
         ? gameState.socialEnergy
@@ -118,12 +208,13 @@ class EnergyUI {
     const maxEnergy = gameState.maxSocialEnergy || CONFIG.MAX_SOCIAL_ENERGY;
     const percentage = (currentEnergy / maxEnergy) * 100;
 
-    // Update bar width
-    this.energyBar.style.width = Math.max(percentage, 2) + "%";
+    // Update vertical bar height
+    this.energyBar.style.height = Math.max(percentage, 2) + "%";
 
-    // Update text
+    // Update text badge
     this.energyText.textContent = `${currentEnergy}/${maxEnergy}`;
-    // FIXED: Update container styling based on energy level
+
+    // Update container styling based on energy level
     const container = this.energyContainer;
     container.classList.remove("low-energy", "no-energy");
 
@@ -133,22 +224,24 @@ class EnergyUI {
       container.classList.add("low-energy");
     }
 
-    // FIXED: Update energy bar color based on level with more specific targeting
+    // Update energy bar color based on level with vertical gradient orientation
     const energyFill = this.energyBar;
     if (currentEnergy === 0) {
       energyFill.style.background = "#e74c3c";
+      energyFill.style.boxShadow = "0 0 12px rgba(231, 76, 60, 0.6)";
     } else if (currentEnergy <= 2) {
-      energyFill.style.background = "linear-gradient(90deg, #e74c3c, #f39c12)";
+      energyFill.style.background = "linear-gradient(180deg, #f39c12, #e74c3c)";
+      energyFill.style.boxShadow = "0 0 12px rgba(231, 76, 60, 0.6)";
     } else if (currentEnergy <= 5) {
-      energyFill.style.background = "linear-gradient(90deg, #f39c12, #f1c40f)";
+      energyFill.style.background = "linear-gradient(180deg, #f1c40f, #f39c12)";
+      energyFill.style.boxShadow = "0 0 12px rgba(243, 156, 18, 0.6)";
     } else {
-      energyFill.style.background = "linear-gradient(90deg, #f1c40f, #2ecc71)";
+      energyFill.style.background = "linear-gradient(180deg, #2ecc71, #f1c40f)";
+      energyFill.style.boxShadow = "0 0 12px rgba(46, 204, 113, 0.6)";
     }
-
-    // console.log(`💝 Energy bar updated: ${percentage}% width`);
   }
 
-  // FIXED: Enhanced energy gain animation
+  // Enhanced energy gain animation next to Left Sidebar
   showEnergyGain(amount) {
     if (!this.isVisible) return;
 
@@ -158,22 +251,22 @@ class EnergyUI {
     gainText.style.cssText = `
       position: fixed;
       top: 60px;
-      right: 30px;
+      left: 95px;
       color: #2ecc71;
       font-weight: bold;
       font-size: 18px;
       pointer-events: none;
       z-index: 1001;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       padding: 8px 12px;
       border-radius: 8px;
       border: 2px solid #2ecc71;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     `;
 
     document.body.appendChild(gainText);
 
-    // FIXED: Better animation with GSAP fallback
     if (typeof gsap !== "undefined") {
       gsap.fromTo(
         gainText,
@@ -195,16 +288,15 @@ class EnergyUI {
         }
       );
 
-      // Pulse the energy bar
-      gsap.to(this.energyBar, {
-        scale: 1.1,
+      // Pulse the vertical energy bar wrapper
+      gsap.to(this.energyContainer, {
+        scale: 1.05,
         duration: 0.2,
         yoyo: true,
         repeat: 1,
         ease: "power2.inOut",
       });
     } else {
-      // FIXED: CSS fallback animation
       gainText.style.animation = "energyGainFallback 1.5s ease-out forwards";
       setTimeout(() => gainText.remove(), 1500);
     }
@@ -212,7 +304,7 @@ class EnergyUI {
     console.log(`💝 Energy gain animation shown: +${amount}`);
   }
 
-  // FIXED: Energy loss animation
+  // Energy loss animation next to Left Sidebar
   showEnergyLoss(amount) {
     if (!this.isVisible) return;
 
@@ -222,17 +314,18 @@ class EnergyUI {
     lossText.style.cssText = `
       position: fixed;
       top: 60px;
-      right: 30px;
+      left: 95px;
       color: #e74c3c;
       font-weight: bold;
       font-size: 16px;
       pointer-events: none;
       z-index: 1001;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       padding: 6px 10px;
       border-radius: 8px;
       border: 2px solid #e74c3c;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     `;
 
     document.body.appendChild(lossText);
@@ -307,6 +400,9 @@ class EnergyUI {
   destroy() {
     if (this.energyContainer && this.energyContainer.parentNode) {
       this.energyContainer.parentNode.removeChild(this.energyContainer);
+    }
+    if (this.menuPopup && this.menuPopup.parentNode) {
+      this.menuPopup.parentNode.removeChild(this.menuPopup);
     }
 
     console.log("🗑️ Energy UI destroyed");

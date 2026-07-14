@@ -186,7 +186,7 @@
 }
 
 /* FIXED: Input area with proper positioning */
-.conversation-input-area {
+.conversation-input-container {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
   display: flex;
@@ -210,8 +210,8 @@
   font-size: 15px;
   outline: none;
   transition: all 0.3s ease;
-  /* FIXED: Prevent input from growing too large */
-  min-width: 100%;
+  min-width: 0;
+  resize: none;
 }
 
 .conversation-input::placeholder {
@@ -261,49 +261,84 @@
   flex-shrink: 0; /* FIXED: Prevent footer from shrinking */
 }
 
-.typing-indicator {
-  display: none;
-  align-items: center;
+.typing-indicator-bubble {
+  display: flex;
+  align-items: flex-end;
   gap: 10px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
+  align-self: flex-start;
+  margin-bottom: 10px;
 }
 
-.typing-indicator.active {
+.typing-indicator-avatar-wrap {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.typing-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.15);
+  background-size: cover;
+  background-position: center;
+}
+
+.typing-bubble {
+  background: linear-gradient(135deg, rgba(236, 240, 241, 0.15) 0%, rgba(189, 195, 199, 0.1) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px !important;
+  border-radius: 18px !important;
+  border-bottom-left-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .typing-dots {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
 }
 
 .typing-dots span {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.6);
+  background: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.6);
   animation: typing-bounce 1.4s infinite ease-in-out;
 }
 
 .typing-dots span:nth-child(1) {
-  animation-delay: -0.32s;
+  animation-delay: 0s;
 }
 
 .typing-dots span:nth-child(2) {
-  animation-delay: -0.16s;
+  animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
 @keyframes typing-bounce {
-  0%,
-  80%,
-  100% {
-    transform: scale(0.8);
-    opacity: 0.5;
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
   }
-  40% {
-    transform: scale(1);
+  50% {
+    transform: translateY(-6px);
     opacity: 1;
+    background: #2ecc71;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
   }
 }
 
@@ -562,6 +597,29 @@
   }
 }
 
+/* Override energy-state animations for left-menu-container - keep it fixed */
+.left-menu-container.low-energy {
+  animation: pulse-warning-sidebar 1.5s infinite !important;
+  background: rgba(231, 76, 60, 0.12) !important;
+  border-right-color: rgba(231, 76, 60, 0.5) !important;
+}
+
+.left-menu-container.no-energy {
+  animation: pulse-critical-sidebar 1s infinite !important;
+  background: rgba(192, 57, 43, 0.2) !important;
+  border-right-color: rgba(192, 57, 43, 0.7) !important;
+}
+
+@keyframes pulse-warning-sidebar {
+  0%, 100% { border-right-color: rgba(231, 76, 60, 0.5); box-shadow: 4px 0 30px rgba(0,0,0,0.6); }
+  50%       { border-right-color: rgba(231, 76, 60, 1);   box-shadow: 4px 0 30px rgba(0,0,0,0.6), 0 0 20px rgba(231,76,60,0.4); }
+}
+
+@keyframes pulse-critical-sidebar {
+  0%, 100% { border-right-color: rgba(192, 57, 43, 0.7); box-shadow: 4px 0 30px rgba(0,0,0,0.6); }
+  50%       { border-right-color: rgba(192, 57, 43, 1);   box-shadow: 4px 0 30px rgba(0,0,0,0.6), 0 0 25px rgba(192,57,43,0.5); }
+}
+
 /* FIXED: Mobile energy UI adjustments */
 @media (max-width: 768px) {
   .energy-ui-container {
@@ -604,3 +662,346 @@
     justify-content: center;
   }
 }
+
+/* ==========================================================================
+   UNIFIED LEFT SIDEBAR MENU & VERTICAL SOCIAL ENERGY DISPLAY
+   ========================================================================== */
+
+/* Hide the old floating UI container and triggers */
+.energy-ui-container:not(.left-menu-container),
+.achievements-trigger,
+.exploration-trigger,
+.audio-settings-trigger {
+  display: none !important;
+}
+
+/* Left Menu Sidebar Container */
+.left-menu-container {
+  /* Reset all inherited .energy-ui-container styles */
+  position: fixed !important;
+  top: 0 !important;
+  right: auto !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 75px !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  border-radius: 0 !important;
+  padding: 25px 0 !important;
+  /* New left bar styles */
+  background: rgba(15, 15, 25, 0.85) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border-right: 2.5px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.6) !important;
+  border-left: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  z-index: 1000 !important;
+  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+.left-menu-container:hover {
+  background: rgba(22, 22, 38, 0.93) !important;
+  border-right-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 6px 0 35px rgba(0, 0, 0, 0.8) !important;
+}
+
+.left-menu-container.popup-open {
+  border-right-color: rgba(233, 30, 99, 0.4) !important;
+  box-shadow: 0 0 25px rgba(233, 30, 99, 0.15), 4px 0 30px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Left Bar Header */
+.left-bar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.left-bar-menu-icon {
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.65);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.left-menu-container:hover .left-bar-menu-icon {
+  color: #ff2a74;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.left-menu-container.popup-open .left-bar-menu-icon {
+  color: #ff2a74;
+  transform: rotate(90deg);
+}
+
+.left-bar-title {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 700;
+  transition: color 0.3s ease;
+}
+
+.left-menu-container:hover .left-bar-title {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Vertical Social Energy Display */
+.vertical-energy-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  width: 100%;
+  padding: 30px 0;
+  gap: 15px;
+  pointer-events: none;
+}
+
+.vertical-energy-label {
+  font-size: 18px;
+  animation: heart-pulse 2s infinite ease-in-out;
+}
+
+@keyframes heart-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.vertical-energy-bar {
+  width: 16px;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.vertical-energy-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%; /* Styled dynamically via JS */
+  background: linear-gradient(180deg, #2ecc71, #f1c40f, #e67e22, #e74c3c);
+  border-radius: 20px;
+  transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.4);
+}
+
+/* Shimmer overlay */
+.vertical-energy-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  animation: shimmer-vertical 2.5s infinite linear;
+}
+
+@keyframes shimmer-vertical {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(-100%); }
+}
+
+.vertical-energy-text {
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 7px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+/* Left Bar Footer */
+.left-bar-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.duck-menu-icon {
+  font-size: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.left-menu-container:hover .duck-menu-icon {
+  transform: scale(1.25) rotate(12deg);
+}
+
+/* Slide-out Menu Popup */
+.left-menu-popup {
+  position: fixed;
+  left: -320px; /* Start offscreen */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  background: rgba(10, 10, 18, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.8);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 999; /* Slightly below the left bar container z-index to slide "under/behind" it visually */
+  transition: left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+.left-menu-popup.open {
+  left: 90px; /* Slides out past left-menu-container (75px + margin) */
+}
+
+.menu-popup-header {
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+}
+
+.menu-popup-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  background: linear-gradient(90deg, #ffffff, #e91e63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Popup Option Buttons */
+.menu-popup-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  color: #e0e0e0;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-popup-option::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.menu-popup-option:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(6px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.menu-popup-option .option-icon {
+  font-size: 22px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.menu-popup-option:hover .option-icon {
+  transform: scale(1.2);
+}
+
+/* Special hover state styles for different options */
+.menu-popup-option.trophies-option:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.12), rgba(139, 195, 74, 0.04));
+  border-color: rgba(76, 175, 80, 0.35);
+}
+.menu-popup-option.trophies-option:hover::before {
+  background: #4caf50;
+}
+
+.menu-popup-option.journal-option:hover {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12), rgba(0, 188, 212, 0.04));
+  border-color: rgba(33, 150, 243, 0.35);
+}
+.menu-popup-option.journal-option:hover::before {
+  background: #2196f3;
+}
+
+.menu-popup-option.music-option:hover {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.12), rgba(233, 30, 99, 0.04));
+  border-color: rgba(156, 39, 176, 0.35);
+}
+.menu-popup-option.music-option:hover::before {
+  background: #9c27b0;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .left-menu-container {
+    width: 60px;
+    padding: 15px 0;
+  }
+  
+  .left-bar-title {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+  
+  .vertical-energy-bar {
+    height: 160px;
+    width: 12px;
+  }
+  
+  .left-menu-popup {
+    width: 220px;
+    padding: 16px;
+  }
+  
+  .left-menu-popup.open {
+    left: 72px;
+  }
+  
+  .menu-popup-option {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+

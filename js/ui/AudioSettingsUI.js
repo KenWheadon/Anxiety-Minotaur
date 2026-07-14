@@ -1,8 +1,9 @@
 // js/ui/AudioSettingsUI.js - Audio control panel for players
 
 class AudioSettingsUI {
-  constructor(audioManager) {
+  constructor(audioManager, gameEngine = null) {
     this.audioManager = audioManager;
+    this.gameEngine = gameEngine;
     this.settingsPanel = null;
     this.settingsButton = null;
     this.isOpen = false;
@@ -232,6 +233,11 @@ class AudioSettingsUI {
   }
 
   showSettingsPanel() {
+    // Close any other open popups
+    if (this.gameEngine) {
+      this.gameEngine.closeAllPopups("audioSettings");
+    }
+
     this.isOpen = true;
     this.settingsPanel.classList.add("visible");
     this.updateAllControls();

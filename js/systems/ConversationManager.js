@@ -34,15 +34,7 @@ class ConversationManager {
       </div>
       
       <div class="conversation-messages"></div>
-      
-      <div class="typing-indicator">
-        <div class="typing-dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <span class="typing-text">Thinking...</span>
-      </div>
+
       
       <div class="conversation-input-container">
         <textarea class="conversation-input" placeholder="Type your message..." rows="2"></textarea>
@@ -138,6 +130,9 @@ class ConversationManager {
     this.isConversationActive = true;
     this.messageHistory = [];
 
+    // Close any other open popups
+    this.gameEngine.closeAllPopups("conversation");
+
     console.log(`💬 Setting up new tutorial conversation with ${characterKey}`);
 
     // Update UI
@@ -155,9 +150,20 @@ class ConversationManager {
       `💬 Found ${history.length} previous messages with ${characterKey}`
     );
 
+    // Show typing indicator during initial greeting generation (unless it's the duck)
+    if (!character.isDuck) {
+      this.showTypingIndicator();
+    }
+
     // Generate greeting
     const greeting = await this.generateGreeting(character, history);
     console.log(`💬 Generated greeting: "${greeting}"`);
+
+    // Hide typing indicator
+    if (!character.isDuck) {
+      this.hideTypingIndicator();
+    }
+
     this.addMessage("character", greeting);
 
     // Focus input
@@ -466,13 +472,69 @@ class ConversationManager {
   }
 
   showTypingIndicator() {
-    const indicator = this.conversationPanel.querySelector(".typing-indicator");
-    indicator.classList.add("active");
+    const messagesContainer = this.conversationPanel.querySelector(
+      ".conversation-messages"
+    );
+
+    // Remove if already exists to avoid duplicates
+    const existing = messagesContainer.querySelector(".typing-indicator-bubble");
+    if (existing) {
+      existing.remove();
+    }
+
+    const indicatorElement = document.createElement("div");
+    indicatorElement.className = "message character typing-indicator-bubble";
+
+    // Set avatar image if available
+    let avatarStyle = "";
+    const character = characters[this.currentCharacter];
+    if (character && character.img) {
+      avatarStyle = `style="background-image: url(images/characters/${character.img}.png);"`;
+    }
+
+    indicatorElement.innerHTML = `
+      <div class="typing-indicator-avatar-wrap">
+        <div class="typing-avatar" ${avatarStyle}></div>
+      </div>
+      <div class="message-bubble typing-bubble">
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    `;
+
+    messagesContainer.appendChild(indicatorElement);
+
+    // Smooth animation using GSAP
+    gsap.fromTo(
+      indicatorElement,
+      { opacity: 0, y: 15, scale: 0.9 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power2.out" }
+    );
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 
   hideTypingIndicator() {
-    const indicator = this.conversationPanel.querySelector(".typing-indicator");
-    indicator.classList.remove("active");
+    const messagesContainer = this.conversationPanel.querySelector(
+      ".conversation-messages"
+    );
+    const indicator = messagesContainer.querySelector(".typing-indicator-bubble");
+    if (indicator) {
+      gsap.to(indicator, {
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.2,
+        onComplete: () => {
+          if (indicator.parentNode) {
+            indicator.parentNode.removeChild(indicator);
+          }
+        }
+      });
+    }
   }
 
   updateCharacterInfo(character) {

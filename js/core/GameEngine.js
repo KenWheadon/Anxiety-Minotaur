@@ -20,7 +20,7 @@ class GameEngine {
 
     // Audio system integration
     this.audioManager = this.renderer.assetManager.getAudioManager();
-    this.audioSettingsUI = new AudioSettingsUI(this.audioManager);
+    this.audioSettingsUI = new AudioSettingsUI(this.audioManager, this);
 
     // Initialize EnergyUI
     this.energyUI = new EnergyUI(this);
@@ -288,6 +288,32 @@ class GameEngine {
       ".detailed-tooltip.visible"
     );
     openDescriptions.forEach((desc) => desc.classList.remove("visible"));
+  }
+
+  // Close all open popups except the one identified by `except`
+  // except: "conversation" | "achievements" | "exploration" | "audioSettings" | null
+  closeAllPopups(except = null) {
+    // Always close item description tooltips
+    this.closeUIElements();
+    if (this.interactionHandler) {
+      this.interactionHandler.closeAllTooltips();
+    }
+
+    if (except !== "exploration" && this.explorationDrawer?.isOpen) {
+      this.explorationDrawer.hideDrawer();
+    }
+    if (except !== "achievements" && this.achievementManager?.achievementPanel) {
+      const panel = this.achievementManager.achievementPanel;
+      if (panel.style.display !== "none" && panel.style.display !== "") {
+        this.achievementManager.hideAchievementPanel();
+      }
+    }
+    if (except !== "audioSettings" && this.audioSettingsUI?.isOpen) {
+      this.audioSettingsUI.hideSettingsPanel();
+    }
+    if (except !== "conversation" && this.conversationManager?.isConversationActive) {
+      this.conversationManager.endConversation();
+    }
   }
 
   handleTutorialVictory() {

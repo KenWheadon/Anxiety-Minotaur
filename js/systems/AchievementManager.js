@@ -339,6 +339,9 @@ class AchievementManager {
   }
 
   showAchievementPanel() {
+    // Close any other open popups
+    this.gameEngine.closeAllPopups("achievements");
+
     this.achievementPanel.style.display = "flex";
     this.renderAchievements("all");
     this.updateProgress();

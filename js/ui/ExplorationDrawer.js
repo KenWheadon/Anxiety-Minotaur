@@ -384,6 +384,9 @@ Total: ${this.discoveredCharacters.size + this.discoveredItems.size}`);
   }
 
   async showDrawer() {
+    // Close any other open popups
+    this.gameEngine.closeAllPopups("exploration");
+
     this.isOpen = true;
     this.drawerPanel.style.display = "flex";
 
