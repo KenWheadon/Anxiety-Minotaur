@@ -7,6 +7,8 @@ class LocationNavigator {
     this.availableLocations = [];
     this.navigationContainer = null;
     this.isEnabled = true;
+    // Locations that require tutorial completion before access
+    this.MAZE_LOCATIONS = [LOC_INSIDE_LABYRINTH, LOC_OUTSIDE_LABYRINTH];
 
     this.createNavigationUI();
     this.setupEventListeners();
@@ -162,6 +164,7 @@ class LocationNavigator {
     this.navigateToLocation(locationKey);
   }
 
+
   // Navigate to specific location
   async navigateToLocation(locationKey) {
     if (!this.isEnabled) {
@@ -176,6 +179,16 @@ class LocationNavigator {
 
     if (locationKey === this.currentLocationKey) {
       console.log(`🧭 Already at location ${locationKey}`);
+      return;
+    }
+
+    // Block maze entry until the tutorial is completed
+    if (
+      this.MAZE_LOCATIONS.includes(locationKey) &&
+      !this.gameEngine.gameState.isTutorialCompleted()
+    ) {
+      console.warn("🧭 Cannot enter maze — tutorial not yet complete");
+      this.showTutorialBlockMessage();
       return;
     }
 
@@ -267,6 +280,52 @@ class LocationNavigator {
       this.currentPreview.remove();
       this.currentPreview = null;
     }
+  }
+
+  // Show a brief toast message when maze entry is blocked by tutorial
+  showTutorialBlockMessage() {
+    // Avoid stacking duplicate toasts
+    const existing = document.getElementById("tutorial-block-toast");
+    if (existing) return;
+
+    const toast = document.createElement("div");
+    toast.id = "tutorial-block-toast";
+    toast.textContent = "🌿 Complete the tutorial first before venturing into the maze!";
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 20, 10, 0.95);
+      color: #ffd700;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      border: 2px solid #ffd700;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      z-index: 9999;
+      pointer-events: none;
+      text-align: center;
+      max-width: 340px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    `;
+
+    document.body.appendChild(toast);
+
+    // Fade in
+    requestAnimationFrame(() => {
+      toast.style.opacity = "1";
+    });
+
+    // Fade out and remove after 3 seconds
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 3000);
   }
 
   // Enable/disable navigation (useful for cutscenes, etc.)

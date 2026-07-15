@@ -86,7 +86,7 @@ const CONFIG = {
   // Game Configuration
   SAVE_KEY: "minotaur-labyrinth-save",
   ANIMATION_SPEED: 0.3,
-  DEBUG: true, // Set to false for production
+  DEBUG: false, // Set to false for production
 
   // Social Energy Configuration (Level 2 only)
   STARTING_SOCIAL_ENERGY: 0,

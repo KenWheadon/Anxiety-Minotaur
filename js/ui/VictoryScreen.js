@@ -269,6 +269,10 @@ class VictoryScreen {
 
     console.log("🎉 Tutorial victory screen showing");
 
+    // Always restore the action buttons in case a previous showResetAnimation() hid them
+    const actions = this.victoryElement.querySelector(".victory-actions");
+    if (actions) actions.style.display = "";
+
     // If this is the first time showing (tutorial just completed)
     if (!this.isUnlocked) {
       this.isUnlocked = true;
@@ -282,12 +286,28 @@ class VictoryScreen {
     }
 
     this.showVictoryScreen();
+
+    // Fallback: guarantee buttons are visible after animation window
+    // in case GSAP leaves them at opacity:0
+    setTimeout(() => {
+      const actionsEl = this.victoryElement.querySelector(".victory-actions");
+      if (actionsEl) {
+        actionsEl.style.display = "";
+        if (!actionsEl.style.opacity || actionsEl.style.opacity === "0") {
+          actionsEl.style.opacity = "1";
+        }
+      }
+    }, 3000);
   }
 
   async showVictoryScreen() {
     if (this.isShowing) return;
 
     this.isShowing = true;
+
+    // Always restore action buttons visibility (may have been hidden by showResetAnimation)
+    const actions = this.victoryElement.querySelector(".victory-actions");
+    if (actions) actions.style.display = "";
 
     // Update stats
     this.updateStats();
@@ -299,13 +319,15 @@ class VictoryScreen {
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
-    // Play entrance animation
-    const content = this.victoryElement.querySelector(".victory-content");
-    gsap.fromTo(
-      content,
-      { scale: 0.8, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
-    );
+    // Play entrance animation (only when not playing the full victory sequence)
+    if (this.isUnlocked) {
+      const content = this.victoryElement.querySelector(".victory-content");
+      gsap.fromTo(
+        content,
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+      );
+    }
 
     // Play victory sound
     if (this.gameEngine.renderer?.assetManager) {
